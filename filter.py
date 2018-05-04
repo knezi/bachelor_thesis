@@ -7,7 +7,7 @@ import sys
 min_date=dt.datetime(2100,1,1)
 max_date=dt.datetime(100,1,1)
 from_date=dt.datetime(2012, 5, 1) # first half of may
-to_date=dt.datetime(2012, 5, 15)
+to_date=dt.datetime(2012, 8, 1)
 count=0
 
 try:
@@ -21,9 +21,6 @@ try:
             if from_date <= date <= to_date:
                 count+=1
                 w.write("{}\n".format(d))
-
-            if count>=20000:
-                break
 
 
 except EOFError as e:
