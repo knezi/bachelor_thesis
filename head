@@ -1,0 +1,30 @@
+{
+'review_id': 'GhtXMAvsVoWX1EMz9EdMJA',
+'user_id': 'zrHCaBd4jMWgI2QrfTwfEw',
+'stars': 4,
+'date': '2012-05-08',
+'text': "Smaller Gold's gym then some of the other ones, that's why they call it an express gym though. Staff is always friendly when I come in and it's nice a few know you by name anytime they see you. Personal trainers are great and will push you harder then you've been pushed before. Great thing about going to this express Gold's is there is nearly never a wait for tanning and  if you are there mid day then virtual no wait for any lifting machine and no wait for cardio machines. There are a few more things I wish they had on the workout floor but you can't have it all can you?",
+'useful': 0,
+'funny': 0,
+'cool': 0,
+'business': {
+		'business_id': 'Aabr0G7IrxI03NhbsH5FDA',
+		'name': "Gold's Gym", 'neighborhood': '',
+		'address': '2805 W Centennial Pkwy',
+		'city': 'North Las Vegas',
+		'state': 'NV',
+		'postal_code': '89084',
+		'latitude': 36.2760401,
+		'longitude': -115.1791359,
+		'stars': 3.0,
+		'review_count': 29,
+		'is_open': 0,
+		'attributes': {
+			'GoodForKids': True
+		},
+		'categories': ['Active Life',
+			'Fitness & Instruction',
+			'Gyms'],
+		'hours': {}
+	}
+}
