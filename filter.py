@@ -2,12 +2,13 @@
 import json
 import datetime as dt
 import sys
+import subprocess as sp
 
 
 min_date=dt.datetime(2100,1,1)
 max_date=dt.datetime(100,1,1)
 from_date=dt.datetime(2012, 5, 1) # first half of may
-to_date=dt.datetime(2012, 8, 1)
+to_date=dt.datetime(2012, 12, 1)
 count=0
 
 try:
@@ -25,6 +26,8 @@ try:
 
 except EOFError as e:
     pass
+
+sp.call(["./rewrite_quotes.py", sys.argv[1]])
 
 print(min_date)
 print(max_date)
