@@ -1,0 +1,35 @@
+udelat denormalizacni skript
+kouoknout rucne na data
+RAM
+vyhodit nemcinu
+feature rozdelit na dve
+
+* Information Gain - snizit dimenzionality
+
+PCA, SVG
+- redukce dimenze
+- centralizovat - kazdy sloupec - prumer nula + odchylky
+- singularni matice - moc featur - 
+
+Najit soouslovi
+- mutual information
+compound detection
+
+embedding - gensym
+kosinovai zvdalenot
+ - podobnost - vzit nahodne pozitivni
+
+
+
+* vic pasem na delku review
+ - analyza
+
+* n-gramy
+
+korelace featur
+- 
+
+
+* aspell
+- preklepy - pocet preklepu
+- merit kvalitu textu
