@@ -12,22 +12,20 @@ to_date=dt.datetime(2012, 12, 1)
 count=0
 
 try:
-    with open(sys.argv[1], 'w') as w:
-        while True:
-            d=json.loads(input().strip())
-            date=dt.datetime(*[int(x) for x in d['date'].split("-")])
-            min_date=min(date, min_date)
-            max_date=max(date, max_date)
-            
-            if from_date <= date <= to_date:
-                count+=1
-                w.write("{}\n".format(d))
+	with open(sys.argv[1], 'w') as w:
+		while True:
+			d=json.loads(input().strip())
+			date=dt.datetime(*[int(x) for x in d['date'].split("-")])
+			min_date=min(date, min_date)
+			max_date=max(date, max_date)
+
+			if from_date <= date <= to_date:
+				count+=1
+				w.write("{}\n".format(json.dumps(d)))
 
 
 except EOFError as e:
-    pass
-
-sp.call(["./rewrite_quotes.py", sys.argv[1]])
+	pass
 
 print(min_date)
 print(max_date)

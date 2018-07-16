@@ -1,5 +1,13 @@
 # NPRG045
 
-Pro vytvoření souboru hy.json:
+For creating data:
 
-`cat denorm.json | ./filter.py hy.json`
+`./create_data.sh in_dir out_file`
+
+where in_dir is path to directory with data downloaded from Yelp
+
+For using it in jupiter:
+
+`./create_data.sh ../data/dataset/ data.json`
+
+
