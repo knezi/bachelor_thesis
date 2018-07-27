@@ -3,6 +3,13 @@ import json
 import datetime as dt
 import sys
 import subprocess as sp
+from subprocess import PIPE
+
+def spell_check(text):
+	p=sp.Popen(['./spell_check.sh'], stdout=PIPE, stdin=PIPE, stderr=PIPE)
+	stdout_data = p.communicate(input=text.encode('utf-8'))[0]
+	res=[int(x) for x in stdout_data.decode('utf-8').split(' ')]
+	return res
 
 
 min_date=dt.datetime(2100,1,1)
@@ -21,7 +28,14 @@ try:
 
 			if from_date <= date <= to_date:
 				count+=1
+				ratio=spell_check(d['text'])
+				# TODO remove non-english
+
+				d['words']=ratio[0]
+				d['incorrect_words']=ratio[1]
+
 				w.write("{}\n".format(json.dumps(d)))
+				break
 
 
 except EOFError as e:

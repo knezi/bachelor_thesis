@@ -1,4 +1,3 @@
-udelat denormalizacni skript
 kouoknout rucne na data
 RAM
 vyhodit nemcinu
@@ -33,3 +32,7 @@ korelace featur
 * aspell
 - preklepy - pocet preklepu
 - merit kvalitu textu
+
+
+cross validation?
+learning curves
