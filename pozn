@@ -1,6 +1,4 @@
 kouoknout rucne na data
-RAM
-vyhodit nemcinu
 feature rozdelit na dve
 
 * Information Gain - snizit dimenzionality
@@ -19,19 +17,11 @@ kosinovai zvdalenot
  - podobnost - vzit nahodne pozitivni
 
 
-
-* vic pasem na delku review
- - analyza
-
 * n-gramy
+ - pridat 1 slova, 3 slova
 
 korelace featur
 - 
-
-
-* aspell
-- preklepy - pocet preklepu
-- merit kvalitu textu
 
 
 cross validation?

@@ -1,7 +1,12 @@
-set title "Number of words"
 set terminal png
+
+set title "Number of words"
 set output "words.png"
 plot "graph" index 0:0:1 with boxes fill pattern 3
+
+set title "Number of words - cropped - up to fifty words"
+set output "words_upto200.png"
+plot [:200][] "graph" index 0:0:1 with boxes fill pattern 3
 
 set title "Number of errors"
 set output "errors.png"
