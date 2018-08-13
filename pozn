@@ -3,7 +3,7 @@ feature rozdelit na dve
 
 * Information Gain - snizit dimenzionality
 
-PCA, SVG
+PCA, SVD
 - redukce dimenze
 - centralizovat - kazdy sloupec - prumer nula + odchylky
 - singularni matice - moc featur - 
@@ -26,3 +26,6 @@ korelace featur
 
 cross validation?
 learning curves
+
+
+pocet chyb absolutni
