@@ -1,3 +1,9 @@
+/data/students/knizek
+
+najit bakalarky podobneho zamezeni
+najit sentiment analysis and classification
+find state of the art of language modelingz
+
 kouoknout rucne na data
 feature rozdelit na dve
 
@@ -28,4 +34,59 @@ cross validation?
 learning curves
 
 
-pocet chyb absolutni
+negativni cosin
+
+
+accuracy - train_set
+ - po pridani jedno slov z 95 -> 65
+ - zkusit udelat jen suuuper frekventovana slova
+
+
+ sklearn - pca randomisedPCA
+ truncatedSVD
+
+
+ fasttext
+
+ f measure - recall/precision
+
+ svm - scikit
+ maximum entropy
+
+
+
+yelp challenge
+kategorizace
+fasttext - clanek
+gensim - clanek
+
+
+
+zeptat:
+- joint probability & distribution
+	Jakej je rozdil oproti conditional?
+	-> generative vs discriminative
+	generative class based on joint prob - distribution that pair X,Y falls into; makes more assumption about data, infers result indirectly; models joint probability and then from Bayes rule - calculates p{y|x] and picks the most probable label y (usual through Bayesan theorem which requires to compute p[x|y])
+vs discriminative based on conditional probability (or none at all) P[X|Y], needs better data, but infers result directly; directly models or directly learns map x to y
+	-> logistic regr vyssi presnost + Andrew Ng
+	
+- n-gram jsou proste Markovovy řetezy -> aplikace ve word2vec
+
+
+
+
+TODO
+
+id - lingv ficury
+fasttext pridat ficury do textu s prefixem
+podle mnozstvi dat a jake ficury
+lematizace,sentiment
+build skript
+
+mathplotlib - learn
+
+
+
+HAHA
+Po potvrzení se nově objeví možnost zadání práce vytisknout (resp. vygenerovat zadání v PDF). Vedoucí práce (případně tajemník katedry) formulář se zadáním 3x vytiskne, nechá ho podepsat vedoucím své katedry (v případě pedagogických studijních oborů vedoucím KDF resp. KDM) a fakultní poštou odešle na studijní oddělení.
+Studijní oddělení nechá vyplněný formulář schválit a podepsat děkanem a tím je zadání práce ukončeno. Jeden výtisk formuláře dostanete zpět poštou (budete ho ještě potřebovat při dokončování práce); jeden exemplář zadání vrátí studijní oddělení na pracoviště vedoucího a jeden založí do Vašeho studijního spisu.

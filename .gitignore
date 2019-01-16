@@ -1,3 +1,7 @@
 data.json
+fasttext
+geneea
 graph
 .*
+__pycache__
+*.json
