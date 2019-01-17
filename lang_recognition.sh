@@ -1,14 +1,19 @@
 #!/bin/sh
-# language recognistion tool for English, German and French.
-# Given text processed with a spell checker and chooses the language
-# with the lowest numbers of incorrect words
+if [ "$1" = "-h" ]; then
+	cat <<EOF
+language recognistion tool for English, German and French.
+The given text on stdin processed with a spell checker and chooses the language
+with the lowest numbers of incorrect words
 
-# If option '-l' is specified, writes detected language to the output
-#   ('en', 'fr' or 'de')
+If option '-l' is specified, writes detected language to the output
+  ('en', 'fr' or 'de')
 
-# Otherwise returns two line separated numbers:
-# for non-english documents -1\n0
-# for english number of incorrect words\n number of all words
+Otherwise returns two line separated numbers:
+for non-english documents -1\n0
+for english number of incorrect words\n number of all words
+EOF
+	exit
+fi
 
 function exit_properly() {
     rm "$tmp"
