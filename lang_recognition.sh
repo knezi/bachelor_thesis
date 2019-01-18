@@ -21,7 +21,6 @@ function exit_properly() {
 }
 
 tmp=`mktemp`
-echo $tmp
 cat > "$tmp"
 
 # get number of incorrect words

@@ -48,7 +48,7 @@ def main(args):
                 d['words'] = ratio_en[1]
                 d['incorrect_words'] = ratio_en[0]
 
-                print("{}\n".format(json.dumps(d)))
+                print("{}".format(json.dumps(d)))
 
     except EOFError:
         pass

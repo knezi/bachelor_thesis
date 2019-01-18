@@ -30,13 +30,13 @@ if __name__ == '__main__':
                                         file1 is replaced with a json-line of
                                         file2.""")
 
-    argparser.add_argument("file1", nargs=1, type=str,
+    argparser.add_argument("file1", type=str,
                            help="file1 (whose key will be replaced)")
-    argparser.add_argument("file2", nargs=1, type=str,
+    argparser.add_argument("file2", type=str,
                            help="file2 (which will replace the key)")
-    argparser.add_argument("outfile", nargs=1, type=str,
+    argparser.add_argument("outfile", type=str,
                            help="the resulting file")
-    argparser.add_argument("key", nargs=1, type=str,
+    argparser.add_argument("key", type=str,
                            help="key of json on which the join is made")
 
     join(argparser.parse_args(sys.argv[1:]))

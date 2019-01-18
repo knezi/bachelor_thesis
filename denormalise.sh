@@ -33,7 +33,7 @@ sort_wrapper "$1/business.json" 4 "$business"
 # filter only a particular time period and filter out german&french
 tmp=`mktemp -p .`
 tmp2=`mktemp -p .`
-cat "$1/review.json" | ./filter.py "$tmp"
+cat "$1/review.json" | ./filter.py -l 2012-05-01 2012-12-01 > "$tmp"
 
 # join with businesses
 sort_wrapper "$tmp" 10 "$tmp2"
@@ -53,4 +53,4 @@ mv "$tmp" "$2"
 
 
 # remove tmp files
-rm "$business" "$user"
+rm -f "$business" "$user"
