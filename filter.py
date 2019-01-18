@@ -3,11 +3,14 @@ import json
 import datetime as dt
 import sys
 import subprocess as sp
+import argparse
 from subprocess import PIPE
 
-## TODO join load_data and filter togetther?
 
 def spell_check(text):
+    """ takes the argument returns the parsed output of
+    lang_recognition.sh"""
+
     p = sp.Popen(['./lang_recognition.sh'], stdout=PIPE, stdin=PIPE,
                  stderr=sys.stderr)
     stdout_data = p.communicate(input=text.encode('utf-8'))[0]
@@ -15,19 +18,19 @@ def spell_check(text):
     return res
 
 
-min_date = dt.datetime(2100, 1, 1)
-max_date = dt.datetime(100, 1, 1)
-from_date = dt.datetime(2012, 5, 1)
-to_date = dt.datetime(2012, 12, 1)
-count = 0
-count_int = 0
+def main(args):
+    """ expects args to contain:
+        from_date
+        to_date
+        lang_check"""
 
-try:
-    with open(sys.argv[1], 'w') as w:
+    min_date = dt.datetime(2100, 1, 1)
+    max_date = dt.datetime(100, 1, 1)
+    from_date = dt.datetime.fromisoformat(args.from_date)
+    to_date = dt.datetime.fromisoformat(args.to_date)
+
+    try:
         while True:
-            if count_int % 10000 == 0:
-                print(count_int)
-            count_int += 1
             d = json.loads(input().strip())
             date = dt.datetime(*[int(x) for x in d['date'].split("-")])
             min_date = min(date, min_date)
@@ -39,24 +42,32 @@ try:
                 ratio_en = spell_check(text)
 
                 # text not in english
-                if ratio_en[0] == -1:
+                if args.lang_check and ratio_en[0] == -1:
                     continue
 
-                count += 1
                 d['words'] = ratio_en[1]
                 d['incorrect_words'] = ratio_en[0]
 
-                w.write("{}\n".format(json.dumps(d)))
+                print("{}\n".format(json.dumps(d)))
+
+    except EOFError:
+        pass
 
 
-# except Exception as e:
-    # print(e)
-    # print(d)
+if __name__ == "__main__":
+    argparser = argparse.ArgumentParser(description="""Classical unix filter
+                                        from stdin in json-line format filters
+                                        out lines that are in a specified date
+                                        range and sends them to stdou.
+                                        Optionally non-german&non-french
+                                        (utility lang_recognisition.sh) is
+                                        used.""")
 
-except EOFError as e:
-    pass
+    argparser.add_argument("from_date", type=str,
+                           help="in format YYYY-MM-HH")
+    argparser.add_argument("to_date", type=str,
+                           help="in format YYYY-MM-HH")
+    argparser.add_argument("-l", "--lang-check", action='store_true',
+                           help="non-english text will be filtered out ")
 
-
-print(min_date)
-print(max_date)
-print("{} lines write from {} to {}.".format(count, from_date, to_date))
+    main(argparser.parse_args(sys.argv[1:]))
