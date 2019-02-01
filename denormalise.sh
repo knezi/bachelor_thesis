@@ -48,6 +48,15 @@ mv "$tmp2" "$tmp"
 # mv "$tmp2" "$tmp"
 
 
+# TODO inplace
+# TODO test if this works
+# getting linguistics data - GENEEA
+# extracting ids - used for subsequent data extraction
+sort_wrapper "$tmp" 4 "$tmp2"
+mv "$tmp2" "$tmp"
+./extract_ids.py "$tmp" "ids"
+
+# the final data are sorted alphabetically with respect to review_id
 # OUTPUT FILE
 mv "$tmp" "$2"
 

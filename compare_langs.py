@@ -43,10 +43,10 @@ def main(args):
                 langs[lang] += 1
 
             if total % 1000 == 0:
-                print("dump {}".format(total))
+                print('dump {}'.format(total))
 
 
-        print("Total processed {}.".format(total))
+        print('Total processed {}.'.format(total))
         print(langs)
 
 
@@ -54,6 +54,8 @@ def main(args):
 
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser()
-    argparser.add_argument("-i", "--analysisIn", help="Result of Full Analysis, one json per line")
-    argparser.add_argument("-n", "--max", type=int, help="Maximal number of processed analysis documents", default=-1)
+    argparser.add_argument('-i', '--analysisIn',
+                           help='Result of Full Analysis, one json per line')
+    argparser.add_argument('-n', '--max', type=int,
+                           help='Maximal number of processed analysis documents', default=-1)
     main(argparser.parse_args(sys.argv[1:]))

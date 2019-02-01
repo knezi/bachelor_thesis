@@ -1,7 +1,8 @@
-data.json
+data/*
 fasttext
 geneea
-graph
+graphs/2019*
+graphs
 .*
 __pycache__
 *.json

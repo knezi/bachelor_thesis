@@ -1,580 +1,638 @@
-# coding: utf-8
+#!/bin/env python
+# TODO COMMENT AUTHOR
 
 import pandas as pd
-import ast
 import json
-import subprocess as sb
-import numpy as np
-
-
-data = "data.json"
-data = "just_restaurants.json"
-with open(data, 'r') as r:
-    i = 0
-    lines = []
-    for x in r:
-        lines.append(pd.DataFrame([json.loads(x)]))
-        i += 1
-        if i % 10000 == 0:
-            print(i)
-    res = pd.concat(lines)
-
-
-def get_reviews(like_type):
-    n = res[res['business_review_count'] > 50].count()[0]
-    # print(n)
-    # print(type(n))
-    tmp = res[res['business_review_count'] > 50].sample(n=n).copy()
-    n = tmp[tmp['attributes_count'] > 10].count()[0]
-    rs = tmp[tmp['attributes_count'] > 10].sample(n=n).copy()
-
-    pos = rs[rs[like_type] > 2].sample(n=10000).copy()
-    pos['classification'] = like_type
-    neg = rs[rs[like_type] == 0].sample(n=10000).copy()
-    neg['classification'] = 'not-' + like_type
-    all = pd.concat([pos, neg])
-    all = all[['text', like_type, 'classification', 'stars', 'business_id', 'words', 'incorrect_words']].reset_index(
-        drop=True)
-    return all
-
-
-# # Classification
-
-
-
 import nltk
-
-toker = nltk.tokenize.TweetTokenizer()
-
-# In[23]:
-
-
-like_type = 'useful'
-# like_type='funny'
-# like_type='cool'
-
-
-# In[24]:
-
-
-reviews = get_reviews(like_type)
-
-# In[25]:
-
-
-texts_tokenized = (toker.tokenize(row.text) for index, row in reviews.iterrows())
-all_words = nltk.FreqDist(w.lower() for tokens in texts_tokenized for w in tokens)
-
-print('total number of words:', sum(all_words.values()))
-print('unique words:', len(all_words))
-print('words present only once:', sum(c for c in all_words.values() if c == 1))
-
-all_words.plot(30)
-
-# In[26]:
-
-
-words = all_words.copy()
-for w, count in all_words.items():
-    if count > 1000 or count == 1:
-        del words[w]
-
-print('feature words:', len(words))
-words.plot(40)
-
-# In[27]:
-
-
-top_words = words.copy()
-for w, count in all_words.items():
-    if count > 200 or count <= 20:
-        del top_words[w]
-
-print('feature words:', len(top_words))
-top_words.plot(40)
-top_words = frozenset(top_words.keys())
-
-# In[28]:
-
-
-word_features = frozenset(words.keys())
-i = 0
-words_numbered = dict()
-for w in word_features:
-    words_numbered[w] = i
-    i += 1
-
-# In[29]:
-
-
-len(word_features)
-
-
-# In[30]:
-
-
-def doc2vec(text):
-    return [(i, words_numbered[w]) for i, w in enumerate(toker.tokenize(text.lower())) if w in words_numbered]
-
-
-# In[31]:
-
-
 import random
+import subprocess as sp
+import os
+import datetime as dt
+from gensim import corpora
+from gensim.similarities import Similarity
+from matplotlib import pyplot
+import exceptions
 
-# In[32]:
-
-
-# cosine similarity
-corpus = [doc2vec(t) for t in random.sample(list(reviews[reviews['classification'] == 'useful']['text']), 10)]
-
-# In[33]:
-
-
-from gensim.similarities.docsim import Similarity
-from gensim.test.utils import get_tmpfile
-
-# In[34]:
+data = 'just_restaurants.json'
 
 
-index = Similarity(None, corpus, num_features=len(words_numbered))  # create index
+class Plot:
+    def __init__(self, path):
+        self.path = path
+        self.fig = pyplot.figure()
+
+    def plot(self, x_data, y_data, name, x_title="", y_title="", title=""):
+        # if title != "":
+        # fig.suptitle(title)
+        # pyplot.figure()
+        # pyplot.plot(data)
+        # pyplot.savefig(os.path.join(self.path, "{}.png".format(name)))
+
+        self.fig.clf()
+        ax = self.fig.subplots()
+        ax.plot(x_data, y_data)
+        self.fig.savefig(os.path.join(self.path, "{}.png".format(name)))
 
 
-# In[35]:
+class Data:
+    tokenizer = nltk.tokenize.TweetTokenizer()
 
+    def __init__(self, path_to_data, path_to_geneea_data):
+        # prepare statistics
+        timestamp = dt.datetime.now().isoformat()
+        self.statPath = os.path.join('graphs', timestamp)
+        os.mkdir(self.statPath)
+        self.stats = open(os.path.join(self.statPath, 'statistics'), 'w')
 
-def features(row):
-    text = row.text
-    txt_words = set(toker.tokenize(text.lower()))
-    features = {}
+        # TODO
+        # self.plot = Plot(self.statPath)
+        # self.plot.plot([1,2], [1,2], 'a')
+        # self.plot.plot([1,2], [4,2], 'b')
 
-    for w in txt_words & top_words:
-        features['contains({})'.format(w)] = 'Yes'  # beze slov je to lepsi
+        # reading data in Pandas array - review per line
+        self.path = path_to_data
+
+        with open(self.path, 'r') as data, open(path_to_geneea_data, 'r') \
+                as geneea:
+            lines = []
+            for d, g in zip(data, geneea):
+                dj = json.loads(d)
+                gj = json.loads(g)
+
+                if dj['review_id'] != gj['id']:
+                    raise exceptions.DataMismatchException(
+                        'ids {} and {} do not match.'
+                            .format(dj['review_id'], gj['id']))
+
+                for key in gj:
+                    if key == 'id':
+                        continue
+                    dj[key] = gj[key]
+
+                lines.append(pd.DataFrame([dj]))
+
+            panda_lines = pd.concat(lines).reset_index()
+
+        # flattening
+        panda_lines['business_review_count'] = \
+            panda_lines['business_id'].map(lambda x: x['review_count'])
+        panda_lines['attributes_count'] = \
+            panda_lines['business_id'].map(lambda x: len(x['attributes']))
+
+        # choosing only trustworthy restaurants
+        self.data = panda_lines[(panda_lines['business_review_count'] > 50) &
+                                (panda_lines['attributes_count'] > 10)].copy()
+
+        self._prepare_tokens()
+
+    def _tokenize(self, text):
+        return self.tokenizer.tokenize(text.lower())
+
+    def get_feature_matrix(self, like_type):
         pass
 
-    for w in txt_words & word_features:
-        # features['contains({})'.format(w)] = 'Yes' # beze slov je to lepsi
-        pass
+    def get_feature_dict(self, like_type):
+        sample = self._get_sample(like_type)
 
-    text_tok = toker.tokenize(text.lower())
-    for w, w2 in zip(text_tok[:-1], text_tok[1:]):
-        if w in word_features and w2 in word_features:
-            features['contains({}&&&{})'.format(w, w2)] = 'Yes'
-            pass
+        sample_for_index = random.sample(list(
+            sample[sample['classification'] == like_type]['text']
+        ), 10)
+        index = self._generate_cosine_similarity_index(like_type,
+                                                       sample_for_index)
 
-    for (w, w2), w3 in zip(zip(text_tok[:-2], text_tok[1:-1]), text_tok[2:]):
-        if w in word_features and w2 in word_features and w3 in word_features:
-            features['contains({}&&&{}&&&{})'.format(w, w2, w3)] = 'Yes'
-            pass
+        features = [(self.features(row, index), row.classification)
+                    for _, row in sample.iterrows()]
 
-    for ((w, w2), w3), w4 in zip(zip(zip(text_tok[:-3], text_tok[1:-2]), text_tok[2:-1]), text_tok[3:]):
-        if w in word_features and w2 in word_features and w3 in word_features and w4 in word_features:
-            features['contains({}&&&{}&&&{}&&&{})'.format(w, w2, w3, w4)] = 'Yes'
-            pass
+        return features
 
-    # features['contains(@@stars{})'.format(row.stars)] = 'Yes'
-    features['@@@stars'] = row.stars
-    features['@@@extreme_stars'] = False if 2 <= row.stars <= 4 else True
-    features['@@@bus_stars'] = row['business_id']['stars']
-    # features['@@@review_count']= "A lot" if row['business']['review_count']  else "A few"
-    l = row['words']
-    features['@@@review_length'] = "short" if l < 50 else "middle" if l < 150 else "long"
-    features['@@@review_length50'] = "short" if l < 50 else "middle"
-    features['@@@review_length100'] = "short" if l < 100 else "middle"
-    features['@@@review_length150'] = "short" if l < 150 else "middle"
-    features['@@@review_length35'] = "short" if l < 35 else "middle"
-    features['@@@review_length75'] = "short" if l < 75 else "middle"
+    # TODO get dump to be able to observe data!
 
-    rate = row['incorrect_words'] / row['words']
+    def _get_sample(self, like_type):
+        pos = self.data[self.data[like_type] > 2].sample(frac=1).copy()
+        pos['classification'] = like_type
+        neg = self.data[self.data[like_type] == 0].sample(frac=1).copy()
+        neg['classification'] = 'not-' + like_type
+        all = pd.concat([pos, neg])
 
-    features['@@@error_rate0.02'] = "good" if rate < 0.02 else "bad"
-    features['@@@error_rate0.05'] = "good" if rate < 0.05 else "bad"
-    features['@@@error_rate0.1'] = "good" if rate < 0.1 else "bad"
-    features['@@@error_rate0.15'] = "good" if rate < 0.15 else "bad"
-    features['@@@error_rate0.2'] = "good" if rate < 0.2 else "bad"
+        # chooses only a subset of features
+        # TODO UPDATE? ?? WTF WHY IS THIS
+        all = all[['text', like_type, 'classification', 'stars',
+                   'business_id', 'words', 'incorrect_words',
+                   'sentiment']] \
+            .reset_index(drop=True)
 
-    features['@@@error_total5'] = "good" if rate < 5 else "bad"
-    features['@@@error_total10<'] = "good" if rate < 10 else "bad"
-    features['@@@error_total15'] = "good" if rate < 15 else "bad"
-    features['@@@error_total20'] = "good" if rate < 20 else "bad"
+        return all
 
-    # not 100% haha
-    # features['aaa'] = 'a' if row.useful > 0 else 'b'
-    cos_sims = index[doc2vec(text)]
-    for i, x in enumerate(cos_sims):
-        features['@@@cos_sim4_{}'.format(i)] = 1 if x > 0.4 else 0
-        features['@@@cos_sim6_{}'.format(i)] = 1 if x > 0.6 else 0
-        features['@@@cos_sim8_{}'.format(i)] = 1 if x > 0.8 else 0
-        features['@@@cos_sim9_{}'.format(i)] = 1 if x > 0.9 else 0
-        features['@@@cos_sim95_{}'.format(i)] = 1 if x > 0.95 else 0
+    def _prepare_tokens(self):
+        texts_tokenized = (self._tokenize(row.text) for index, row
+                           in self.data.iterrows())
+        words_freqs = nltk.FreqDist(w.lower() for tokens in texts_tokenized
+                                    for w in tokens)
 
-    return features
+        # TODO
+        # for x in all_words:
+        # print(all_words[x])
+
+        # self.print('total number of words:', sum(all_words.values()))
+        # self.print('unique words:', len(all_words))
+        # self.print('words present only once:',
+        # sum(c for c in all_words.values() if c == 1))
+        # all_words.plot(30)
+
+        # only the right frequencies
+        self.words = words_freqs.copy()
+        for w, count in words_freqs.items():
+            if count > 200 or count == 20:
+                # TODO Measure
+                del self.words[w]
+
+        self.words = frozenset(self.words.keys())
+
+        # building a dictionary for counting cosine similarity
+        texts = [[w for w in self._tokenize(row.text)
+                  if w in self.words]
+                 for _,row in self.data.iterrows()]
+        self.gensim_dictionary = corpora.Dictionary(texts)
+
+    def _generate_cosine_similarity_index(self, like_type, rand_samp):
+        corpus = [self.gensim_dictionary.doc2bow(self._tokenize(t))
+                  for t in rand_samp]
+
+        index = Similarity(None, corpus, num_features=len(self.gensim_dictionary))
+        return index
+
+    def print(self, *line):
+        print(*line, file=self.stats)
+
+    def features(self, row, index):
+        text = row.text
+        txt_words = self._tokenize(text)
+        features = {}
+
+        for w in txt_words:
+            if w in self.words:
+                features['contains({})'.format(w)] = 'Yes'  # beze slov je to lepsi
+                pass
+
+        for w, w2 in zip(txt_words[:-1], txt_words[1:]):
+            if w in self.words and w2 in self.words:
+                features['contains({}&&&{})'.format(w, w2)] = 'Yes'
+                pass
+
+        for (w, w2), w3 in zip(zip(txt_words[:-2], txt_words[1:-1]), txt_words[2:]):
+            if w in self.words and w2 in self.words and w3 in self.words:
+                features['contains({}&&&{}&&&{})'.format(w, w2, w3)] = 'Yes'
+                pass
+
+        for ((w, w2), w3), w4 in zip(zip(zip(txt_words[:-3], txt_words[1:-2]), txt_words[2:-1]), txt_words[3:]):
+            if w in self.words and w2 in self.words and w3 in self.words and w4 in self.words:
+                features['contains({}&&&{}&&&{}&&&{})'.format(w, w2, w3, w4)] = 'Yes'
+                pass
+
+        # features['contains(@@stars{})'.format(row.stars)] = 'Yes'
+        features['@@@stars'] = row.stars
+        features['@@@extreme_stars'] = False if 2 <= row.stars <= 4 else True
+        features['@@@bus_stars'] = row['business_id']['stars']
+        # features['@@@review_count']= 'A lot' if row['business']['review_count']  else 'A few'
+        l = row['words']
+        features['@@@review_length'] = 'short' if l < 50 else 'middle' if l < 150 else 'long'
+        features['@@@review_length50'] = 'short' if l < 50 else 'middle'
+        features['@@@review_length100'] = 'short' if l < 100 else 'middle'
+        features['@@@review_length150'] = 'short' if l < 150 else 'middle'
+        features['@@@review_length35'] = 'short' if l < 35 else 'middle'
+        features['@@@review_length75'] = 'short' if l < 75 else 'middle'
+
+        rate = row['incorrect_words'] / row['words']
+
+        features['@@@error_rate0.02'] = 'good' if rate < 0.02 else 'bad'
+        features['@@@error_rate0.05'] = 'good' if rate < 0.05 else 'bad'
+        features['@@@error_rate0.1'] = 'good' if rate < 0.1 else 'bad'
+        features['@@@error_rate0.15'] = 'good' if rate < 0.15 else 'bad'
+        features['@@@error_rate0.2'] = 'good' if rate < 0.2 else 'bad'
+
+        features['@@@error_total5'] = 'good' if rate < 5 else 'bad'
+        features['@@@error_total10<'] = 'good' if rate < 10 else 'bad'
+        features['@@@error_total15'] = 'good' if rate < 15 else 'bad'
+        features['@@@error_total20'] = 'good' if rate < 20 else 'bad'
+
+        # not 100% haha WTF?
+        # features['aaa'] = 'a' if row.useful > 0 else 'b'
+        cos_sims = index[self.gensim_dictionary.doc2bow(self._tokenize(text))]
+        for i, x in enumerate(cos_sims):
+            features['@@@cos_sim4_{}'.format(i)] = 1 if x > 0.4 else 0
+            features['@@@cos_sim6_{}'.format(i)] = 1 if x > 0.6 else 0
+            features['@@@cos_sim8_{}'.format(i)] = 1 if x > 0.8 else 0
+            # features['@@@cos_sim9_{}'.format(i)] = 1 if x > 0.9 else 0
+            # features['@@@cos_sim95_{}'.format(i)] = 1 if x > 0.95 else 0
+
+        return features
 
 
-# In[36]:
+data = Data('data/data_sample.json', 'data/geneea_data_extracted_sample.json')
+fs = data.get_feature_dict('useful')
+print(1)
+
+# like_type = 'useful'
+# # like_type='funny'
+# # like_type='cool'
+
+# reviews = get_reviews(like_type)
+
+# # In[25]:
 
 
-# generate tuples: (features_dict, sentiment)
-feature_sets = [(features(row), row.classification) for index, row in reviews.iterrows()]
-
-# In[37]:
+# # In[28]:
 
 
-feature_sets[0]
+# word_features = frozenset(words.keys())
+# i = 0
+# words_numbered = dict()
+# for w in word_features:
+# words_numbered[w] = i
+# i += 1
 
-# # Model training
-
-# In[38]:
-
-
-import random
-
-random.shuffle(feature_sets)
-half = int(len(feature_sets) / 2)
-train_set, test_set = feature_sets[:half], feature_sets[half:]
-half
-
-# In[39]:
+# # In[29]:
 
 
-classifier = nltk.NaiveBayesClassifier.train(train_set)
-print(nltk.classify.accuracy(classifier, test_set))
-print(nltk.classify.accuracy(classifier,
-                             train_set))  # pridani jednotlivych slov tady snizi presnost jen na 65, je to ocekavane?
-
-# In[40]:
+# len(word_features)
 
 
-classifier.show_most_informative_features(30)
-
-# In[41]:
+# # In[30]:
 
 
-# classifier = nltk.DecisionTreeClassifier.train(train_set)
+
+
+# # In[35]:
+
+
+
+
+# # In[36]:
+
+
+# # generate tuples: (features_dict, sentiment)
+# feature_sets = [(features(row), row.classification) for index, row in reviews.iterrows()]
+
+# # In[37]:
+
+
+# feature_sets[0]
+
+
+# ########################### konec??
+# # # Model training
+
+# # In[38]:
+
+
+# import random
+
+# random.shuffle(feature_sets)
+# half = int(len(feature_sets) / 2)
+# train_set, test_set = feature_sets[:half], feature_sets[half:]
+# half
+
+# # In[39]:
+
+
+# classifier = nltk.NaiveBayesClassifier.train(train_set)
 # print(nltk.classify.accuracy(classifier, test_set))
-# print(nltk.classify.accuracy(classifier, train_set))
+# print(nltk.classify.accuracy(classifier,
+# train_set))  # pridani jednotlivych slov tady snizi presnost jen na 65, je to ocekavane?
 
+# # In[40]:
 
-# # get feature matrix
 
-# In[42]:
+# classifier.show_most_informative_features(30)
 
+# # In[41]:
 
-X, Y = [x[0] for x in feature_sets], [x[1] for x in feature_sets]
 
-# In[43]:
+# # classifier = nltk.DecisionTreeClassifier.train(train_set)
+# # print(nltk.classify.accuracy(classifier, test_set))
+# # print(nltk.classify.accuracy(classifier, train_set))
 
 
-from sklearn.datasets import fetch_20newsgroups
-from sklearn.feature_selection import mutual_info_classif
-from sklearn.feature_extraction.text import CountVectorizer
+# # # get feature matrix
 
-# In[44]:
+# # In[42]:
 
 
-X[0]
+# X, Y = [x[0] for x in feature_sets], [x[1] for x in feature_sets]
 
-# In[45]:
+# # In[43]:
 
 
-cv_gain = CountVectorizer(max_df=0.95, min_df=2,
-                          max_features=10000)  # WTF
+# from sklearn.datasets import fetch_20newsgroups
+# from sklearn.feature_selection import mutual_info_classif
+# from sklearn.feature_extraction.text import CountVectorizer
 
-# In[46]:
+# # In[44]:
 
 
-all_keys = [set(x.keys()) for x in X]
+# X[0]
 
-# In[47]:
+# # In[45]:
 
 
-import functools
+# cv_gain = CountVectorizer(max_df=0.95, min_df=2,
+# max_features=10000)  # WTF
 
-all_fs = functools.reduce(lambda a, b: a.union(b), all_keys)
-all_fs = list(all_fs)
+# # In[46]:
 
-# In[48]:
 
+# all_keys = [set(x.keys()) for x in X]
 
-len(all_fs)
+# # In[47]:
 
 
-# In[49]:
+# import functools
 
+# all_fs = functools.reduce(lambda a, b: a.union(b), all_keys)
+# all_fs = list(all_fs)
 
-def get_int(val):
-    if isinstance(val, int):
-        return val
-    if isinstance(val, float):
-        return val
-    vals = {"Yes": 1, "No": 0, "middle": 1, "long": 2, "short": 0, "good": 1, "bad": 0}
-    return vals[val]
+# # In[48]:
 
 
-# In[50]:
+# len(all_fs)
 
 
-# X_matrix=[]
-#
-# for x in X:
-#    row=[]
-#    for key in all_fs:
-#        if key in x:
-#            row.append(get_int(x[key]))
-#        else:
-#            row.append(0)
-#    X_matrix.append(row)
+# # In[49]:
 
 
-# In[51]:
+# def get_int(val):
+# if isinstance(val, int):
+# return val
+# if isinstance(val, float):
+# return val
+# vals = {'Yes': 1, 'No': 0, 'middle': 1, 'long': 2, 'short': 0, 'good': 1, 'bad': 0}
+# return vals[val]
 
 
-import scipy
+# # In[50]:
 
-# In[52]:
 
+# # X_matrix=[]
+# #
+# # for x in X:
+# #    row=[]
+# #    for key in all_fs:
+# #        if key in x:
+# #            row.append(get_int(x[key]))
+# #        else:
+# #            row.append(0)
+# #    X_matrix.append(row)
 
-row = []
-x = X[0]
 
-for key in all_fs:
-    if key in x:
-        row.append(get_int(x[key]))
-    else:
-        row.append(0)
+# # In[51]:
 
-X_matrix = scipy.sparse.lil_matrix([row])
 
-i = 0
-for x in X[1:]:
-    row = []
-    for key in all_fs:
-        if key in x:
-            row.append(get_int(x[key]))
-        else:
-            row.append(0)
-    X_matrix = scipy.sparse.vstack((X_matrix, scipy.sparse.lil_matrix([row])), format='lil')
-    i += 1
-    # if i==1000:
-    # break
+# import scipy
 
-# In[53]:
+# # In[52]:
 
 
-len(X)
+# row = []
+# x = X[0]
 
-# In[54]:
+# for key in all_fs:
+# if key in x:
+# row.append(get_int(x[key]))
+# else:
+# row.append(0)
 
+# X_matrix = scipy.sparse.lil_matrix([row])
 
-X_matrix
+# i = 0
+# for x in X[1:]:
+# row = []
+# for key in all_fs:
+# if key in x:
+# row.append(get_int(x[key]))
+# else:
+# row.append(0)
+# X_matrix = scipy.sparse.vstack((X_matrix, scipy.sparse.lil_matrix([row])), format='lil')
+# i += 1
+# # if i==1000:
+# # break
 
-# ## logistic regression
+# # In[53]:
 
-# In[55]:
 
+# len(X)
 
-from sklearn.linear_model import LogisticRegression
+# # In[54]:
 
-# In[56]:
 
+# X_matrix
 
-lr = LogisticRegression()
+# # ## logistic regression
 
-# In[57]:
+# # In[55]:
 
 
-half = int(len(X) / 2)
-print(half)
+# from sklearn.linear_model import LogisticRegression
 
-# In[58]:
+# # In[56]:
 
 
-train_set_X, test_set_X = X_matrix[:half, :], X_matrix[half:, :]
-train_set_Y, test_set_Y = Y[:half], Y[half:]
+# lr = LogisticRegression()
 
-# In[59]:
+# # In[57]:
 
 
-lr.fit(train_set_X, train_set_Y)
+# half = int(len(X) / 2)
+# print(half)
 
-# In[60]:
+# # In[58]:
 
 
-lr.score(test_set_X, test_set_Y)
+# train_set_X, test_set_X = X_matrix[:half, :], X_matrix[half:, :]
+# train_set_Y, test_set_Y = Y[:half], Y[half:]
 
-# ## Dimension reduction - LSA - SVD
+# # In[59]:
 
-# In[55]:
 
+# lr.fit(train_set_X, train_set_Y)
 
-from sklearn.decomposition import TruncatedSVD
-from sklearn.preprocessing import scale
+# # In[60]:
 
-# In[56]:
 
+# lr.score(test_set_X, test_set_Y)
 
-svd = TruncatedSVD(n_components=100)
-# scale(X_matrix.tocsc())
-svdMatrix = svd.fit_transform(X_matrix)
+# # ## Dimension reduction - LSA - SVD
 
-# In[57]:
+# # In[55]:
 
 
-feature_set_reduced = [(dict(enumerate(x)), y) for (x, y) in zip(svdMatrix, Y)]
+# from sklearn.decomposition import TruncatedSVD
+# from sklearn.preprocessing import scale
 
-# In[58]:
+# # In[56]:
 
 
-random.shuffle(feature_set_reduced)
-half = int(len(feature_sets) / 2)
-train_set, test_set = feature_sets[:half], feature_sets[half:]
-half
+# svd = TruncatedSVD(n_components=100)
+# # scale(X_matrix.tocsc())
+# svdMatrix = svd.fit_transform(X_matrix)
 
-# # training
+# # In[57]:
 
-# In[59]:
 
+# feature_set_reduced = [(dict(enumerate(x)), y) for (x, y) in zip(svdMatrix, Y)]
 
-classifier = nltk.NaiveBayesClassifier.train(train_set)
-print(nltk.classify.accuracy(classifier, test_set))
+# # In[58]:
 
-# # get feature matrix
 
-# In[60]:
+# random.shuffle(feature_set_reduced)
+# half = int(len(feature_sets) / 2)
+# train_set, test_set = feature_sets[:half], feature_sets[half:]
+# half
 
+# # # training
 
-X, Y = [x[0] for x in test_set], [x[1] for x in test_set]
+# # In[59]:
 
-# In[61]:
 
+# classifier = nltk.NaiveBayesClassifier.train(train_set)
+# print(nltk.classify.accuracy(classifier, test_set))
 
-from sklearn.datasets import fetch_20newsgroups
-from sklearn.feature_selection import mutual_info_classif
-from sklearn.feature_extraction.text import CountVectorizer
+# # # get feature matrix
 
-# In[62]:
+# # In[60]:
 
 
-X[0]
+# X, Y = [x[0] for x in test_set], [x[1] for x in test_set]
 
-# In[63]:
+# # In[61]:
 
 
-cv_gain = CountVectorizer(max_df=0.95, min_df=2,
-                          max_features=10000)
+# from sklearn.datasets import fetch_20newsgroups
+# from sklearn.feature_selection import mutual_info_classif
+# from sklearn.feature_extraction.text import CountVectorizer
 
-# In[64]:
+# # In[62]:
 
 
-all_keys = [set(x.keys()) for x in X]
+# X[0]
 
-# In[65]:
+# # In[63]:
 
 
-import functools
+# cv_gain = CountVectorizer(max_df=0.95, min_df=2,
+# max_features=10000)
 
-all_fs = functools.reduce(lambda a, b: a.union(b), all_keys)
-all_fs = list(all_fs)
+# # In[64]:
 
-# In[66]:
 
+# all_keys = [set(x.keys()) for x in X]
 
-len(all_fs)
+# # In[65]:
 
 
-# In[67]:
+# import functools
 
+# all_fs = functools.reduce(lambda a, b: a.union(b), all_keys)
+# all_fs = list(all_fs)
 
-def get_int(val):
-    if isinstance(val, int):
-        return val
-    if isinstance(val, float):
-        return val
-    vals = {"Yes": 1, "No": 0, "middle": 1, "long": 2, "short": 0, "good": 1, "bad": 0}
-    return vals[val]
+# # In[66]:
 
 
-# In[68]:
+# len(all_fs)
 
 
-# X_matrix=[]
-#
-# for x in X:
-#    row=[]
-#    for key in all_fs:
-#        if key in x:
-#            row.append(get_int(x[key]))
-#        else:
-#            row.append(0)
-#    X_matrix.append(row)
+# # In[67]:
 
 
-# In[69]:
+# def get_int(val):
+# if isinstance(val, int):
+# return val
+# if isinstance(val, float):
+# return val
+# vals = {'Yes': 1, 'No': 0, 'middle': 1, 'long': 2, 'short': 0, 'good': 1, 'bad': 0}
+# return vals[val]
 
 
-import scipy
+# # In[68]:
 
-# In[70]:
 
+# # X_matrix=[]
+# #
+# # for x in X:
+# #    row=[]
+# #    for key in all_fs:
+# #        if key in x:
+# #            row.append(get_int(x[key]))
+# #        else:
+# #            row.append(0)
+# #    X_matrix.append(row)
 
-row = []
-x = X[0]
 
-for key in all_fs:
-    if key in x:
-        row.append(get_int(x[key]))
-    else:
-        row.append(0)
+# # In[69]:
 
-X_matrix = scipy.sparse.lil_matrix([row])
 
-i = 0
-for x in X[1:]:
-    row = []
-    for key in all_fs:
-        if key in x:
-            row.append(get_int(x[key]))
-        else:
-            row.append(0)
-    X_matrix = scipy.sparse.vstack((X_matrix, scipy.sparse.lil_matrix([row])))
-    i += 1
-    # if i==1000:
-    # break
+# import scipy
 
-# In[71]:
+# # In[70]:
 
 
-len(X)
+# row = []
+# x = X[0]
 
-# In[72]:
+# for key in all_fs:
+# if key in x:
+# row.append(get_int(x[key]))
+# else:
+# row.append(0)
 
+# X_matrix = scipy.sparse.lil_matrix([row])
 
-X_matrix
+# i = 0
+# for x in X[1:]:
+# row = []
+# for key in all_fs:
+# if key in x:
+# row.append(get_int(x[key]))
+# else:
+# row.append(0)
+# X_matrix = scipy.sparse.vstack((X_matrix, scipy.sparse.lil_matrix([row])))
+# i += 1
+# # if i==1000:
+# # break
 
-# # information gaion
+# # In[71]:
 
-# In[73]:
 
+# len(X)
 
-res_gain = list(zip(all_fs, mutual_info_classif(X_matrix, Y, discrete_features=True)))
+# # In[72]:
 
-# In[74]:
 
+# X_matrix
 
-# res_gain
+# # # information gaion
 
+# # In[73]:
 
-# In[75]:
 
+# res_gain = list(zip(all_fs, mutual_info_classif(X_matrix, Y, discrete_features=True)))
 
-[(x, y) for (x, y) in res_gain if y > 0.0005]
+# # In[74]:
 
-# In[76]:
 
+# # res_gain
 
-[(x, y) for (x, y) in res_gain if y > 0.001]
 
-# In[77]:
+# # In[75]:
 
 
-sorted([(x, y) for (x, y) in res_gain if x[:3] == "@@@"])
+# [(x, y) for (x, y) in res_gain if y > 0.0005]
+
+# # In[76]:
+
+
+# [(x, y) for (x, y) in res_gain if y > 0.001]
+
+# # In[77]:
+
+
+# sorted([(x, y) for (x, y) in res_gain if x[:3] == '@@@'])

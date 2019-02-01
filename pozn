@@ -1,10 +1,17 @@
 /data/students/knizek
 
+116 n/a sentiment
+
+TODO konstanty misto hodnot??
+
+brat jenom slova delsi nez neco??
+doc stringy a nastudovat
 BC nezapomeň:
  - pridat kecy o poctu ruznych review a tak, proc co jsem jak vybiral
  	-> grafy poctu slov/error rate and stuff
  - taking only business_review_count > 50
  - don't include word error unles you check the language
+ - taking only attributes with at least 10 and at least 50 reviews
 
 zkontrolovat, jestli masinerie nekde nenechava tmp soubory
 

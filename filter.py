@@ -32,7 +32,7 @@ def main(args):
     try:
         while True:
             d = json.loads(input().strip())
-            date = dt.datetime(*[int(x) for x in d['date'].split("-")])
+            date = dt.datetime(*[int(x) for x in d['date'].split('-')])
             min_date = min(date, min_date)
             max_date = max(date, max_date)
 
@@ -48,13 +48,13 @@ def main(args):
                 d['words'] = ratio_en[1]
                 d['incorrect_words'] = ratio_en[0]
 
-                print("{}".format(json.dumps(d)))
+                print('{}'.format(json.dumps(d)))
 
     except EOFError:
         pass
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     argparser = argparse.ArgumentParser(description="""Classical unix filter
                                         from stdin in json-line format filters
                                         out lines that are in a specified date
@@ -63,11 +63,11 @@ if __name__ == "__main__":
                                         (utility lang_recognisition.sh) is
                                         used.""")
 
-    argparser.add_argument("from_date", type=str,
-                           help="in format YYYY-MM-HH")
-    argparser.add_argument("to_date", type=str,
-                           help="in format YYYY-MM-HH")
-    argparser.add_argument("-l", "--lang-check", action='store_true',
-                           help="non-english text will be filtered out ")
+    argparser.add_argument('from_date', type=str,
+                           help='in format YYYY-MM-HH')
+    argparser.add_argument('to_date', type=str,
+                           help='in format YYYY-MM-HH')
+    argparser.add_argument('-l', '--lang-check', action='store_true',
+                           help='non-english text will be filtered out ')
 
     main(argparser.parse_args(sys.argv[1:]))
