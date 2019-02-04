@@ -1,16 +1,23 @@
-#!/bin/env python
+#!/bin/env python3
 # TODO COMMENT AUTHOR
+from functools import reduce
 
-import pandas as pd
+from typing import Iterator, List
+
+import typing
+
+import datetime as dt
 import json
 import nltk
-import random
-import subprocess as sp
 import os
-import datetime as dt
+import pandas as pd
+import random
 from gensim import corpora
 from gensim.similarities import Similarity
 from matplotlib import pyplot
+from nltk import TweetTokenizer
+from pandas import DataFrame
+
 import exceptions
 
 data = 'just_restaurants.json'
@@ -34,10 +41,75 @@ class Plot:
         self.fig.savefig(os.path.join(self.path, "{}.png".format(name)))
 
 
-class Data:
-    tokenizer = nltk.tokenize.TweetTokenizer()
+class Sample:
+    # train, test, crossvalidation
+    TRAIN = 0
+    TEST = 1
+    CROSSVALIDATION = 2
+    # TODO COMM
 
-    def __init__(self, path_to_data, path_to_geneea_data):
+    # format (features, data_line_from_pandas_data)
+    def __init__(self) -> None:
+        self._samples = [[], [], []]
+
+    def set_train(self,
+                  sample: typing.List[typing.Tuple[dict, dict]]) \
+            -> None:
+        self._samples[self.TRAIN] = sample
+
+    def set_test(self,
+                 sample: typing.List[typing.Tuple[dict, dict]]) \
+            -> None:
+        self._samples[self.TEST] = sample
+
+    def set_crossvalidation(self,
+                            sample: typing.List[typing.Tuple[dict, dict]]) \
+            -> None:
+        self._samples[self.CROSSVALIDATION] = sample
+
+    # training set
+    def get_train_basic(self) \
+            -> typing.List[typing.Tuple]:
+        return self.get_data(self.TRAIN, 'classification')
+
+    def get_train_extended(self, *args: str) \
+            -> typing.List[typing.Tuple]:
+        return self.get_data(self.TRAIN, *args)
+
+    # testing set
+    def get_test_basic(self) \
+            -> typing.List[typing.Tuple]:
+        return self.get_data(self.TEST, 'classification')
+
+    def get_test_extended(self, *args: str) \
+            -> object:
+        return self.get_data(self.TEST, *args)
+
+    # crossvalidating set
+    def get_crossvalidate_basic(self) \
+            -> typing.List[typing.Tuple]:
+        return self.get_data(self.TEST, 'classification')
+
+    def get_crossvalidate_extended(self, *args: str) \
+            -> typing.List[typing.Tuple]:
+        return self.get_data(self.TEST, *args)
+
+    def get_data(self, set_no: int, *args: str)\
+            -> typing.List[typing.Tuple]:
+        return [(row[0], *Sample._filter_row(row[1], args)) for row
+                in self._samples[set_no]]
+
+    @staticmethod
+    def _filter_row(row: pd.Series, args: typing.Tuple[str]) -> list:
+        return [row[arg] for arg in args]
+
+
+class Data:
+    tokenizer: TweetTokenizer = nltk.tokenize.TweetTokenizer()
+
+    def __init__(self, path_to_data: str, path_to_geneea_data: str):
+        self._sample: Sample = Sample()
+
         # prepare statistics
         timestamp = dt.datetime.now().isoformat()
         self.statPath = os.path.join('graphs', timestamp)
@@ -50,7 +122,7 @@ class Data:
         # self.plot.plot([1,2], [4,2], 'b')
 
         # reading data in Pandas array - review per line
-        self.path = path_to_data
+        self.path: str = path_to_data
 
         with open(self.path, 'r') as data, open(path_to_geneea_data, 'r') \
                 as geneea:
@@ -62,7 +134,7 @@ class Data:
                 if dj['review_id'] != gj['id']:
                     raise exceptions.DataMismatchException(
                         'ids {} and {} do not match.'
-                            .format(dj['review_id'], gj['id']))
+                        .format(dj['review_id'], gj['id']))
 
                 for key in gj:
                     if key == 'id':
@@ -85,45 +157,105 @@ class Data:
 
         self._prepare_tokens()
 
-    def _tokenize(self, text):
+    def _tokenize(self, text: str) -> typing.List[str]:
         return self.tokenizer.tokenize(text.lower())
+
+    def generate_sample(self, like_type: str, sample_size: int=None) \
+            -> None:
+        self._sample: Sample = Sample()
+
+        sample: DataFrame = self._get_sample(like_type)
+        sample_for_index: typing.List[str] = random.sample(list(
+            sample[sample['classification'] == like_type]['text']
+        ), 10)
+        index: Similarity = self._generate_cosine_similarity_index(like_type,
+                                                       sample_for_index)
+        sample = [(self.features(row, index), row)
+                  for _, row in sample.iterrows()]
+
+        random.shuffle(sample)
+        # TODO sample size
+        train_size: int = int(len(sample) * 0.7)
+        self._sample.set_train(sample[:train_size])
+        self._sample.set_test(sample[train_size:])
+
+        t=self._sample.get_train_extended('text')[0][1]
+        tt=self._sample.get_test_extended('text')[0][1]
 
     def get_feature_matrix(self, like_type):
         pass
 
+        # todo extract 1st, 3rd
+
     def get_feature_dict(self, like_type):
-        sample = self._get_sample(like_type)
+        pass
 
-        sample_for_index = random.sample(list(
-            sample[sample['classification'] == like_type]['text']
-        ), 10)
-        index = self._generate_cosine_similarity_index(like_type,
-                                                       sample_for_index)
+    def dump_fasttext_format(self, like_type: str, path_prefix: str) -> None:
+        # print
+        #  __label__classification
+        #  features in the format _feature_value
+        #  text
+        train_p: str = '{}_train'.format(path_prefix)
+        test_data_p: str = '{}_test_data'.format(path_prefix)
+        test_lables_p: str = '{}_test_lables'.format(path_prefix)
 
-        features = [(self.features(row, index), row.classification)
-                    for _, row in sample.iterrows()]
+        with open(train_p, 'w') as train, \
+             open(test_data_p, 'w') as test_data, \
+             open(test_lables_p, 'w') as test_lables:
 
-        return features
+            erase_nl_trans = str.maketrans({'\n': None})
+
+            # train set
+            train_sample: List[tuple] \
+                = self._sample.get_train_extended('text',
+                                                 'classification')
+            for (fs, txt, clsf) in train_sample:
+                print("__label__{} {} {}".format(clsf,
+                                                  Data._convert_fs2fasttext(fs),
+                                                  txt.translate(erase_nl_trans)
+                                                 ), file=train)
+
+            # test set
+            test_sample: List[tuple]\
+                = self._sample.get_test_extended('text',
+                                                 'classification')
+            for (fs, txt, clsf) in test_sample:
+                print('{} {}'.format(Data._convert_fs2fasttext(fs),
+                                     txt.translate(erase_nl_trans)
+                                     ), file=test_data)
+                print('__label__{}'.format(clsf), file=test_lables)
+
+    @staticmethod
+    def _convert_fs2fasttext(fs: dict) -> str:
+        # convert dict of features
+        # to iterable of strings in the format _feature_value
+        feature_strings: Iterator[str]\
+            = map(lambda k: '{}_{}'.format(k, fs[k]), fs)
+        all_features_string: str = reduce(lambda s1, s2: '{} _{}'.format(s1, s2),
+                                          feature_strings,
+                                          '').strip()
+        return all_features_string
+
 
     # TODO get dump to be able to observe data!
 
-    def _get_sample(self, like_type):
+    def _get_sample(self, like_type: str) -> pd.DataFrame:
         pos = self.data[self.data[like_type] > 2].sample(frac=1).copy()
         pos['classification'] = like_type
         neg = self.data[self.data[like_type] == 0].sample(frac=1).copy()
         neg['classification'] = 'not-' + like_type
-        all = pd.concat([pos, neg])
+        sample = pd.concat([pos, neg])
 
         # chooses only a subset of features
         # TODO UPDATE? ?? WTF WHY IS THIS
-        all = all[['text', like_type, 'classification', 'stars',
-                   'business_id', 'words', 'incorrect_words',
-                   'sentiment']] \
+        sample = sample[['text', like_type, 'classification', 'stars',
+                         'business_id', 'words', 'incorrect_words',
+                         'sentiment']] \
             .reset_index(drop=True)
 
-        return all
+        return sample
 
-    def _prepare_tokens(self):
+    def _prepare_tokens(self) -> None:
         texts_tokenized = (self._tokenize(row.text) for index, row
                            in self.data.iterrows())
         words_freqs = nltk.FreqDist(w.lower() for tokens in texts_tokenized
@@ -151,7 +283,7 @@ class Data:
         # building a dictionary for counting cosine similarity
         texts = [[w for w in self._tokenize(row.text)
                   if w in self.words]
-                 for _,row in self.data.iterrows()]
+                 for _, row in self.data.iterrows()]
         self.gensim_dictionary = corpora.Dictionary(texts)
 
     def _generate_cosine_similarity_index(self, like_type, rand_samp):
@@ -161,10 +293,11 @@ class Data:
         index = Similarity(None, corpus, num_features=len(self.gensim_dictionary))
         return index
 
-    def print(self, *line):
+    def print(self, *line) -> None:
         print(*line, file=self.stats)
 
     def features(self, row, index):
+        # todo predelat
         text = row.text
         txt_words = self._tokenize(text)
         features = {}
@@ -229,8 +362,12 @@ class Data:
 
 
 data = Data('data/data_sample.json', 'data/geneea_data_extracted_sample.json')
-fs = data.get_feature_dict('useful')
-print(1)
+# data = Data('data/data.json', 'data/geneea_data_extracted.json')
+
+data.generate_sample('useful')
+data.dump_fasttext_format('useful', 'data/data_fasttext')
+# fs = data.get_feature_dict('useful')
+# print(1)
 
 # like_type = 'useful'
 # # like_type='funny'

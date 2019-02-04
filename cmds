@@ -1,2 +1,3 @@
 sed 's/^\([^"]*\)"\(.*ness_id": "\)/\2\1"/'
 ./load_geneea.py -i /mnt/cloud/less10_sample.json | tee out_upto10words.json
+./run_fasttext.sh data/data_fasttext_t{ain,est_data,est_lables}
