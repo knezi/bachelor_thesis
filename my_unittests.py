@@ -37,6 +37,13 @@ class TestLoadData(unittest.TestCase):
         self.assertEqual(sample.get_crossvalidate_basic(), sample.get_crossvalidate_extended('classification'))
         self.assertNotEqual(sample.get_train_basic(), sample.get_test_basic())
 
+        self.assertRaises(IndexError, lambda: sample.limit_train_size(4))
+        sample.limit_train_size(1)
+        self.assertEqual(sample.get_train_basic(), [({'stars': 5}, 'useful')])
+
+
+
+
 
 # TODO CLASS PLOT
 

@@ -1,5 +1,8 @@
 #!/bin/env python3
 # TODO COMMENT AUTHOR
+from itertools import islice
+
+from enum import Enum
 from functools import reduce
 
 from typing import Iterator, List
@@ -41,63 +44,77 @@ class Plot:
         self.fig.savefig(os.path.join(self.path, "{}.png".format(name)))
 
 
-class Sample:
-    # train, test, crossvalidation
+class SampleTypeEnum(Enum):
     TRAIN = 0
     TEST = 1
     CROSSVALIDATION = 2
+
+
+class Sample:
+    # train, test, crossvalidation
     # TODO COMM
 
     # format (features, data_line_from_pandas_data)
     def __init__(self) -> None:
-        self._samples = [[], [], []]
+        self._samples = dict()
+        for x in SampleTypeEnum:
+            self._samples[x] = []
+        self._train_size = None
 
     def set_train(self,
                   sample: typing.List[typing.Tuple[dict, dict]]) \
             -> None:
-        self._samples[self.TRAIN] = sample
+        self._samples[SampleTypeEnum.TRAIN] = sample
 
     def set_test(self,
                  sample: typing.List[typing.Tuple[dict, dict]]) \
             -> None:
-        self._samples[self.TEST] = sample
+        self._samples[SampleTypeEnum.TEST] = sample
 
     def set_crossvalidation(self,
                             sample: typing.List[typing.Tuple[dict, dict]]) \
             -> None:
-        self._samples[self.CROSSVALIDATION] = sample
+        self._samples[SampleTypeEnum.CROSSVALIDATION] = sample
 
     # training set
     def get_train_basic(self) \
             -> typing.List[typing.Tuple]:
-        return self.get_data(self.TRAIN, 'classification')
+        return self.get_data(SampleTypeEnum.TRAIN, 'classification')
 
     def get_train_extended(self, *args: str) \
             -> typing.List[typing.Tuple]:
-        return self.get_data(self.TRAIN, *args)
+        return self.get_data(SampleTypeEnum.TRAIN, *args)
 
     # testing set
     def get_test_basic(self) \
             -> typing.List[typing.Tuple]:
-        return self.get_data(self.TEST, 'classification')
+        return self.get_data(SampleTypeEnum.TEST, 'classification')
 
     def get_test_extended(self, *args: str) \
             -> object:
-        return self.get_data(self.TEST, *args)
+        return self.get_data(SampleTypeEnum.TEST, *args)
 
     # crossvalidating set
     def get_crossvalidate_basic(self) \
             -> typing.List[typing.Tuple]:
-        return self.get_data(self.TEST, 'classification')
+        return self.get_data(SampleTypeEnum.TEST, 'classification')
 
     def get_crossvalidate_extended(self, *args: str) \
             -> typing.List[typing.Tuple]:
-        return self.get_data(self.TEST, *args)
+        return self.get_data(SampleTypeEnum.TEST, *args)
 
     def get_data(self, set_no: int, *args: str)\
             -> typing.List[typing.Tuple]:
-        return [(row[0], *Sample._filter_row(row[1], args)) for row
+        res = [(row[0], *Sample._filter_row(row[1], args)) for row
                 in self._samples[set_no]]
+        if set_no == SampleTypeEnum.TRAIN and self._train_size is not None:
+            res = res[0:self._train_size]
+        return res
+
+    def limit_train_size(self, size: int) -> None:
+        if size > len(self._samples[SampleTypeEnum.TRAIN]):
+            raise IndexError('Train set is not big enough.')
+        self._train_size = size
 
     @staticmethod
     def _filter_row(row: pd.Series, args: typing.Tuple[str]) -> list:
