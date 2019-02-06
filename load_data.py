@@ -31,7 +31,7 @@ class Plot:
         self.path = path
         self.fig = pyplot.figure()
 
-    def plot(self, x_data, y_data, name, x_title="", y_title="", title=""):
+    def plot(self, data, name, x_title="", y_title="", title=""):
         # if title != "":
         # fig.suptitle(title)
         # pyplot.figure()
@@ -40,7 +40,8 @@ class Plot:
 
         self.fig.clf()
         ax = self.fig.subplots()
-        ax.plot(x_data, y_data)
+        for d in data:
+            ax.plot(*zip(*d))
         self.fig.savefig(os.path.join(self.path, "{}.png".format(name)))
 
 
@@ -348,6 +349,6 @@ class Data:
     def limit_train_size(self, size: int) -> None:
         self._sample.limit_train_size(size)
 
-    def plot(self, x_data, y_data, name, x_title="", y_title="", title=""):
+    def plot(self, data, name, x_title="", y_title="", title=""):
     # just wrapper around plot
-        self._plot.plot(x_data, y_data, name, x_title, y_title, title)
+        self._plot.plot(data, name, x_title, y_title, title)

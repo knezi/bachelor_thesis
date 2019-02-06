@@ -12,9 +12,10 @@ data = Data('data/data.json', 'data/geneea_data_extracted.json')
 train_size = data.generate_sample('useful')
 # data.limit_train_size(2)
 # data.dump_fasttext_format('useful', 'data/data_fasttext')
+# data.plot([[(1,2), (1,1)], [(2,2), (3,3)]], 'a')
 
-x = []
-y = []
+plot_data = [[], []]
+# TODO this cannot exceed, but doesn't use up all data
 for train_size in map(lambda x: 2**x, range(1, ceil(log2(train_size)))):
     data.limit_train_size(train_size)
 
@@ -26,10 +27,10 @@ for train_size in map(lambda x: 2**x, range(1, ceil(log2(train_size)))):
     print(nltk.classify.accuracy(classifier, test_set))
     print(nltk.classify.accuracy(classifier, train_set))
 
-    x.append(train_size)
-    y.append(nltk.classify.accuracy(classifier, test_set))
+    plot_data[0].append((train_size, nltk.classify.accuracy(classifier, test_set)))
+    plot_data[1].append((train_size, nltk.classify.accuracy(classifier, train_set)))
 
-data.plot(x, y, 'accuracy_bayes')
+data.plot(plot_data, 'accuracy_bayes')
 
 
 # pridani jednotlivych slov tady snizi presnost jen na 65, je to ocekavane?
