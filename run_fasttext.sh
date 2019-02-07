@@ -1,15 +1,22 @@
 #!/bin/sh
 # TODO CMENT
-# $1 $2 $3
-predicted="data/fasttext_predicted"
-# train test_data test_lables
-ft="fasttext/fastText-0.1.0/fasttext"
+# TODO silent -q ?
+# todo compr
+# $1 - path prefix
+train="$1_train"
+test_data="$1_test_data"
+test_lables="$1_test_lables"
+predicted="$1_predicted"
+model="$1_model"
 
-model='data/fasttext_model'
-./$ft supervised -input "$1" -output "$model"
-./$ft predict "$model.bin" "$2" >"$predicted"
-paste -d' ' "$3" "$predicted" > 'compr'
+ft="./fasttext/fastText-0.1.0/fasttext"
+
+$ft supervised -verbose 0 -input "$train" -output "$model"
+$ft predict "$model.bin" "$test_data" >"$predicted"
+paste -d' ' "$test_lables" "$predicted" > 'compr'
+
 ./compr_fasttext.sh
 
-#rm 'compr'
-paste "$3" "$2" | ./$ft test "$model.bin" -
+rm 'compr'
+paste "$test_lables" "$test_data" | ./$ft test "$model.bin" - 2>/dev/null| grep "@" \
+	| sed "s/P@1	/precision /;s/R@1	/recall /"

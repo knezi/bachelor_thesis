@@ -174,10 +174,10 @@ class Data:
 
         # todo extract 1st, 3rd
 
-    def get_feature_dict(self, dataset: SampleTypeEnum):
+    def get_feature_dict(self, dataset: SampleTypeEnum) -> List[tuple]:
         return self._sample.get_data_basic(dataset)
 
-    def dump_fasttext_format(self, like_type: str, path_prefix: str) -> None:
+    def dump_fasttext_format(self, path_prefix: str) -> None:
         # print
         #  __label__classification
         #  features in the format _feature_value

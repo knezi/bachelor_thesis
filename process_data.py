@@ -1,20 +1,45 @@
 #!/bin/env python3
 # TODO COMMENT AUTHOR
+import sys
+import typing
+from collections import defaultdict
 from math import log2, ceil
 
+from nltk.metrics import scores
+from typing import Any
+
+from subprocess import CompletedProcess
+
 import nltk
+import subprocess as sp
 
 from load_data import Data, SampleTypeEnum
 
-# data = Data('data/data_sample.json', 'data/geneea_data_extracted_sample.json')
-data = Data('data/data.json', 'data/geneea_data_extracted.json')
+
+def run_fasttext(prefix):
+    finished_process: CompletedProcess = sp.run(['./run_fasttext.sh', prefix],
+                                                encoding='utf-8',
+                                                capture_output=True)
+
+    if finished_process.returncode != 0:
+        print('fasttext with prefix {} failed.'.format(prefix), file=sys.stderr)
+
+    return dict(map(lambda x: (x[0], float(x[1])),
+                    map(lambda a: a.split(' '),
+                        finished_process.stdout.strip().split('\n'))))
+
+
+data = Data('data/data_sample.json', 'data/geneea_data_extracted_sample.json')
+# data = Data('data/data.json', 'data/geneea_data_extracted.json')
 
 train_size = data.generate_sample('useful')
 # data.limit_train_size(2)
 # data.dump_fasttext_format('useful', 'data/data_fasttext')
 # data.plot([[(1,2), (1,1)], [(2,2), (3,3)]], 'a')
 
-plot_data = [[], []]
+plot_data_naive_bayes = [[], [], [], [], []]
+# accu, prec, rec, f-measu
+plot_data_fasttext = [[], [], [], []]
 # TODO this cannot exceed, but doesn't use up all data
 for train_size in map(lambda x: 2**x, range(1, ceil(log2(train_size)))):
     data.limit_train_size(train_size)
@@ -27,10 +52,42 @@ for train_size in map(lambda x: 2**x, range(1, ceil(log2(train_size)))):
     print(nltk.classify.accuracy(classifier, test_set))
     print(nltk.classify.accuracy(classifier, train_set))
 
-    plot_data[0].append((train_size, nltk.classify.accuracy(classifier, test_set)))
-    plot_data[1].append((train_size, nltk.classify.accuracy(classifier, train_set)))
+    plot_data_naive_bayes[0].append((train_size, nltk.classify.accuracy(classifier, train_set)))
 
-data.plot(plot_data, 'accuracy_bayes')
+    # TODO is this accuracy only from the positive sample or both?
+    plot_data_naive_bayes[1].append((train_size, nltk.classify.accuracy(classifier, test_set)))
+
+    # metrics
+    refsets: typing.DefaultDict[str, set] = defaultdict(set)
+    testsets: typing.DefaultDict[str, set] = defaultdict(set)
+    for i, (fs, label) in enumerate(test_set):
+        refsets[label].add(i)
+        classified = classifier.classify(fs)
+        testsets[label].add(i)
+
+    plot_data_naive_bayes[2].append((train_size,
+                                     scores.precision(refsets['useful'],
+                                                      testsets['useful'])))
+    plot_data_naive_bayes[3].append((train_size,
+                                     scores.recall(refsets['useful'],
+                                                   testsets['useful'])))
+    plot_data_naive_bayes[4].append((train_size,
+                                     scores.f_measure(refsets['useful'],
+                                                      testsets['useful'])))
+
+
+
+    data.dump_fasttext_format('data/data_fasttext')
+    out = run_fasttext('data/data_fasttext')
+
+    plot_data_fasttext[0].append((train_size, out['accuracy']))
+    plot_data_fasttext[1].append((train_size, out['precision']))
+    plot_data_fasttext[2].append((train_size, out['recall']))
+    f_mes = 2 * out['precision'] * out['recall'] / (out['precision'] + out['recall'])
+    plot_data_fasttext[3].append((train_size, f_mes))
+
+data.plot(plot_data_naive_bayes, 'accuracy_bayes')
+data.plot(plot_data_fasttext, 'fasttext')
 
 
 # pridani jednotlivych slov tady snizi presnost jen na 65, je to ocekavane?
@@ -41,53 +98,21 @@ data.plot(plot_data, 'accuracy_bayes')
 # # print(nltk.classify.accuracy(classifier, test_set))
 # # print(nltk.classify.accuracy(classifier, train_set))
 
-
 # # # get feature matrix
-
-# # In[42]:
-
-
 # X, Y = [x[0] for x in feature_sets], [x[1] for x in feature_sets]
-
-# # In[43]:
-
 
 # from sklearn.datasets import fetch_20newsgroups
 # from sklearn.feature_selection import mutual_info_classif
 # from sklearn.feature_extraction.text import CountVectorizer
 
-# # In[44]:
-
-
-# X[0]
-
-# # In[45]:
-
-
 # cv_gain = CountVectorizer(max_df=0.95, min_df=2,
 # max_features=10000)  # WTF
-
-# # In[46]:
-
-
 # all_keys = [set(x.keys()) for x in X]
-
-# # In[47]:
-
-
 # import functools
 
 # all_fs = functools.reduce(lambda a, b: a.union(b), all_keys)
 # all_fs = list(all_fs)
-
-# # In[48]:
-
-
 # len(all_fs)
-
-
-# # In[49]:
-
 
 # def get_int(val):
 # if isinstance(val, int):
@@ -96,10 +121,6 @@ data.plot(plot_data, 'accuracy_bayes')
 # return val
 # vals = {'Yes': 1, 'No': 0, 'middle': 1, 'long': 2, 'short': 0, 'good': 1, 'bad': 0}
 # return vals[val]
-
-
-# # In[50]:
-
 
 # # X_matrix=[]
 # #
