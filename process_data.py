@@ -6,7 +6,6 @@ from collections import defaultdict
 from math import log2, ceil
 
 from nltk.metrics import scores
-from typing import Any
 
 from subprocess import CompletedProcess
 
@@ -74,8 +73,6 @@ for train_size in map(lambda x: 2**x, range(1, ceil(log2(train_size)))):
     plot_data_naive_bayes[4].append((train_size,
                                      scores.f_measure(refsets['useful'],
                                                       testsets['useful'])))
-
-
 
     data.dump_fasttext_format('data/data_fasttext')
     out = run_fasttext('data/data_fasttext')

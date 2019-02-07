@@ -17,32 +17,14 @@ import pandas as pd
 import random
 from gensim import corpora
 from gensim.similarities import Similarity
-from matplotlib import pyplot
 from nltk import TweetTokenizer
 from pandas import DataFrame
 
 import exceptions
+from statistics import Plot
 
 data = 'just_restaurants.json'
 
-
-class Plot:
-    def __init__(self, path):
-        self.path = path
-        self.fig = pyplot.figure()
-
-    def plot(self, data, name, x_title="", y_title="", title=""):
-        # if title != "":
-        # fig.suptitle(title)
-        # pyplot.figure()
-        # pyplot.plot(data)
-        # pyplot.savefig(os.path.join(self.path, "{}.png".format(name)))
-
-        self.fig.clf()
-        ax = self.fig.subplots()
-        for d in data:
-            ax.plot(*zip(*d))
-        self.fig.savefig(os.path.join(self.path, "{}.png".format(name)))
 
 
 class SampleTypeEnum(Enum):
@@ -216,6 +198,7 @@ class Data:
     def _convert_fs2fasttext(fs: dict) -> str:
         # convert dict of features
         # to iterable of strings in the format _feature_value
+        # TODO use dict.items() instead of lambda
         feature_strings: Iterator[str] \
             = map(lambda k: '{}_{}'.format(k, fs[k]), fs)
         all_features_string: str = reduce(lambda s1, s2: '{} _{}'.format(s1, s2),
