@@ -13,6 +13,7 @@ import nltk
 import subprocess as sp
 
 from load_data import Data, SampleTypeEnum
+from statistics import Statistics
 
 
 def run_fasttext(prefix):
@@ -28,17 +29,14 @@ def run_fasttext(prefix):
                         finished_process.stdout.strip().split('\n'))))
 
 
-data = Data('data/data_sample.json', 'data/geneea_data_extracted_sample.json')
-# data = Data('data/data.json', 'data/geneea_data_extracted.json')
+# data = Data('data/data_sample.json', 'data/geneea_data_extracted_sample.json')
+data = Data('data/data.json', 'data/geneea_data_extracted.json')
 
 train_size = data.generate_sample('useful')
-# data.limit_train_size(2)
-# data.dump_fasttext_format('useful', 'data/data_fasttext')
-# data.plot([[(1,2), (1,1)], [(2,2), (3,3)]], 'a')
 
-plot_data_naive_bayes = [[], [], [], [], []]
-# accu, prec, rec, f-measu
-plot_data_fasttext = [[], [], [], []]
+s = Statistics('graphs', 'P')
+
+
 # TODO this cannot exceed, but doesn't use up all data
 for train_size in map(lambda x: 2**x, range(1, ceil(log2(train_size)))):
     data.limit_train_size(train_size)
@@ -51,10 +49,10 @@ for train_size in map(lambda x: 2**x, range(1, ceil(log2(train_size)))):
     print(nltk.classify.accuracy(classifier, test_set))
     print(nltk.classify.accuracy(classifier, train_set))
 
-    plot_data_naive_bayes[0].append((train_size, nltk.classify.accuracy(classifier, train_set)))
-
+    point = dict()
+    point['bayes train set accuracy'] = nltk.classify.accuracy(classifier, train_set)
     # TODO is this accuracy only from the positive sample or both?
-    plot_data_naive_bayes[1].append((train_size, nltk.classify.accuracy(classifier, test_set)))
+    point['bayes test set accuracy'] = nltk.classify.accuracy(classifier, test_set)
 
     # metrics
     refsets: typing.DefaultDict[str, set] = defaultdict(set)
@@ -64,28 +62,27 @@ for train_size in map(lambda x: 2**x, range(1, ceil(log2(train_size)))):
         classified = classifier.classify(fs)
         testsets[label].add(i)
 
-    plot_data_naive_bayes[2].append((train_size,
-                                     scores.precision(refsets['useful'],
-                                                      testsets['useful'])))
-    plot_data_naive_bayes[3].append((train_size,
-                                     scores.recall(refsets['useful'],
-                                                   testsets['useful'])))
-    plot_data_naive_bayes[4].append((train_size,
-                                     scores.f_measure(refsets['useful'],
-                                                      testsets['useful'])))
+    point['bayes test set precision'] = scores.precision(refsets['useful'],
+                                                      testsets['useful'])
+    point['bayes test set recall'] = scores.recall(refsets['useful'],
+                                                         testsets['useful'])
+    point['bayes test set f_measure'] = scores.f_measure(refsets['useful'],
+                                                         testsets['useful'])
+
 
     data.dump_fasttext_format('data/data_fasttext')
     out = run_fasttext('data/data_fasttext')
 
-    plot_data_fasttext[0].append((train_size, out['accuracy']))
-    plot_data_fasttext[1].append((train_size, out['precision']))
-    plot_data_fasttext[2].append((train_size, out['recall']))
+    point['fasttext accuracy'] = out['accuracy']
+    point['fasttext precision'] = out['precision']
+    point['fasttext recall'] = out['recall']
     f_mes = 2 * out['precision'] * out['recall'] / (out['precision'] + out['recall'])
-    plot_data_fasttext[3].append((train_size, f_mes))
+    point['fasttext f_measure'] =  f_mes
 
-data.plot(plot_data_naive_bayes, 'accuracy_bayes')
-data.plot(plot_data_fasttext, 'fasttext')
+    s.add_points(train_size, point)
 
+
+s.plot('summary')
 
 # pridani jednotlivych slov tady snizi presnost jen na 65, je to ocekavane?
 

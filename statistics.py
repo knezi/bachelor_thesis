@@ -66,23 +66,37 @@ class Statistics:
             self._data[key].points.append(Point(x, val))
 
     def plot(self, name: str, keys: typing.List[str] = None) -> None:
+        fname = self._file_prefix+name
         if keys is None:
             keys = self._data.keys()
 
         self._plot.plot({key: self._data[key] for key in keys},
-                        self._file_prefix+name)
+                        fname)
+
+        # dump textual representation
+        with open(os.path.join(self._path, fname + '.csv'), 'w') as w:
+            w.write(';y;'.join(keys)+';y\n')
+
+            for line in map(';'.join,
+                            zip(*map(lambda x: [str(p.x) + ';' + str(p.y) for p in x],
+                                [self._data[l].points for l in keys]))):
+                w.write(line+'\n')
 
     def set_fmt(self, data_label: str, fmt: str) -> None:
         self._data[data_label].fmt = fmt
 
+    def clear_graph(self):
+        self._data.clear()
 
-s = Statistics('graphs', 'P')
 
-s.add_points(1, {'hey': 2, 'a': 3})
-s.add_points(2, {'hey': 4, 'a': 3})
+if __name__ == '__main__':
+    s = Statistics('graphs', 'P')
 
-s.set_fmt('hey', '')
-s.set_fmt('a', 'ro')
+    s.add_points(1, {'hey': 2, 'a': 3})
+    s.add_points(2, {'hey': 4, 'a': 3})
 
-s.plot('O')
-s.plot('O_hey', ['hey'])
+    s.set_fmt('hey', '')
+    s.set_fmt('a', 'ro')
+
+    s.plot('O')
+    s.plot('O_hey', ['hey'])
