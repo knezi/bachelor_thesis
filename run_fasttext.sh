@@ -11,7 +11,7 @@ model="$1_model"
 
 ft="./fasttext/fastText-0.1.0/fasttext"
 
-$ft supervised -verbose 0 -input "$train" -output "$model"
+$ft supervised -verbose 0 -input "$train" -output "$model" -epoch 50 -wordNgrams 3
 $ft predict "$model.bin" "$test_data" >"$predicted"
 paste -d' ' "$test_lables" "$predicted" > 'compr'
 
