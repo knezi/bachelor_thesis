@@ -60,7 +60,18 @@ for train_size in map(lambda x: 2**x, range(1, ceil(log2(train_size)))):
     for i, (fs, label) in enumerate(test_set):
         refsets[label].add(i)
         classified = classifier.classify(fs)
-        testsets[label].add(i)
+        testsets[classified].add(i)
+
+    print("data line")
+    print("size of useful vs not-useful:", len(refsets['useful']), len(refsets['not-useful']))
+    print("predicted sizes:", len(testsets['useful']), len(testsets['not-useful']))
+    print('tp', len(testsets['useful'] & refsets['useful']))
+    print('fp', len(testsets['useful'] & refsets['not-useful']))
+    print('tn', len(testsets['not-useful'] & refsets['not-useful']))
+    print('fn', len(testsets['not-useful'] & refsets['useful']))
+
+    print('fp', len(testsets['useful'] - refsets['useful']))
+    print('fn', len(refsets['useful'] - testsets['useful']))
 
     point['bayes test set precision'] = scores.precision(refsets['useful'],
                                                       testsets['useful'])

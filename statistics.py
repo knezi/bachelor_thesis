@@ -1,4 +1,4 @@
-#!/bin/env python
+#!/bin/env python3
 # TODO COMMENT
 from collections import defaultdict
 

@@ -1,13 +1,36 @@
 # NPRG045
 
-For creating data:
+Nejdrive TODO yelp data
 
-`./create_data.sh in_dir out_file`
+co data geenea?
 
-where in_dir is path to directory with data downloaded from Yelp
+TODO reqs
+Závislosti:
 
-For using it in jupiter:
+aspell (en, de, fr - u mě balíky aspell, aspell-{en,de,fr} )
 
-`./create_data.sh ../data/dataset/ data.json`
+Já používám python 3.7.2 - vsechny skripty automaticky volaji /bin/env python3
+
+pro nainstalovani zavislosti v pipu:
+
+`pip install \`cat pip_deps\``
+
+Pote naklonujte gitovy repozitar.
+
+Dale staci spustit v korenu repozitare:
+
+`mkdir graphs`
+
+Pro data staci nakopirovat slozku /data/students/knizek/data/ do korenu. Nakonec staci 500MB.
 
 
+`./denormalise.sh cesta/ke_slozce_s_yelpem data/data.json`
+
+(do data.json se uklada vysledek)
+
+`./process_data.py | tee dump`
+
+Po dobehnuti je graf v `graphs/Psummary.png` a ta sama data v csv dumpu:
+`graphs/Psummary.csv`
+
+Na stdout mame (nebo v `dump`) precision a recall jednotlivych velikosti bayesa.
