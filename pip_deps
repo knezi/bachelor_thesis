@@ -12,8 +12,6 @@ decorator
 defusedxml
 docutils
 entrypoints
-geneea.analyzer
-geneea.utils
 gensim
 html5lib
 idna
