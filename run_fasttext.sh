@@ -9,7 +9,7 @@ test_lables="$1_test_lables"
 predicted="$1_predicted"
 model="$1_model"
 
-ft="./fasttext/fastText-0.1.0/fasttext"
+ft="./fastText/fasttext"
 
 $ft supervised -verbose 0 -input "$train" -output "$model" -epoch 50 -wordNgrams 3
 $ft predict "$model.bin" "$test_data" >"$predicted"
