@@ -8,6 +8,7 @@ from math import log2, ceil
 from nltk.metrics import scores
 
 from subprocess import CompletedProcess
+from subprocess import PIPE
 
 import nltk
 import subprocess as sp
@@ -17,9 +18,12 @@ from statistics import Statistics
 
 
 def run_fasttext(prefix):
+    # finished_process: CompletedProcess = sp.run(['./run_fasttext.sh', prefix],
+                                                # encoding='utf-8',
+                                                # capture_output=True)
     finished_process: CompletedProcess = sp.run(['./run_fasttext.sh', prefix],
                                                 encoding='utf-8',
-                                                capture_output=True)
+                                                stdout=PIPE)
 
     if finished_process.returncode != 0:
         print('fasttext with prefix {} failed.'.format(prefix), file=sys.stderr)
