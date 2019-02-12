@@ -6,11 +6,19 @@ aspell neni potreba, kdyz mate denormalizovana data
 
 Já používám python 3.7.2 - vsechny skripty automaticky volaji /bin/env python3
 
-Na sb je potřeba použít 3.6, funguje toto:
+Na sandboxu je potřeba použít 3.6, funguje toto:
 
 `virtualenv v --python=python3.6`
 
 `source ./v/bin/activate`
+
+Pote naklonujte tento gitovy repozitar a v korenu zkompilujte fasttext:
+
+```
+git clone https://github.com/facebookresearch/fastText.git
+cd fastText
+make
+```
 
 pro nainstalovani zavislosti v pipu:
 
@@ -20,14 +28,6 @@ pip install `cat pip_deps`
 
 Dale predpoklada nainstalovane geneea.analyzer a geneea.utils.
 
-
-Pote naklonujte gitovy repozitar a v korenu zkompilujte fasttext:
-
-```
-git clone https://github.com/facebookresearch/fastText.git
-cd fastText
-make
-```
 
 ## spousteni
 
