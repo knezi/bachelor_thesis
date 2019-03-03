@@ -1,4 +1,9 @@
 #!/bin/env python3
+"""Classical unix filter. Take stdin in json-line format and write
+to stdout lines that are in a specified date range.
+Optionally german&french lines (utility lang_recognisition.sh) are filtered out.
+"""
+
 import json
 import datetime as dt
 import sys
@@ -8,8 +13,11 @@ from subprocess import PIPE
 
 
 def spell_check(text):
-    """ takes the argument returns the parsed output of
-    lang_recognition.sh"""
+    """Run lang_recognition.sh on the string given as argument.
+
+    text - input string to the script
+    Return list of script output lines converted to int (should be two lines)
+    The script lang_recognition.sh outputs -1 if the string isn't English."""
 
     p = sp.Popen(['./lang_recognition.sh'], stdout=PIPE, stdin=PIPE,
                  stderr=sys.stderr)
@@ -18,11 +26,17 @@ def spell_check(text):
     return res
 
 
-def main(args):
-    """ expects args to contain:
-        from_date
-        to_date
-        lang_check"""
+def filter(args):
+    """Grep lines between the given dates and optionally in English from stdin.
+
+
+    args must be namespace containing:
+        from_date - format (YYYY-MM-HH) beginning of the span
+        to_date - format (YYYY-MM-HH) end of the span
+        lang_check - boolean if the language check should be done
+
+    There must be data in stdin in JSON-line format (TODO link to spec)
+    Writes to stdout only matching lines."""
 
     min_date = dt.datetime(2100, 1, 1)
     max_date = dt.datetime(100, 1, 1)
@@ -55,13 +69,7 @@ def main(args):
 
 
 if __name__ == '__main__':
-    argparser = argparse.ArgumentParser(description="""Classical unix filter
-                                        from stdin in json-line format filters
-                                        out lines that are in a specified date
-                                        range and sends them to stdou.
-                                        Optionally non-german&non-french
-                                        (utility lang_recognisition.sh) is
-                                        used.""")
+    argparser = argparse.ArgumentParser(description=__doc__)
 
     argparser.add_argument('from_date', type=str,
                            help='in format YYYY-MM-HH')
@@ -70,4 +78,4 @@ if __name__ == '__main__':
     argparser.add_argument('-l', '--lang-check', action='store_true',
                            help='non-english text will be filtered out ')
 
-    main(argparser.parse_args(sys.argv[1:]))
+    filter(argparser.parse_args(sys.argv[1:]))
