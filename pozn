@@ -1,5 +1,9 @@
 /data/students/knizek
 
+PROGRESS:
+filter.py - done
+statistics.py - mark l (68)
+
 
 add textual statistics - dump of graphs
 
@@ -121,7 +125,6 @@ fasttext precision at...?
 TODO readme a bullet points
 private repository s jednim commitem
 udelat pruvodce
-postlat motivacni dopis + finance
 30 minut na spusteni vsechno se vsim vsudy
 featura primo useful/neuseful
 zkusit s plaintextem

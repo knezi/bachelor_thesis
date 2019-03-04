@@ -3,6 +3,7 @@
 to stdout lines that are in a specified date range.
 Optionally german&french lines (utility lang_recognisition.sh) are filtered out.
 """
+from datetime import datetime
 
 import json
 import datetime as dt
@@ -16,9 +17,10 @@ def spell_check(text):
     """Run lang_recognition.sh on the string given as argument.
 
     text - input string to the script
-    Return list of script output lines converted to int (should be two lines)
-    The script lang_recognition.sh outputs -1 if the string isn't English."""
 
+    Return list of script output lines converted to int (should be two lines).
+    The script lang_recognition.sh outputs -1\n0 if the string isn't English.
+    """
     p = sp.Popen(['./lang_recognition.sh'], stdout=PIPE, stdin=PIPE,
                  stderr=sys.stderr)
     stdout_data = p.communicate(input=text.encode('utf-8'))[0]
@@ -36,36 +38,27 @@ def filter(args):
         lang_check - boolean if the language check should be done
 
     There must be data in stdin in JSON-line format (TODO link to spec)
-    Writes to stdout only matching lines."""
-
-    min_date = dt.datetime(2100, 1, 1)
-    max_date = dt.datetime(100, 1, 1)
+    Writes to stdout only matching lines.
+    """
     from_date = dt.datetime.fromisoformat(args.from_date)
     to_date = dt.datetime.fromisoformat(args.to_date)
 
-    try:
-        while True:
-            d = json.loads(input().strip())
-            date = dt.datetime(*[int(x) for x in d['date'].split('-')])
-            min_date = min(date, min_date)
-            max_date = max(date, max_date)
+    for line in map(lambda x: json.loads(x.strip()), sys.stdin):
+        date: datetime = dt.datetime.fromisoformat(line['date'])
 
-            if from_date <= date <= to_date:
-                # aspell considers dashes to be a comment
-                text = d['text']
-                ratio_en = spell_check(text)
+        if from_date <= date <= to_date:
+            # aspell considers dashes to be a comment TODO? Wh?
+            text = line['text']
+            ratio_en = spell_check(text)
 
-                # text not in english
-                if args.lang_check and ratio_en[0] == -1:
-                    continue
+            # text not in english
+            if args.lang_check and ratio_en[0] == -1:
+                continue
 
-                d['words'] = ratio_en[1]
-                d['incorrect_words'] = ratio_en[0]
+            line['words'] = ratio_en[1]
+            line['incorrect_words'] = ratio_en[0]
 
-                print('{}'.format(json.dumps(d)))
-
-    except EOFError:
-        pass
+            print(json.dumps(line))
 
 
 if __name__ == '__main__':

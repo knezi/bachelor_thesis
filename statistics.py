@@ -13,40 +13,59 @@ import os
 
 
 class Point(RecordClass):
+    """Represent a point in a graph."""
     x: float
     y: float
 
 
 class PointsPlot(RecordClass):
+    """Store data points and format specs for a one type of data.
+
+    points - list of RecordClasses Point
+    fmt - format string for data plotting in mathplotilb"""
     points: typing.List[Point]
     fmt: str = ''
 
 
 PointsPlots = typing.Dict[str, PointsPlot]
+"""Typename for a dictionary holding several PointsPlots accesible by names.
+Used for plotting graphs with more datalines."""
 
 
 class Plot:
-    fig: Figure
+    """Wrapper class for plotting data.
 
-    def __init__(self, path):
-        self.path = path
+    The constructor gets path to where store graphs.
+    self.plot then plots given PointsPlots."""
+    _fig: pyplot.figure
+    _path: str
+
+    def __init__(self, path: str):
+        """Prepare the object for plotting.
+
+        path - string path to the directory where graphs should be stored."""
+        self._path = path
         # TODO resolution and stuff
-        self.fig = pyplot.figure()
+        self._fig = pyplot.figure()
 
     def plot(self, data: PointsPlots, name: str, x_title: str = '',
              y_title: str = '', title: str = '') -> None:
-        self.fig.clf()
-
+        """Plot `data` into a file 'name' stored in the given dir."""
         if title != '':
-            self.fig.suptitle(title)
+            self._fig.suptitle(title)
 
-        ax: Axes = self.fig.subplots()
+        # Each graph has exactly one axes for plotting
+        self._fig.clf()
+        ax: Axes = self._fig.subplots()
+
+        # setting Axes
         ax.set_xlabel(x_title)
         ax.set_ylabel(y_title)
         for label, pp in data.items():
             ax.plot(*zip(*pp.points), pp.fmt, label=label)
         ax.legend()
-        self.fig.savefig(os.path.join(self.path, '{}.png'.format(name)))
+
+        self._fig.savefig(os.path.join(self._path, '{}.png'.format(name)))
 
 
 class Statistics:
