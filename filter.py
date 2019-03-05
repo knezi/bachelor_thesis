@@ -13,12 +13,13 @@ import argparse
 from subprocess import PIPE
 
 
+
 def spell_check(text):
     """Run lang_recognition.sh on the string given as argument.
 
-    text - input string to the script
+    :param text: input string to the script
+    :return: list of output lines converted to int (should be two lines).
 
-    Return list of script output lines converted to int (should be two lines).
     The script lang_recognition.sh outputs -1\n0 if the string isn't English.
     """
     p = sp.Popen(['./lang_recognition.sh'], stdout=PIPE, stdin=PIPE,
@@ -31,14 +32,14 @@ def spell_check(text):
 def filter(args):
     """Grep lines between the given dates and optionally in English from stdin.
 
+    :param args:
+        args must be namespace containing:
+            from_date - format (YYYY-MM-HH) beginning of the span
+            to_date - format (YYYY-MM-HH) end of the span
+            lang_check - boolean if the language check should be done
 
-    args must be namespace containing:
-        from_date - format (YYYY-MM-HH) beginning of the span
-        to_date - format (YYYY-MM-HH) end of the span
-        lang_check - boolean if the language check should be done
-
-    There must be data in stdin in JSON-line format (TODO link to spec)
-    Writes to stdout only matching lines.
+    Expects data in stdin in JSON-line format (TODO link to spec).
+    Write only matching lines to stdout.
     """
     from_date = dt.datetime.fromisoformat(args.from_date)
     to_date = dt.datetime.fromisoformat(args.to_date)

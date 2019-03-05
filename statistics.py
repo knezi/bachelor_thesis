@@ -29,7 +29,7 @@ class PointsPlot(RecordClass):
 
 PointsPlots = typing.Dict[str, PointsPlot]
 """Typename for a dictionary holding several PointsPlots accesible by names.
-Used for plotting graphs with more datalines."""
+Used for plotting graphs with more datalines.""" # TODO how to do this?
 
 
 class Plot:
@@ -40,17 +40,25 @@ class Plot:
     _fig: pyplot.figure
     _path: str
 
-    def __init__(self, path: str):
+    def __init__(self, path: str) -> None:
         """Prepare the object for plotting.
 
-        path - string path to the directory where graphs should be stored."""
+        :param path: string path to the directory where graphs should be stored.
+        """
         self._path = path
         # TODO resolution and stuff
         self._fig = pyplot.figure()
 
     def plot(self, data: PointsPlots, name: str, x_title: str = '',
              y_title: str = '', title: str = '') -> None:
-        """Plot `data` into a file 'name' stored in the given dir."""
+        """ Plot `data` into a file 'name' stored in the given dir.
+
+        :param data: data to be plotted
+        :param name: filename of the graph
+        :param x_title: label of x (optional)
+        :param y_title:  label of y (optional)
+        :param title: title of the graph (optional)
+        """
         if title != '':
             self._fig.suptitle(title)
 
@@ -69,23 +77,37 @@ class Plot:
 
 
 class Statistics:
-    # data_label -> PointsPlot
+    """Class for buffering data points. Plot graphs and dump text from them."""
     _data: PointsPlots
     _file_prefix: str
-    _path: str
 
     def __init__(self, path: str, file_prefix: str) -> None:
-        self._path = path
-        self._file_prefix = file_prefix
+        """Set up paths & contruct default objects.
+
+        :param path: directory of stored files
+        :param file_prefix: file_prefix of all filenames
+        """
+        self._file_prefix = file_prefix #TODO why is this asking specify type?
         self._data = defaultdict(lambda: PointsPlot([], ''))
         self._plot = Plot(path)
 
+
     def add_points(self, x: float, value_dict: typing.Dict[str, float]) -> None:
+        """Add points with the same x and various y for different types.
+
+        :param x: x value same for all points
+        :param value_dict: dictionary 'the name of the datatype' -> 'y value'
+        """
         for key, val in value_dict.items():
             self._data[key].points.append(Point(x, val))
 
     def plot(self, name: str, keys: typing.List[str] = None) -> None:
-        fname = self._file_prefix+name
+        """Plot&text dump data of given types defined in a dictionary.
+
+        :param name: filename of the graph
+        :param keys: keys to the dictionary of types
+        """
+        fname: str= self._file_prefix + name
         if keys is None:
             keys = self._data.keys()
 
@@ -101,10 +123,16 @@ class Statistics:
                                 [self._data[l].points for l in keys]))):
                 w.write(line+'\n')
 
-    def set_fmt(self, data_label: str, fmt: str) -> None:
-        self._data[data_label].fmt = fmt
+    def set_fmt(self, data_type: str, fmt: str) -> None:
+        """Set fmt string for given type (default empty).
 
-    def clear_graph(self):
+        :param data_type: type of data
+        :param fmt: formatting directive for mathplotlib
+        """
+        self._data[data_type].fmt = fmt
+
+    def clear_data(self):
+        """Empty PointsPlots container."""
         self._data.clear()
 
 
