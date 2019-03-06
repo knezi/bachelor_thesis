@@ -1,5 +1,13 @@
 #!/bin/env python3
-# TODO COMMENT
+"""Creates helpers classes for plotting graphs and dumping textual data.
+
+Point - record class of a single point
+PointsPlot - record class for a list of types Point
+PointsPlots - store named PointsPlot
+Plot - wrapper class for the actual plotting (takes PointsPlots)
+Statistics - accept data as it goes from the programme flow, aggregate it and
+             passes it to plotting
+"""
 from collections import defaultdict
 
 from matplotlib.axes import Axes

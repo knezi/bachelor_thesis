@@ -26,19 +26,24 @@ from statistics import Plot
 data = 'just_restaurants.json'
 
 
-
 class SampleTypeEnum(Enum):
+    """Enum used for denoting the use of data (TRAIN, TEST, CROSSVALIDATION)"""
     TRAIN = 0
     TEST = 1
     CROSSVALIDATION = 2
 
 
 class Sample:
-    # train, test, crossvalidation
-    # TODO COMM
+    """Store data for different usage and allow access to them.
 
-    # format (features, data_line_from_pandas_data)
+    __init__ - construct empty objects
+    set_data - set data to one of SampleTypeEnum
+    get_data_basic - return data of SampleTypeEnum with text&classification
+    get_data - return data of SampleTypeEnum with text and specified columns
+    limit_train_size - set only [:n] rows accessible"""
+
     def __init__(self) -> None:
+        """Construct empty objects."""
         self._samples = dict()
         for x in SampleTypeEnum:
             self._samples[x] = []
@@ -48,14 +53,41 @@ class Sample:
                  dataset: SampleTypeEnum,
                  sample: typing.List[typing.Tuple[dict, dict]]) \
             -> None:
+        """Set data to one of SampleTypeEnum
+
+        :param dataset: given type - SampleTypeEnum
+        :param sample:  the actual sample being set
+        :return: None
+        """
         self._samples[dataset] = sample
+
+        # TODO REMOVE
+        def add_f(row):
+            row[0]['classification'] = row[1]['classification']
+            return row
+
+        self._samples[dataset] = [add_f(x) for x in self._samples[dataset]]
 
     def get_data_basic(self, dataset: SampleTypeEnum) \
             -> typing.List[typing.Tuple]:
+        """Only calls self.get_data(dataset, 'classification')
+
+        :param dataset: wanted type - SampleTypeEnum
+        :return: wanted dataset
+        """
         return self.get_data(dataset, 'classification')
 
     def get_data(self, dataset: SampleTypeEnum, *args: str) \
             -> typing.List[typing.Tuple]:
+        """Return list of tuples with needed data.
+
+        Each tuple contains text of a row at the index 0
+        The remaining indeces are columns defined by the remaining arguments
+
+        :param dataset: wanted type - SampleTypeEnum
+        :param args: columns being added to the end of each tuple
+        :return: wanted dataset
+        """
         res = [(row[0], *Sample._filter_row(row[1], args)) for row
                in self._samples[dataset]]
         if dataset == SampleTypeEnum.TRAIN and self._train_size is not None:
@@ -63,21 +95,42 @@ class Sample:
         return res
 
     def limit_train_size(self, size: int) -> None:
+        """Limit the accessible part of train data to [:size]
+
+        :param size: First `size` elements of train data will be used.
+        """
         if size > len(self._samples[SampleTypeEnum.TRAIN]):
             raise IndexError('Train set is not big enough.')
         self._train_size = size
 
     @staticmethod
-    def _filter_row(row: pd.Series, args: typing.Tuple[str]) -> list:
-        return [row[arg] for arg in args]
+    def _filter_row(row: pd.Series, args: typing.Tuple[str]) -> tuple:
+        """Convert a given row to a tuple containing only the specified columns.
+
+        :param row: panda Series of data
+        :param args: tuple of wanted columns
+        :return: resulting tuple
+        """
+        return (row[arg] for arg in args)
 
 
 class Data:
+    """Load data from specified files to memory and make it accessible.
+
+    __init__ - take paths and load data to memory
+    generate_sample - create a sample stored internally
+
+    """
     _plot: Plot
     statPath: str
     tokenizer: TweetTokenizer = nltk.tokenize.TweetTokenizer()
 
     def __init__(self, path_to_data: str, path_to_geneea_data: str):
+        """Load data to memory.
+
+        :param path_to_data: JSON-line file as given from denormalise.sh
+        :param path_to_geneea_data: extracted data as output of?? TODO
+        """
         self._sample: Sample = Sample()
 
         # prepare statistics
@@ -86,10 +139,7 @@ class Data:
         os.mkdir(self.statPath)
         self.stats = open(os.path.join(self.statPath, 'statistics'), 'w')
 
-        # TODO
         self._plot = Plot(self.statPath)
-        # self.plot.plot([1,2], [1,2], 'a')
-        # self.plot.plot([1,2], [4,2], 'b')
 
         # reading data in Pandas array - review per line
         self.path: str = path_to_data
@@ -128,6 +178,11 @@ class Data:
         self._prepare_tokens()
 
     def _tokenize(self, text: str) -> typing.List[str]:
+        """Tokenize given string with nltk tokenizer.
+
+        :param text: text to be tokenized
+        :return: list of words
+        """
         return self.tokenizer.tokenize(text.lower())
 
     def generate_sample(self, like_type: str, sample_size: int = None) \
