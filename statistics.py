@@ -88,6 +88,7 @@ class Statistics:
     """Class for buffering data points. Plot graphs and dump text from them."""
     _data: PointsPlots
     _file_prefix: str
+    _path: str
 
     def __init__(self, path: str, file_prefix: str) -> None:
         """Set up paths & contruct default objects.
@@ -95,6 +96,7 @@ class Statistics:
         :param path: directory of stored files
         :param file_prefix: file_prefix of all filenames
         """
+        self._path = path
         self._file_prefix = file_prefix #TODO why is this asking specify type?
         self._data = defaultdict(lambda: PointsPlot([], ''))
         self._plot = Plot(path)

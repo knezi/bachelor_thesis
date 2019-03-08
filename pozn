@@ -1,8 +1,21 @@
 /data/students/knizek
 
+should I care about overwriting files and such?
+
 PROGRESS:
 filter.py - done
 statistics.py - done
+join.py - done
+load_data.py - done
+get_data_for_ids.py - zbalit hezky a dodelat
+extract_ids.py - zbalit hezky a dodelat
+exceptions.py - zbalit hezky a dodelat
+reduce_user.py - necessary??
+reduce_bus.py - necessary??
+my_unittests.py - zbalit hezky a dodelat
+compare_langs.py - useless?
+crop_geneea.py - todo
+process_data.py
 
 
 add textual statistics - dump of graphs

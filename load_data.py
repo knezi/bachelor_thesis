@@ -5,7 +5,7 @@ from itertools import islice
 from enum import Enum
 from functools import reduce
 
-from typing import Iterator, List, Union
+from typing import Iterator, List
 
 import typing
 
@@ -21,9 +21,7 @@ from nltk import TweetTokenizer
 from pandas import DataFrame
 
 import exceptions
-from statistics import Plot
-
-data = 'just_restaurants.json'
+from statistics import Plot, PointsPlot
 
 
 class SampleTypeEnum(Enum):
@@ -111,7 +109,7 @@ class Sample:
         :param args: tuple of wanted columns
         :return: resulting tuple
         """
-        return (row[arg] for arg in args)
+        return tuple(row[arg] for arg in args)
 
 
 class Data:
@@ -119,7 +117,7 @@ class Data:
 
     __init__ - take paths and load data to memory
     generate_sample - create a sample stored internally
-
+TODO
     """
     _plot: Plot
     statPath: str
@@ -185,21 +183,27 @@ class Data:
         """
         return self.tokenizer.tokenize(text.lower())
 
-    def generate_sample(self, like_type: str, sample_size: int = None) \
+    def generate_sample(self, like_type: str) \
             -> int:
+        """Generate sample from all data available of the particular like type.
+
+        For all
+
+        :param like_type:
+        :param sample_size:
+        :return:
+        """
         self._sample: Sample = Sample()
 
         sample: DataFrame = self._get_sample(like_type)
         sample_for_index: typing.List[str] = random.sample(list(
             sample[sample['classification'] == like_type]['text']
         ), 10)
-        index: Similarity = self._generate_cosine_similarity_index(like_type,
-                                                                   sample_for_index)
+        index: Similarity = self._generate_cosine_similarity_index(sample_for_index)
         sample = [(self.features(row, index), row)
                   for _, row in sample.iterrows()]
 
         random.shuffle(sample)
-        # TODO sample size
         train_size: int = int(len(sample) * 0.7)
         self._sample.set_data(SampleTypeEnum.TRAIN, sample[:train_size])
         self._sample.set_data(SampleTypeEnum.TEST, sample[train_size:])
@@ -264,28 +268,40 @@ class Data:
     # TODO get dump to be able to observe data!
 
     def _get_sample(self, like_type: str) -> pd.DataFrame:
+        """Return a sample in PandaSeries from the given of the given like type.
+
+        All lines with at least two likes are classified as positive,
+        all with zero negative. Lines with only one like are disregarded.
+
+        :param like_type: the type of like being classified
+        :return: panda series containing text, likes (number of likes),
+         classification, other data
+        """
         pos = self.data[self.data[like_type] > 2].sample(frac=1).copy()
         pos['classification'] = like_type
         neg = self.data[self.data[like_type] == 0].sample(frac=1).copy()
         neg['classification'] = 'not-' + like_type
-        sample = pd.concat([pos, neg])
+        sample: pd.Series= pd.concat([pos, neg])
 
-        # chooses only a subset of features
-        # TODO UPDATE? ?? WTF WHY IS THIS
+        # chooses only a subset of features for memory reasons
+        # TODO is this necessary? Pontentially introduces bugs
         sample = sample[['text', like_type, 'classification', 'stars',
                          'business_id', 'words', 'incorrect_words',
                          'sentiment']] \
             .reset_index(drop=True)
+        
+        sample.rename(columns={like_type: 'likes'})
 
         return sample
 
     def _prepare_tokens(self) -> None:
+        """Building lists of words for features and gensim dictionary."""
         texts_tokenized = (self._tokenize(row.text) for index, row
                            in self.data.iterrows())
         words_freqs = nltk.FreqDist(w.lower() for tokens in texts_tokenized
                                     for w in tokens)
 
-        # TODO
+        # TODO statistics
         # for x in all_words:
         # print(all_words[x])
 
@@ -310,17 +326,36 @@ class Data:
                  for _, row in self.data.iterrows()]
         self.gensim_dictionary = corpora.Dictionary(texts)
 
-    def _generate_cosine_similarity_index(self, like_type, rand_samp):
+    def _generate_cosine_similarity_index(self, rand_samp: typing.List[str])\
+            -> Similarity:
+        """Built index from the given rand_samp for computing cosine similarity.
+
+        :param rand_samp: Index will be built out of these strings.
+        :return: index
+        """
         corpus = [self.gensim_dictionary.doc2bow(self._tokenize(t))
                   for t in rand_samp]
 
-        index = Similarity(None, corpus, num_features=len(self.gensim_dictionary))
+        index: Similarity = Similarity(None, corpus,
+                                       num_features=len(self.gensim_dictionary))
         return index
 
     def print(self, *line) -> None:
+        """Log into a statistics file.
+
+        :param line: These arguments will be passed as are to print
+        """
         print(*line, file=self.stats)
 
-    def features(self, row, index):
+    def features(self, row: pd.Series, index: Similarity)\
+            -> typing.Dict[str, any]:
+        """Create dictionary of features from the given row.
+
+        :param row: Data of a review
+        :param index: Gensim index for computing cosine similarity.
+                      It is returned by _generate_cosine_similarity_index.
+        :return: Feature dict name_of_feature -> value
+        """
         # todo predelat
         text = row.text
         txt_words = self._tokenize(text)
@@ -385,8 +420,21 @@ class Data:
         return features
 
     def limit_train_size(self, size: int) -> None:
+        """Directly call Sample.limit_train_size.
+
+        :param size: size of train data
+        """
         self._sample.limit_train_size(size)
 
-    def plot(self, data, name, x_title="", y_title="", title=""):
-    # just wrapper around plot
+    def plot(self, data: typing.Dict[str, PointsPlot], name: str,
+             x_title: str = '', y_title: str = '', title: str = '') -> None:
+        """Directly call Plot.plot.
+
+        TODO should this be also filled?
+        :param data:
+        :param name:
+        :param x_title:
+        :param y_title:
+        :param title:
+        """
         self._plot.plot(data, name, x_title, y_title, title)
