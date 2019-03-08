@@ -1,5 +1,10 @@
 #!/bin/env python3
-# TODO COMMENT AUTHOR
+"""Creates classes for loading and storing data.
+
+SampleTypeEnum - distinguishing between TRAIN, TEST, CROSSVALIDATION
+Sample - container holding separately train,test,cv data
+Data - class for loading, generating inferred and storing (in Sample) data
+"""
 from itertools import islice
 
 from enum import Enum
@@ -430,7 +435,7 @@ TODO
              x_title: str = '', y_title: str = '', title: str = '') -> None:
         """Directly call Plot.plot.
 
-        TODO should this be also filled?
+        TODO should this be also filled? Or just populate them with *args
         :param data:
         :param name:
         :param x_title:

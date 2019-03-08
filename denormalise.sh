@@ -14,7 +14,7 @@ sort_wrapper() {
 	printf "Usage: denormalise.sh in_dir out_file
 in_dir		path to a directory with original Yelp files
 out_file	output file\n" &&
-	exit 1
+	exit 0
 
 
 # sort businesses & users

@@ -3,6 +3,7 @@
 should I care about overwriting files and such?
 
 PROGRESS:
+*.sh - done
 filter.py - done
 statistics.py - done
 join.py - done

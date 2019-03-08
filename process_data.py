@@ -18,9 +18,11 @@ from statistics import Statistics
 
 
 def run_fasttext(prefix):
-    # finished_process: CompletedProcess = sp.run(['./run_fasttext.sh', prefix],
-                                                # encoding='utf-8',
-                                                # capture_output=True)
+    """Capture output of run_fasttext.sh
+
+    :param prefix: path that is passed to the script as an argument
+    :return: dictionary of results property_name -> value
+    """
     finished_process: CompletedProcess = sp.run(['./run_fasttext.sh', prefix],
                                                 encoding='utf-8',
                                                 stdout=PIPE)
