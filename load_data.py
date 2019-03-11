@@ -5,8 +5,6 @@ SampleTypeEnum - distinguishing between TRAIN, TEST, CROSSVALIDATION
 Sample - container holding separately train,test,cv data
 Data - class for loading, generating inferred and storing (in Sample) data
 """
-from itertools import islice
-
 from enum import Enum
 from functools import reduce
 

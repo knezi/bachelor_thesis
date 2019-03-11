@@ -1,16 +1,32 @@
+# bakalářka
 /data/students/knizek
 
-should I care about overwriting files and such?
 
-PROGRESS:
-*.sh - done
+## TODO programovani
+zkusit featuru obshujici klasifikaci na test masinerie
+should I care about overwriting files and such?
+116 n/a sentiment
+TODO konstanty misto hodnot??
+brat jenom slova delsi nez neco??
+kouoknout rucne na data
+feature rozdelit na dve
+* Information Gain - snizit dimenzionality
+Najit soouslovi - mutual information; compound detection
+lingv ficury
+podle mnozstvi dat a jake ficury
+embedding - gensym
+zkusit s plaintextem
+try to plot error rate of useful vs not useful and blah blah blah...
+
+## PROGRESS of docstring:
+\*.sh - done
 filter.py - done
 statistics.py - done
 join.py - done
 load_data.py - done
-get_data_for_ids.py - zbalit hezky a dodelat
-extract_ids.py - zbalit hezky a dodelat
-exceptions.py - zbalit hezky a dodelat
+exceptions.py - done
+extract_ids.py - done
+get_data_for_ids.py - waiting - on geneea server
 reduce_user.py - necessary??
 reduce_bus.py - necessary??
 my_unittests.py - zbalit hezky a dodelat
@@ -18,56 +34,40 @@ compare_langs.py - useless?
 crop_geneea.py - todo
 process_data.py
 
+## při hotovém programu
+zkontrolovat, jestli masinerie nekde nenechava tmp soubory
+30 minut na spusteni vsechno se vsim vsudy
+requirements.txt - python, setup.py
 
-add textual statistics - dump of graphs
-
-add recordCLASSES
-
-116 n/a sentiment
-
-TODO konstanty misto hodnot??
-
-brat jenom slova delsi nez neco??
-doc stringy a nastudovat
-BC nezapomeň:
+## psaní bakalářky
  - pridat kecy o poctu ruznych review a tak, proc co jsem jak vybiral
  	-> grafy poctu slov/error rate and stuff
  - taking only business_review_count > 50
  - don't include word error unles you check the language
  - taking only attributes with at least 10 and at least 50 reviews
+ - measure if reducing non-restaurants helps (no, doesn't)
+ - zmerit ruzne konfigurace (kosinova vzdalenost...)
 
-zkontrolovat, jestli masinerie nekde nenechava tmp soubory
+## zdroje
+ - najit bakalarky podobneho zamezeni
+ - najit sentiment analysis and classification
+ - find state of the art of language modelingz
+ - docist gensim, ft
 
-TODO reduce non-restaurants
 
-najit bakalarky podobneho zamezeni
-najit sentiment analysis and classification
-find state of the art of language modelingz
-
-kouoknout rucne na data
-feature rozdelit na dve
-
-* Information Gain - snizit dimenzionality
 
 PCA, SVD
 - redukce dimenze
 - centralizovat - kazdy sloupec - prumer nula + odchylky
 - singularni matice - moc featur - 
 
-Najit soouslovi
-- mutual information
-compound detection
 
-embedding - gensym
-kosinovai zvdalenot
- - podobnost - vzit nahodne pozitivni
 
 
 * n-gramy
  - pridat 1 slova, 3 slova
 
 korelace featur
-- 
 
 
 cross validation?
@@ -86,19 +86,10 @@ accuracy - train_set
  truncatedSVD
 
 
- fasttext
-
- f measure - recall/precision
-
  svm - scikit
  maximum entropy
 
 
-
-yelp challenge
-kategorizace
-fasttext - clanek
-gensim - clanek
 
 
 
@@ -113,33 +104,8 @@ vs discriminative based on conditional probability (or none at all) P[X|Y], need
 - n-gram jsou proste Markovovy řetezy -> aplikace ve word2vec
 
 
-
-
-TODO
-
-id - lingv ficury
-* fasttext pridat ficury do textu s prefixem
-podle mnozstvi dat a jake ficury
-lematizace,sentiment
-build skript
-
-
-
-HAHA
+HANA
 Po potvrzení se nově objeví možnost zadání práce vytisknout (resp. vygenerovat zadání v PDF). Vedoucí práce (případně tajemník katedry) formulář se zadáním 3x vytiskne, nechá ho podepsat vedoucím své katedry (v případě pedagogických studijních oborů vedoucím KDF resp. KDM) a fakultní poštou odešle na studijní oddělení.
 Studijní oddělení nechá vyplněný formulář schválit a podepsat děkanem a tím je zadání práce ukončeno. Jeden výtisk formuláře dostanete zpět poštou (budete ho ještě potřebovat při dokončování práce); jeden exemplář zadání vrátí studijní oddělení na pracoviště vedoucího a jeden založí do Vašeho studijního spisu.
 
 
-try to plot error rate of useful vs not useful and blah blah blah...
-
-fasttext precision at...?
-
-
-
-TODO readme a bullet points
-private repository s jednim commitem
-udelat pruvodce
-30 minut na spusteni vsechno se vsim vsudy
-featura primo useful/neuseful
-zkusit s plaintextem
-requirements.txt - python, setup.py
