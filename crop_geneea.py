@@ -1,5 +1,6 @@
 #!/bin/env python3
 # TODO AUTHOR
+# extracts sentiment from geneea analysis
 
 import sys
 import json

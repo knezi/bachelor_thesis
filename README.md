@@ -10,14 +10,23 @@ Na sandboxu je potřeba použít 3.6, funguje toto:
 
 `virtualenv v --python=python3.6`
 
-`source ./v/bin/activate`
+`cd v`
 
-Pote naklonujte tento gitovy repozitar a v korenu zkompilujte fasttext:
+`source ./bin/activate`
+
+Naklonujte repozitar (nebo klonujte rovnou fantastic-spoon):
+
+`git clone https://github.com/knezi/NPRG045`
+
+`cd NPRG045`
+
+Zkompilujte fasttext:
 
 ```
 git clone https://github.com/facebookresearch/fastText.git
 cd fastText
 make
+cd ..
 ```
 
 pro nainstalovani zavislosti v pipu:
@@ -26,7 +35,7 @@ pro nainstalovani zavislosti v pipu:
 pip install `cat pip_deps`
 ```
 
-Dale predpoklada nainstalovane geneea.analyzer a geneea.utils.
+Dale predpoklada nainstalovane geneea.analyzer a geneea.utils (utils se museji instalovat prvni).
 
 
 ## spousteni
