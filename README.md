@@ -40,10 +40,9 @@ Dale predpoklada nainstalovane geneea.analyzer a geneea.utils (utils se museji i
 
 ## spousteni
 
-Dale staci spustit v korenu repozitare:
+Dale k koreni repa vytvorte:
 
 `mkdir graphs`
-
 
 Pro data staci nakopirovat slozku /data/students/knizek/data/ do korenu. Nakonec staci 500MB. To jsou rovnou denormalizovane pouzite soubory.
 

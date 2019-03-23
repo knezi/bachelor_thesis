@@ -76,8 +76,8 @@ for train_size in map(lambda x: 2**x, range(1, ceil(log2(train_size)))):
     print('tn', len(testsets['not-useful'] & refsets['not-useful']))
     print('fn', len(testsets['not-useful'] & refsets['useful']))
 
-    print('fp', len(testsets['useful'] - refsets['useful']))
-    print('fn', len(refsets['useful'] - testsets['useful']))
+    # print('fp', len(testsets['useful'] - refsets['useful']))
+    # print('fn', len(refsets['useful'] - testsets['useful']))
 
     point['bayes test set precision'] = scores.precision(refsets['useful'],
                                                       testsets['useful'])
@@ -94,7 +94,7 @@ for train_size in map(lambda x: 2**x, range(1, ceil(log2(train_size)))):
     point['fasttext precision'] = out['precision']
     point['fasttext recall'] = out['recall']
     f_mes = 2 * out['precision'] * out['recall'] / (out['precision'] + out['recall'])
-    point['fasttext f_measure'] =  f_mes
+    point['fasttext f_measure'] = f_mes
 
     s.add_points(train_size, point)
 

@@ -1,8 +1,12 @@
 # bakalářka
 /data/students/knizek
 
+## clanky
+printed
 
 ## TODO programovani
+geenea entity -> s/ngrams/entities/
+log - tp/fp/tn/fn....
 zkusit featuru obshujici klasifikaci na test masinerie
 should I care about overwriting files and such?
 116 n/a sentiment
@@ -17,6 +21,12 @@ podle mnozstvi dat a jake ficury
 embedding - gensym
 zkusit s plaintextem
 try to plot error rate of useful vs not useful and blah blah blah...
+
+Drobnost v reportu:
+- Dejte mezi jednotlive casti nejaky oddelovac (pomlcky nebo prazdnou radku)
+- Zaokrouhlite P a R na 3 desetinna mista
+- napiste co je P a co R
+
 
 ## PROGRESS of docstring:
 \*.sh - done
@@ -33,6 +43,7 @@ my_unittests.py - zbalit hezky a dodelat
 compare_langs.py - useless?
 crop_geneea.py - todo
 process_data.py
+
 
 ## při hotovém programu
 zkontrolovat, jestli masinerie nekde nenechava tmp soubory
