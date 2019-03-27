@@ -43,10 +43,9 @@ def main(args):
                 langs[lang] += 1
 
             if total % 1000 == 0:
-                print('dump {}'.format(total))
+                print(f'dump {total}')
 
-
-        print('Total processed {}.'.format(total))
+        print(f'Total processed {total}.')
         print(langs)
 
 

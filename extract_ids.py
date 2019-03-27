@@ -17,7 +17,7 @@ def extract_ids(args: argparse.ArgumentParser) -> None:
     with open(args.from_file, 'r') as r, open(args.to_file, 'w') as w:
         for l in r:
             i = json.loads(l)['review_id']
-            w.write('{}\n'.format(i))
+            w.write(f'{i}\n')
 
 
 if __name__ == '__main__':

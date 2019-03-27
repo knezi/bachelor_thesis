@@ -1,9 +1,10 @@
 #!/bin/sh
 if [ "$1" = "-h" ]; then
 	cat <<EOF
-language recognistion tool for English, German and French.
-The given text on stdin processed with a spell checker and chooses the language
-with the lowest numbers of incorrect words
+Spell check and language recognistion tool based on non-existing words
+for English, German and French. The given text on stdin is processed
+with a spell checker and chooses the language with the lowest number
+of incorrect words.
 
 If option '-l' is specified, writes detected language to the output
   ('en', 'fr' or 'de')

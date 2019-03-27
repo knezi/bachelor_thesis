@@ -16,4 +16,4 @@ with open(ids, 'r') as i, open(lings, 'r') as ling, open(out, 'w') as w:
     for line in ling:
         analysis = json.loads(line)
         if analysis['id'] in ids:
-            w.write('{}\n'.format(line))
+            w.write(f'{line}\n')

@@ -10,11 +10,11 @@ Statistics - accept data as it goes from the programme flow, aggregate it and
 """
 from collections import defaultdict
 
+from typing import List, Dict
+
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from recordclass import RecordClass
-
-import typing
 
 from matplotlib import pyplot
 import os
@@ -31,11 +31,11 @@ class PointsPlot(RecordClass):
 
     points - list of RecordClasses Point
     fmt - format string for data plotting in mathplotilb"""
-    points: typing.List[Point]
+    points: List[Point]
     fmt: str = ''
 
 
-PointsPlots = typing.Dict[str, PointsPlot]
+PointsPlots = Dict[str, PointsPlot]
 """Typename for a dictionary holding several PointsPlots accesible by names.
 Used for plotting graphs with more datalines.""" # TODO how to do this?
 
@@ -81,7 +81,7 @@ class Plot:
             ax.plot(*zip(*pp.points), pp.fmt, label=label)
         ax.legend()
 
-        self._fig.savefig(os.path.join(self._path, '{}.png'.format(name)))
+        self._fig.savefig(os.path.join(self._path, f'{name}.png'))
 
 
 class Statistics:
@@ -102,7 +102,7 @@ class Statistics:
         self._plot = Plot(path)
 
 
-    def add_points(self, x: float, value_dict: typing.Dict[str, float]) -> None:
+    def add_points(self, x: float, value_dict: Dict[str, float]) -> None:
         """Add points with the same x and various y for different types.
 
         :param x: x value same for all points
@@ -111,7 +111,7 @@ class Statistics:
         for key, val in value_dict.items():
             self._data[key].points.append(Point(x, val))
 
-    def plot(self, name: str, keys: typing.List[str] = None) -> None:
+    def plot(self, name: str, keys: List[str] = None) -> None:
         """Plot&text dump data of given types defined in a dictionary.
 
         :param name: filename of the graph

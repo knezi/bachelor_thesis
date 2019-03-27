@@ -1,7 +1,6 @@
 #!/bin/env python3
 # TODO COMMENT AUTHOR
 import sys
-import typing
 from collections import defaultdict
 from math import log2, ceil
 
@@ -12,6 +11,7 @@ from subprocess import PIPE
 
 import nltk
 import subprocess as sp
+from typing import DefaultDict
 
 from load_data import Data, SampleTypeEnum
 from statistics import Statistics
@@ -28,7 +28,7 @@ def run_fasttext(prefix):
                                                 stdout=PIPE)
 
     if finished_process.returncode != 0:
-        print('fasttext with prefix {} failed.'.format(prefix), file=sys.stderr)
+        print(f'fasttext with prefix {prefix} failed.', file=sys.stderr)
 
     return dict(map(lambda x: (x[0], float(x[1])),
                     map(lambda a: a.split(' '),
@@ -51,7 +51,7 @@ for train_size in map(lambda x: 2**x, range(1, ceil(log2(train_size)))):
     test_set = data.get_feature_dict(SampleTypeEnum.TEST)
     classifier = nltk.NaiveBayesClassifier.train(train_set)
 
-    print("SIZE {}".format(train_size))
+    print(f'SIZE {train_size}')
     print(nltk.classify.accuracy(classifier, test_set))
     print(nltk.classify.accuracy(classifier, train_set))
 
@@ -61,8 +61,8 @@ for train_size in map(lambda x: 2**x, range(1, ceil(log2(train_size)))):
     point['bayes test set accuracy'] = nltk.classify.accuracy(classifier, test_set)
 
     # metrics
-    refsets: typing.DefaultDict[str, set] = defaultdict(set)
-    testsets: typing.DefaultDict[str, set] = defaultdict(set)
+    refsets: DefaultDict[str, set] = defaultdict(set)
+    testsets: DefaultDict[str, set] = defaultdict(set)
     for i, (fs, label) in enumerate(test_set):
         refsets[label].add(i)
         classified = classifier.classify(fs)

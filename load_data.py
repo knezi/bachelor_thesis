@@ -8,9 +8,7 @@ Data - class for loading, generating inferred and storing (in Sample) data
 from enum import Enum
 from functools import reduce
 
-from typing import Iterator, List
-
-import typing
+from typing import Iterator, List, Tuple, Dict
 
 import datetime as dt
 import json
@@ -52,9 +50,9 @@ class Sample:
 
     def set_data(self,
                  dataset: SampleTypeEnum,
-                 sample: typing.List[typing.Tuple[dict, dict]]) \
+                 sample: List[Tuple[dict, dict]]) \
             -> None:
-        """Set data to one of SampleTypeEnum
+        """Set data to the given set
 
         :param dataset: given type - SampleTypeEnum
         :param sample:  the actual sample being set
@@ -62,15 +60,14 @@ class Sample:
         """
         self._samples[dataset] = sample
 
-        # TODO REMOVE
+        # TODO REMOVE adding classified feature
         def add_f(row):
             row[0]['classification'] = row[1]['classification']
             return row
-
         self._samples[dataset] = [add_f(x) for x in self._samples[dataset]]
 
     def get_data_basic(self, dataset: SampleTypeEnum) \
-            -> typing.List[typing.Tuple]:
+            -> List[Tuple]:
         """Only calls self.get_data(dataset, 'classification')
 
         :param dataset: wanted type - SampleTypeEnum
@@ -79,13 +76,14 @@ class Sample:
         return self.get_data(dataset, 'classification')
 
     def get_data(self, dataset: SampleTypeEnum, *args: str) \
-            -> typing.List[typing.Tuple]:
-        """Return list of tuples with needed data.
+            -> List[Tuple]:
+        """Return list of instances represented by tuples of attributes.
 
-        Each tuple contains text of a row at the index 0
-        The remaining indeces are columns defined by the remaining arguments
+        Each tuple contains text of an instance at the index 0
+        The remaining indices are attribute values defined by
+        the remaining arguments passed to this function.
 
-        :param dataset: wanted type - SampleTypeEnum
+        :param dataset: wanted type
         :param args: columns being added to the end of each tuple
         :return: wanted dataset
         """
@@ -105,7 +103,7 @@ class Sample:
         self._train_size = size
 
     @staticmethod
-    def _filter_row(row: pd.Series, args: typing.Tuple[str]) -> tuple:
+    def _filter_row(row: pd.Series, args: Tuple[str]) -> tuple:
         """Convert a given row to a tuple containing only the specified columns.
 
         :param row: panda Series of data
@@ -127,7 +125,7 @@ TODO
     tokenizer: TweetTokenizer = nltk.tokenize.TweetTokenizer()
 
     def __init__(self, path_to_data: str, path_to_geneea_data: str):
-        """Load data to memory.
+        """Load data to memory and init class.
 
         :param path_to_data: JSON-line file as given from denormalise.sh
         :param path_to_geneea_data: extracted data as output of?? TODO
@@ -142,9 +140,13 @@ TODO
 
         self._plot = Plot(self.statPath)
 
-        # reading data in Pandas array - review per line
+        # reading data into Pandas array - review per line
         self.path: str = path_to_data
 
+        # self.path contain text, desired classification and some other features
+        # Instances correspond line-by-line with file path_to_geneea_data
+        # which contain extra linguistics features extracted from text
+        # this loop joins them together to one panda array
         with open(self.path, 'r') as data, open(path_to_geneea_data, 'r') \
                 as geneea:
             lines: List[DataFrame] = []
@@ -152,10 +154,10 @@ TODO
                 dj = json.loads(d)
                 gj = json.loads(g)
 
+                # check line-by-line correspondence
                 if dj['review_id'] != gj['id']:
                     raise exceptions.DataMismatchException(
-                        'ids {} and {} do not match.'
-                            .format(dj['review_id'], gj['id']))
+                        f'ids {dj["review_id"]} and {gj["id"]} do not match.')
 
                 for key in gj:
                     if key == 'id':
@@ -166,7 +168,7 @@ TODO
 
             panda_lines = pd.concat(lines).reset_index()
 
-        # flattening
+        # flattening - all properties need to be only scalar values
         panda_lines['business_review_count'] = \
             panda_lines['business_id'].map(lambda x: x['review_count'])
         panda_lines['attributes_count'] = \
@@ -178,7 +180,7 @@ TODO
 
         self._prepare_tokens()
 
-    def _tokenize(self, text: str) -> typing.List[str]:
+    def _tokenize(self, text: str) -> List[str]:
         """Tokenize given string with nltk tokenizer.
 
         :param text: text to be tokenized
@@ -190,22 +192,35 @@ TODO
             -> int:
         """Generate sample from all data available of the particular like type.
 
-        For all
+        Create train and test set and set them as the current sample used
+        by methods returning instances of data (get_feature_matrix,
+        get_feature_dict, dump_fasttext_format). It doesn't create
+        crossvalidation set as of now.
 
-        :param like_type:
-        :param sample_size:
-        :return:
+        :param like_type: string name of the predicted attribute
+                          possible values useful, funny, cool
+        :return: int the size of train set
         """
         self._sample: Sample = Sample()
 
-        sample: DataFrame = self._get_sample(like_type)
-        sample_for_index: typing.List[str] = random.sample(list(
-            sample[sample['classification'] == like_type]['text']
+        # get all usable data for the given like type
+        raw_sample: DataFrame = self._get_raw_sample(like_type)
+
+        # build index of positive instances for computing cosine similarity
+        # features expressing cosine distance to all instances in the index
+        # are later added to each instance
+        sample_for_index: List[str] = random.sample(list(
+            raw_sample[raw_sample['classification'] == like_type]['text']
         ), 10)
         index: Similarity = self._generate_cosine_similarity_index(sample_for_index)
-        sample = [(self.features(row, index), row)
-                  for _, row in sample.iterrows()]
 
+        # computing features for instances and creating datastructures
+        # for samples to be given further
+        sample: List[Tuple[Dict, DataFrame]]\
+            = [(self.features(row, index), row)
+               for _, row in raw_sample.iterrows()]
+
+        # splitting data into sample sets train and test (7:3 ratio)
         random.shuffle(sample)
         train_size: int = int(len(sample) * 0.7)
         self._sample.set_data(SampleTypeEnum.TRAIN, sample[:train_size])
@@ -226,9 +241,9 @@ TODO
         #  __label__classification
         #  features in the format _feature_value
         #  text
-        train_p: str = '{}_train'.format(path_prefix)
-        test_data_p: str = '{}_test_data'.format(path_prefix)
-        test_lables_p: str = '{}_test_lables'.format(path_prefix)
+        train_p: str = f'{path_prefix}_train'
+        test_data_p: str = f'{path_prefix}_test_data'
+        test_lables_p: str = f'{path_prefix}_test_lables'
 
         with open(train_p, 'w') as train, \
                 open(test_data_p, 'w') as test_data, \
@@ -254,7 +269,7 @@ TODO
                 print('{} {}'.format(Data._convert_fs2fasttext(fs),
                                      txt.translate(erase_nl_trans)
                                      ), file=test_data)
-                print('__label__{}'.format(clsf), file=test_lables)
+                print(f'__label__{clsf}', file=test_lables)
 
     @staticmethod
     def _convert_fs2fasttext(fs: dict) -> str:
@@ -262,16 +277,16 @@ TODO
         # to iterable of strings in the format _feature_value
         # TODO use dict.items() instead of lambda
         feature_strings: Iterator[str] \
-            = map(lambda k: '{}_{}'.format(k, fs[k]), fs)
-        all_features_string: str = reduce(lambda s1, s2: '{} _{}'.format(s1, s2),
+            = map(lambda k: f'{k}_{fs[k]}', fs)
+        all_features_string: str = reduce(lambda s1, s2: f'{s1} _{s2}',
                                           feature_strings,
                                           '').strip()
         return all_features_string
 
     # TODO get dump to be able to observe data!
 
-    def _get_sample(self, like_type: str) -> pd.DataFrame:
-        """Return a sample in PandaSeries from the given of the given like type.
+    def _get_raw_sample(self, like_type: str) -> pd.DataFrame:
+        """Return all usable raw data of the given like type in PandaSeries.
 
         All lines with at least two likes are classified as positive,
         all with zero negative. Lines with only one like are disregarded.
@@ -329,7 +344,7 @@ TODO
                  for _, row in self.data.iterrows()]
         self.gensim_dictionary = corpora.Dictionary(texts)
 
-    def _generate_cosine_similarity_index(self, rand_samp: typing.List[str])\
+    def _generate_cosine_similarity_index(self, rand_samp: List[str])\
             -> Similarity:
         """Built index from the given rand_samp for computing cosine similarity.
 
@@ -351,7 +366,7 @@ TODO
         print(*line, file=self.stats)
 
     def features(self, row: pd.Series, index: Similarity)\
-            -> typing.Dict[str, any]:
+            -> Dict[str, any]:
         """Create dictionary of features from the given row.
 
         :param row: Data of a review
@@ -429,7 +444,7 @@ TODO
         """
         self._sample.limit_train_size(size)
 
-    def plot(self, data: typing.Dict[str, PointsPlot], name: str,
+    def plot(self, data: Dict[str, PointsPlot], name: str,
              x_title: str = '', y_title: str = '', title: str = '') -> None:
         """Directly call Plot.plot.
 

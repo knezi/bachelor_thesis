@@ -5,6 +5,10 @@
 printed
 
 ## TODO programovani
+format directive with function calling
+test for datamismatch exception
+word2vec for classif?
+fasttext - parameters tuning
 geenea entity -> s/ngrams/entities/
 log - tp/fp/tn/fn....
 zkusit featuru obshujici klasifikaci na test masinerie
