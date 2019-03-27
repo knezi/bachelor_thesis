@@ -54,6 +54,9 @@ class Sample:
             -> None:
         """Set data to the given set
 
+        Data must be list of instances. Each element being a tuple of
+        feature dictionary and attribute dictionary
+
         :param dataset: given type - SampleTypeEnum
         :param sample:  the actual sample being set
         :return: None
@@ -77,11 +80,13 @@ class Sample:
 
     def get_data(self, dataset: SampleTypeEnum, *args: str) \
             -> List[Tuple]:
-        """Return list of instances represented by tuples of attributes.
+        """Return list of instances represented by tuples.
 
-        Each tuple contains text of an instance at the index 0
+        Each tuple contains feature dictionary of an instance at the index 0.
         The remaining indices are attribute values defined by
         the remaining arguments passed to this function.
+
+        Feature dictionary is mapping feature(str) -> value(scalar type)
 
         :param dataset: wanted type
         :param args: columns being added to the end of each tuple
@@ -237,10 +242,23 @@ TODO
         return self._sample.get_data_basic(dataset)
 
     def dump_fasttext_format(self, path_prefix: str) -> None:
-        # print
-        #  __label__classification
-        #  features in the format _feature_value
-        #  text
+        """Create training & testing files for fasttext from the current sample.
+
+        Train set is written into file {path_prefix}_train instance per line
+        in format:
+            __label__classification \
+            features in the format _feature_value \
+            text
+
+        Test set is divided into two files:
+            {path_prefix}_test_data - format same as for the training file
+                without __label__classification
+
+            {path_prefix}_test_lables - file containing only lables
+                __label__classification
+                Order of lines corresponds to first test file
+
+        :param path_prefix: prefix used for all three files"""
         train_p: str = f'{path_prefix}_train'
         test_data_p: str = f'{path_prefix}_test_data'
         test_lables_p: str = f'{path_prefix}_test_lables'
@@ -249,6 +267,7 @@ TODO
                 open(test_data_p, 'w') as test_data, \
                 open(test_lables_p, 'w') as test_lables:
 
+            # instance per line, newline is forbidden
             erase_nl_trans = str.maketrans({'\n': None})
 
             # train set
@@ -256,6 +275,7 @@ TODO
                 = self._sample.get_data(SampleTypeEnum.TRAIN,
                                         'text', 'classification')
             for (fs, txt, clsf) in train_sample:
+                # is this string better to turn into f-string too?
                 print("__label__{} {} {}".format(clsf,
                                                  Data._convert_fs2fasttext(fs),
                                                  txt.translate(erase_nl_trans)

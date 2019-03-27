@@ -5,6 +5,7 @@
 printed
 
 ## TODO programovani
+285 load_data bmark
 format directive with function calling
 test for datamismatch exception
 word2vec for classif?
