@@ -13,7 +13,7 @@ import nltk
 import subprocess as sp
 from typing import DefaultDict
 
-from load_data import Data, SampleTypeEnum
+from load_data import Data, SampleTypeEnum, FeatureSet
 from statistics import Statistics
 
 
@@ -38,7 +38,10 @@ def run_fasttext(prefix):
 # data = Data('data/data_sample.json', 'data/geneea_data_extracted_sample.json')
 data = Data('data/data.json', 'data/geneea_data_extracted.json')
 
-train_size = data.generate_sample('useful')
+train_size = data.generate_sample('useful', {FeatureSet.REVIEWLEN,
+                                             FeatureSet.STARS,
+                                             FeatureSet.SPELLCHECK,
+                                             FeatureSet.COSINESIM})
 
 s = Statistics('graphs', 'P')
 
