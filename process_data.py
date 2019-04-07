@@ -14,7 +14,7 @@ import subprocess as sp
 from typing import DefaultDict
 
 from load_data import Data, SampleTypeEnum, FeatureSet
-from statistics import Statistics
+from statistics import Statistics, DataGraph
 
 
 def run_fasttext(prefix):
@@ -43,7 +43,7 @@ train_size = data.generate_sample('useful', {FeatureSet.REVIEWLEN,
                                              FeatureSet.SPELLCHECK,
                                              FeatureSet.COSINESIM})
 
-s = Statistics('graphs', 'P')
+stats = DataGraph('summary', 'number of instances', 'percentage')
 
 
 # TODO this cannot exceed, but doesn't use up all data
@@ -99,10 +99,9 @@ for train_size in map(lambda x: 2**x, range(1, ceil(log2(train_size)))):
     f_mes = 2 * out['precision'] * out['recall'] / (out['precision'] + out['recall'])
     point['fasttext f_measure'] = f_mes
 
-    s.add_points(train_size, point)
+    stats.add_points(train_size, point)
 
-
-s.plot('summary')
+data.plot(stats)
 
 # pridani jednotlivych slov tady snizi presnost jen na 65, je to ocekavane?
 

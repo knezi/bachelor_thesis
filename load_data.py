@@ -22,7 +22,7 @@ from nltk import TweetTokenizer
 from pandas import DataFrame
 
 import exceptions
-from statistics import Plot, PointsPlot
+from statistics import PointsPlot, Statistics, DataGraph
 
 
 @unique
@@ -139,8 +139,8 @@ class Data:
     generate_sample - create a sample stored internally
 TODO
     """
-    _plot: Plot
-    statPath: str
+    _statistics: Statistics
+    _statPath: str
     tokenizer: TweetTokenizer = nltk.tokenize.TweetTokenizer()
 
     def __init__(self, path_to_data: str, path_to_geneea_data: str):
@@ -153,11 +153,11 @@ TODO
 
         # prepare statistics
         timestamp: str = dt.datetime.now().isoformat()
-        self.statPath = os.path.join('graphs', timestamp)
-        os.mkdir(self.statPath)
-        self.stats = open(os.path.join(self.statPath, 'statistics'), 'w')
+        self._statPath = os.path.join('graphs', timestamp)
+        os.mkdir(self._statPath)
+        self.stats = open(os.path.join(self._statPath, 'statistics'), 'w')
 
-        self._plot = Plot(self.statPath)
+        self._statistics = Statistics(self._statPath)
 
         # reading data into Pandas array - review per line
         self.path: str = path_to_data
@@ -185,7 +185,7 @@ TODO
 
                 lines.append(pd.DataFrame([dj]))
 
-            panda_lines = pd.concat(lines).reset_index()
+            panda_lines: pd.DataFrame = pd.concat(lines).reset_index()
 
         # flattening - all properties need to be only scalar values
         panda_lines['business_review_count'] = \
@@ -257,6 +257,7 @@ TODO
         # todo extract 1st, 3rd
 
     def get_feature_dict(self, dataset: SampleTypeEnum) -> List[tuple]:
+        """TODO"""
         return self._sample.get_data_basic(dataset)
 
     def dump_fasttext_format(self, path_prefix: str) -> None:
@@ -335,7 +336,7 @@ TODO
         pos['classification'] = like_type
         neg = self.data[self.data[like_type] == 0].sample(frac=1).copy()
         neg['classification'] = 'not-' + like_type
-        sample: pd.Series= pd.concat([pos, neg])
+        sample: pd.DataFrame = pd.concat([pos, neg])
 
         # chooses only a subset of features for memory reasons
         sample = sample[['text', like_type, 'classification', 'stars',
@@ -494,15 +495,9 @@ TODO
         """
         self._sample.limit_train_size(size)
 
-    def plot(self, data: Dict[str, PointsPlot], name: str,
-             x_title: str = '', y_title: str = '', title: str = '') -> None:
-        """Directly call Plot.plot.
+    def plot(self, data: DataGraph) -> None:
+        """Plot given DataGraph.
 
-        TODO should this be also filled? Or just populate them with *args
-        :param data:
-        :param name:
-        :param x_title:
-        :param y_title:
-        :param title:
-        """
-        self._plot.plot(data, name, x_title, y_title, title)
+        :param data: instance of DataGraph to be plotted"""
+        self._statistics.plot(data)
+

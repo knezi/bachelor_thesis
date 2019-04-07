@@ -2,9 +2,17 @@
 /data/students/knizek
 
 ## clanky
-printed
 
 ## TODO programovani
+unittests:
+data in load_data
+statistics
+datagraph
+plot
+
+todo gracefully close statistics - load_data.py line 158
+
+
 285 load_data bmark
 format directive with function calling
 test for datamismatch exception

@@ -42,11 +42,20 @@ class TestLoadData(unittest.TestCase):
         sample.limit_train_size(1)
         self.assertEqual(sample.get_data_basic(load_data.SampleTypeEnum.TRAIN), [({'stars': 5}, 'useful')])
 
+    def test_load_data(self):
+        # warning data has been tampered for testing purposes
+        data = load_data.Data('unittests/data_unit.json', 'unittests/geneea_unit.json')
+        # returns size of training set
+        self.assertEqual(data.generate_sample('useful', {}), 14)
+        self.assertEqual(data.get_feature_dict(load_data.SampleTypeEnum.TRAIN)[0][0], {})
+        self.assertEqual(data.generate_sample('useful', {load_data.FeatureSet.REVIEWLEN}), 14)
+        self.assertEqual(len(data.get_feature_dict(load_data.SampleTypeEnum.TRAIN)[0][0]), 6)
+        self.assertTrue('review_length' in data.get_feature_dict(load_data.SampleTypeEnum.TRAIN)[0][0])
 
 
+class TestStatistics(unittest.TestCase):
+    pass
 
-
-# TODO CLASS PLOT
 
 if __name__ == "__main__":
     unittest.main()
