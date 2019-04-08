@@ -268,7 +268,10 @@ TODO
         # todo extract 1st, 3rd
 
     def get_feature_dict(self, dataset: SampleTypeEnum) -> List[tuple]:
-        """TODO"""
+        """Return list of instances, attributes being represented by dict.
+
+        Each instance is a tuple of
+        (feature dictionary {'feature' -> 'value'}, classification)"""
         return self._sample.get_data_basic(dataset)
 
     def dump_fasttext_format(self, path_prefix: str) -> None:
@@ -305,31 +308,28 @@ TODO
                 = self._sample.get_data(SampleTypeEnum.TRAIN,
                                         'text', 'classification')
             for (fs, txt, clsf) in train_sample:
-                # is this string better to turn into f-string too?
-                print("__label__{} {} {}".format(clsf,
-                                                 Data._convert_fs2fasttext(fs),
-                                                 txt.translate(erase_nl_trans)
-                                                 ), file=train)
+                print(f'__label__{clsf} '
+                      f'{Data._convert_fs2fasttext(fs)} '
+                      f'{txt.translate(erase_nl_trans)}', file=train)
 
             # test set
             test_sample: List[tuple] \
                 = self._sample.get_data(SampleTypeEnum.TEST,
                                         'text', 'classification')
             for (fs, txt, clsf) in test_sample:
+                # test file - data
                 print(Data._convert_fs2fasttext(fs) + ' ' +
                       txt.translate(erase_nl_trans), file=test_data)
+                # test file - lables
                 print(f'__label__{clsf}', file=test_lables)
 
     @staticmethod
     def _convert_fs2fasttext(fs: dict) -> str:
-        # convert dict of features
-        # to iterable of strings in the format _feature_value
-        feature_strings: Iterator[str] \
-            = map(lambda k: f'{k}_{fs[k]}', fs)
-        all_features_string: str = reduce(lambda s1, s2: f'{s1} _{s2}',
-                                          feature_strings,
-                                          '').strip()
-        return all_features_string
+        """convert  feature dict to string in the format _featurename_value"""
+        features_str_repre: Iterator[str] \
+            = map(lambda k: f'_{k}_{fs[k]}', fs)
+        feature_string: str = ' '.join(features_str_repre)
+        return feature_string
 
     # TODO get dump to be able to observe data!
 

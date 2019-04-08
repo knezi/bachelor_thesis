@@ -20,8 +20,6 @@ uzivatelska doc??
 
 ## TODO programovani
 v make... pridej execution unittesty
-todo gracefully close statistics - load_data.py line 158
-285 load_data bmark
 format directive with function calling
 test for datamismatch exception
 word2vec for classif?
