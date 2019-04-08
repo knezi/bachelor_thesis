@@ -19,7 +19,7 @@ import random
 from gensim import corpora
 from gensim.similarities import Similarity
 from nltk import TweetTokenizer
-from pandas import DataFrame
+from pandas import DataFrame, Series
 
 import exceptions
 from statistics import PointsPlot, Statistics, DataGraph
@@ -51,7 +51,7 @@ class Sample:
 
     def set_data(self,
                  dataset: SampleTypeEnum,
-                 sample: List[Tuple[dict, dict]]) \
+                 sample: List[Tuple[dict, Series]]) \
             -> None:
         """Set data to the given set
 
@@ -68,7 +68,7 @@ class Sample:
         def add_f(row):
             row[0]['classification'] = row[1]['classification']
             return row
-        self._samples[dataset] = [add_f(x) for x in self._samples[dataset]]
+        # self._samples[dataset] = [add_f(x) for x in self._samples[dataset]]
 
     def get_data_basic(self, dataset: SampleTypeEnum) \
             -> List[Tuple]:
@@ -239,7 +239,7 @@ TODO
 
         # computing features for instances and creating datastructures
         # for samples to be given further
-        sample: List[Tuple[Dict, DataFrame]]\
+        sample: List[Tuple[Dict, Series]]\
             = [(self.generate_features(row, index, fs_selection), row)
                for _, row in raw_sample.iterrows()]
 
@@ -305,7 +305,7 @@ TODO
                 = self._sample.get_data(SampleTypeEnum.TEST,
                                         'text', 'classification')
             for (fs, txt, clsf) in test_sample:
-                print(Data._convert_fs2fasttext(fs) + ' ' + \
+                print(Data._convert_fs2fasttext(fs) + ' ' +
                       txt.translate(erase_nl_trans), file=test_data)
                 print(f'__label__{clsf}', file=test_lables)
 
@@ -500,4 +500,3 @@ TODO
 
         :param data: instance of DataGraph to be plotted"""
         self._statistics.plot(data)
-

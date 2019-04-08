@@ -14,7 +14,7 @@ import subprocess as sp
 from typing import DefaultDict
 
 from load_data import Data, SampleTypeEnum, FeatureSet
-from statistics import Statistics, DataGraph
+from statistics import DataGraph
 
 
 def run_fasttext(prefix):

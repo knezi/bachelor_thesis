@@ -4,15 +4,8 @@
 ## clanky
 
 ## TODO programovani
-unittests:
-data in load_data
-statistics
-datagraph
-plot
-
+v make... pridej execution unittesty
 todo gracefully close statistics - load_data.py line 158
-
-
 285 load_data bmark
 format directive with function calling
 test for datamismatch exception
@@ -20,7 +13,6 @@ word2vec for classif?
 fasttext - parameters tuning
 geenea entity -> s/ngrams/entities/
 log - tp/fp/tn/fn....
-zkusit featuru obshujici klasifikaci na test masinerie
 should I care about overwriting files and such?
 116 n/a sentiment
 TODO konstanty misto hodnot??

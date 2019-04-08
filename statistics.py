@@ -10,7 +10,7 @@ Statistics - prepares directories for graphs and plots DataGraphs
 """
 from collections import defaultdict
 
-from typing import List, Dict, Generator
+from typing import List, Dict, Generator, Set
 
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
@@ -45,7 +45,7 @@ class DataGraph:
 
         DataGraph - accept data as it goes from the programme flow, aggregate it
         and can be passed to Statistics as a whole for plotting"""
-    _keys: Dict
+    _keys: Set
     _name: str
     _data: PointsPlots
 
@@ -83,7 +83,7 @@ class DataGraph:
         """Empty PointsPlots container."""
         self._data.clear()
 
-    def set_view(self, keys: Dict) -> None:
+    def set_view(self, keys: Set) -> None:
         """Set keys visible when dumping data with get_data.
 
         :param keys: names of data types"""
