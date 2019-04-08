@@ -3,6 +3,21 @@
 
 ## clanky
 
+
+## odevzdani
+50 min
+- pdfa
+- vazba nemusi byt nerozebiratelna
+- pres 800 MB napsat HOffmanove
+- uprava viz MJ's pruvodce
+- kontext dira cila
+- abstract nejdulezitejsi
+- cil - uvod cilem teto prace je....
+uzivatelska doc??
+
+## psani
+- doc dat
+
 ## TODO programovani
 v make... pridej execution unittesty
 todo gracefully close statistics - load_data.py line 158

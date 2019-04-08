@@ -120,7 +120,7 @@ class Sample:
 
 
 @unique
-class FeatureSet(Enum):
+class FeatureSetEnum(Enum):
     """Enum used for defining sets of features"""
     UNIGRAMS     = auto()
     BIGRAMS      = auto()
@@ -130,6 +130,14 @@ class FeatureSet(Enum):
     REVIEWLEN    = auto()
     SPELLCHECK   = auto()
     COSINESIM    = auto()
+
+
+@unique
+class LikeTypeEnum(Enum):
+    """Enum used for denoting which class is classified"""
+    USEFUL = 'useful'
+    COOL = 'cool'
+    FUNNY = 'funny'
 
 
 class Data:
@@ -207,8 +215,8 @@ TODO
         """
         return self.tokenizer.tokenize(text.lower())
 
-    def generate_sample(self, like_type: str, fs_selection: Set[FeatureSet]) \
-            -> int:
+    def generate_sample(self, like_type: LikeTypeEnum,
+                        fs_selection: Set[FeatureSetEnum]) -> int:
         """Generate sample from all data available of the particular like type.
 
         Create train and test set and set them as the current sample used
@@ -216,8 +224,7 @@ TODO
         get_feature_dict, dump_fasttext_format). It doesn't create
         crossvalidation set as of now.
 
-        :param like_type: string name of the predicted attribute
-                          possible values useful, funny, cool
+        :param like_type: class being classified
                       It is returned by _generate_cosine_similarity_index.
         :param fs_selection: set specifying which features will be used.
                              each element is of type FeatureSet which
@@ -233,7 +240,7 @@ TODO
         # features expressing cosine distance to all instances in the index
         # are later added to each instance
         sample_for_index: List[str] = random.sample(list(
-            raw_sample[raw_sample['classification'] == like_type]['text']
+            raw_sample[raw_sample['classification'] == like_type.value]['text']
         ), 10)
         index: Similarity = self._generate_cosine_similarity_index(sample_for_index)
 
@@ -322,29 +329,29 @@ TODO
 
     # TODO get dump to be able to observe data!
 
-    def _get_raw_sample(self, like_type: str) -> pd.DataFrame:
+    def _get_raw_sample(self, like_type: LikeTypeEnum) -> pd.DataFrame:
         """Return all usable raw data of the given like type in PandaSeries.
 
         All lines with at least two likes are classified as positive,
         all with zero negative. Lines with only one like are disregarded.
 
-        :param like_type: the type of like being classified
+        :param like_type: class beying classified
         :return: panda series containing text, likes (number of likes),
          classification, other data
         """
-        pos = self.data[self.data[like_type] > 2].sample(frac=1).copy()
-        pos['classification'] = like_type
-        neg = self.data[self.data[like_type] == 0].sample(frac=1).copy()
-        neg['classification'] = 'not-' + like_type
+        pos = self.data[self.data[like_type.value] > 2].sample(frac=1).copy()
+        pos['classification'] = like_type.value
+        neg = self.data[self.data[like_type.value] == 0].sample(frac=1).copy()
+        neg['classification'] = 'not-' + like_type.value
         sample: pd.DataFrame = pd.concat([pos, neg])
 
         # chooses only a subset of features for memory reasons
-        sample = sample[['text', like_type, 'classification', 'stars',
+        sample = sample[['text', like_type.value, 'classification', 'stars',
                          'business_id', 'words', 'incorrect_words',
                          'sentiment']] \
             .reset_index(drop=True)
         
-        sample.rename(columns={like_type: 'likes'})
+        sample.rename(columns={like_type.value: 'likes'})
 
         return sample
 
@@ -402,7 +409,7 @@ TODO
         print(*line, file=self.stats)
 
     def generate_features(self, row: pd.Series, index: Similarity,
-                          fs_selection: Set[FeatureSet])\
+                          fs_selection: Set[FeatureSetEnum])\
             -> Dict[str, any]:
         """Create dictionary of features from the given row.
 
@@ -419,7 +426,7 @@ TODO
         features = {}
 
         # GENERAL NON-TEXTUAL FEATURES
-        if FeatureSet.STARS in fs_selection:
+        if FeatureSetEnum.STARS in fs_selection:
             # TODO convert to float/int + add no?
             features[f'stars({row.stars})'] = 'Yes'
             features['stars'] = row.stars
@@ -428,28 +435,28 @@ TODO
 
         # TEXTUAL FEATURES
         # N-GRAMS
-        if FeatureSet.UNIGRAMS in fs_selection:
+        if FeatureSetEnum.UNIGRAMS in fs_selection:
             for w in txt_words:
                 if w in self.words:
                     features[f'contains({w})'] = 'Yes'
 
-        if FeatureSet.BIGRAMS in fs_selection:
+        if FeatureSetEnum.BIGRAMS in fs_selection:
             for w, w2 in zip(txt_words, txt_words[1:]):
                 if w in self.words and w2 in self.words:
                     features[f'contains({w}&{w2})'] = 'Yes'
 
-        if FeatureSet.TRIGRAMS in fs_selection:
+        if FeatureSetEnum.TRIGRAMS in fs_selection:
             for w, w2, w3 in zip(txt_words, txt_words[1:], txt_words[2:]):
                 if w in self.words and w2 in self.words and w3 in self.words:
                     features[f'contains({w}&{w2}&{w3})'] = 'Yes'
 
-        if FeatureSet.FOURGRAMS in fs_selection:
+        if FeatureSetEnum.FOURGRAMS in fs_selection:
             for w, w2, w3, w4 in zip(txt_words, txt_words[1:], txt_words[2:], txt_words[3:]):
                 if w in self.words and w2 in self.words and w3 in self.words and w4 in self.words:
                     features[f'contains({w}&{w2}&{w3}&{w4})'] = 'Yes'
 
         # MISC
-        if FeatureSet.REVIEWLEN in fs_selection:
+        if FeatureSetEnum.REVIEWLEN in fs_selection:
             # features['@@@review_count']= 'A lot' if row['business']['review_count'] TODO add constant else 'A few'
             l = row['words']
             features['review_length'] = 'short' if l < 50 else 'middle' if l < 150 else 'long'
@@ -459,7 +466,7 @@ TODO
             features['review_length35'] = 'short' if l < 35 else 'middle'
             features['review_length75'] = 'short' if l < 75 else 'middle'
 
-        if FeatureSet.SPELLCHECK in fs_selection:
+        if FeatureSetEnum.SPELLCHECK in fs_selection:
             rate = row['incorrect_words'] / row['words']
 
             features['error_rate0.02'] = 'good' if rate < 0.02 else 'bad'
@@ -473,7 +480,7 @@ TODO
             features['error_total15'] = 'good' if rate < 15 else 'bad'
             features['error_total20'] = 'good' if rate < 20 else 'bad'
 
-        if FeatureSet.COSINESIM in fs_selection:
+        if FeatureSetEnum.COSINESIM in fs_selection:
             cos_sims = index[self.gensim_dictionary.doc2bow(self._tokenize(text))]
             for i, x in enumerate(cos_sims):
                 features[f'cos_sim0.4_{i}'] = True if x > 0.4 else False

@@ -13,7 +13,7 @@ import nltk
 import subprocess as sp
 from typing import DefaultDict
 
-from load_data import Data, SampleTypeEnum, FeatureSet
+from load_data import Data, SampleTypeEnum, FeatureSetEnum, LikeTypeEnum
 from statistics import DataGraph
 
 
@@ -35,13 +35,14 @@ def run_fasttext(prefix):
                         finished_process.stdout.strip().split('\n'))))
 
 
-# data = Data('data/data_sample.json', 'data/geneea_data_extracted_sample.json')
-data = Data('data/data.json', 'data/geneea_data_extracted.json')
+data = Data('data/data_sample.json', 'data/geneea_data_extracted_sample.json')
+# data = Data('data/data.json', 'data/geneea_data_extracted.json')
 
-train_size = data.generate_sample('useful', {FeatureSet.REVIEWLEN,
-                                             FeatureSet.STARS,
-                                             FeatureSet.SPELLCHECK,
-                                             FeatureSet.COSINESIM})
+train_size = data.generate_sample(LikeTypeEnum.USEFUL,
+                                  {FeatureSetEnum.REVIEWLEN,
+                                   FeatureSetEnum.STARS,
+                                   FeatureSetEnum.SPELLCHECK,
+                                   FeatureSetEnum.COSINESIM})
 
 stats = DataGraph('summary', 'number of instances', 'percentage')
 

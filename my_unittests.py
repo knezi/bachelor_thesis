@@ -70,7 +70,7 @@ class TestLoadData(unittest.TestCase):
         # warning data has been tampered for testing purposes
         data = load_data.Data('unittests/data_unit.json', 'unittests/geneea_unit.json')
         # returns size of training set
-        self.assertEqual(data.generate_sample('useful', set()),
+        self.assertEqual(data.generate_sample(load_data.LikeTypeEnum.USEFUL, set()),
                          14)
 
         # test returned samples
@@ -79,7 +79,7 @@ class TestLoadData(unittest.TestCase):
                          {})
 
         # only review len features
-        self.assertEqual(data.generate_sample('useful', {load_data.FeatureSet.REVIEWLEN}),
+        self.assertEqual(data.generate_sample(load_data.LikeTypeEnum.USEFUL, {load_data.FeatureSetEnum.REVIEWLEN}),
                          14)
         self.assertEqual(len(data.get_feature_dict(load_data.SampleTypeEnum.TRAIN)[0][0]),
                          6)
