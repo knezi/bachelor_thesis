@@ -207,6 +207,10 @@ TODO
 
         self._prepare_tokens()
 
+    def __del__(self) -> None:
+        """Close open FileDescriptor for stat file."""
+        self.stats.close()
+
     def _tokenize(self, text: str) -> List[str]:
         """Tokenize given string with nltk tokenizer.
 
