@@ -19,6 +19,7 @@ uzivatelska doc??
 - doc dat
 
 ## TODO programovani
+a slova dle entropie ne vyskyu
 v make... pridej execution unittesty
 format directive with function calling
 test for datamismatch exception
@@ -131,10 +132,4 @@ vs discriminative based on conditional probability (or none at all) P[X|Y], need
 	-> logistic regr vyssi presnost + Andrew Ng
 	
 - n-gram jsou proste Markovovy řetezy -> aplikace ve word2vec
-
-
-HANA
-Po potvrzení se nově objeví možnost zadání práce vytisknout (resp. vygenerovat zadání v PDF). Vedoucí práce (případně tajemník katedry) formulář se zadáním 3x vytiskne, nechá ho podepsat vedoucím své katedry (v případě pedagogických studijních oborů vedoucím KDF resp. KDM) a fakultní poštou odešle na studijní oddělení.
-Studijní oddělení nechá vyplněný formulář schválit a podepsat děkanem a tím je zadání práce ukončeno. Jeden výtisk formuláře dostanete zpět poštou (budete ho ještě potřebovat při dokončování práce); jeden exemplář zadání vrátí studijní oddělení na pracoviště vedoucího a jeden založí do Vašeho studijního spisu.
-
 

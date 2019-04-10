@@ -35,8 +35,8 @@ def run_fasttext(prefix):
                         finished_process.stdout.strip().split('\n'))))
 
 
-data = Data('data/data_sample.json', 'data/geneea_data_extracted_sample.json')
-# data = Data('data/data.json', 'data/geneea_data_extracted.json')
+# data = Data('data/data_sample.json', 'data/geneea_data_extracted_sample.json')
+data = Data('data/data.json', 'data/geneea_data_extracted.json')
 
 train_size = data.generate_sample(LikeTypeEnum.USEFUL,
                                   {FeatureSetEnum.REVIEWLEN,
@@ -112,83 +112,6 @@ data.plot(stats)
 # # print(nltk.classify.accuracy(classifier, test_set))
 # # print(nltk.classify.accuracy(classifier, train_set))
 
-# # # get feature matrix
-# X, Y = [x[0] for x in feature_sets], [x[1] for x in feature_sets]
-
-# from sklearn.datasets import fetch_20newsgroups
-# from sklearn.feature_selection import mutual_info_classif
-# from sklearn.feature_extraction.text import CountVectorizer
-
-# cv_gain = CountVectorizer(max_df=0.95, min_df=2,
-# max_features=10000)  # WTF
-# all_keys = [set(x.keys()) for x in X]
-# import functools
-
-# all_fs = functools.reduce(lambda a, b: a.union(b), all_keys)
-# all_fs = list(all_fs)
-# len(all_fs)
-
-# def get_int(val):
-# if isinstance(val, int):
-# return val
-# if isinstance(val, float):
-# return val
-# vals = {'Yes': 1, 'No': 0, 'middle': 1, 'long': 2, 'short': 0, 'good': 1, 'bad': 0}
-# return vals[val]
-
-# # X_matrix=[]
-# #
-# # for x in X:
-# #    row=[]
-# #    for key in all_fs:
-# #        if key in x:
-# #            row.append(get_int(x[key]))
-# #        else:
-# #            row.append(0)
-# #    X_matrix.append(row)
-
-
-# # In[51]:
-
-
-# import scipy
-
-# # In[52]:
-
-
-# row = []
-# x = X[0]
-
-# for key in all_fs:
-# if key in x:
-# row.append(get_int(x[key]))
-# else:
-# row.append(0)
-
-# X_matrix = scipy.sparse.lil_matrix([row])
-
-# i = 0
-# for x in X[1:]:
-# row = []
-# for key in all_fs:
-# if key in x:
-# row.append(get_int(x[key]))
-# else:
-# row.append(0)
-# X_matrix = scipy.sparse.vstack((X_matrix, scipy.sparse.lil_matrix([row])), format='lil')
-# i += 1
-# # if i==1000:
-# # break
-
-# # In[53]:
-
-
-# len(X)
-
-# # In[54]:
-
-
-# X_matrix
 
 # # ## logistic regression
 

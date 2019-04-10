@@ -5,10 +5,12 @@ SampleTypeEnum - distinguishing between TRAIN, TEST, CROSSVALIDATION
 Sample - container holding separately train,test,cv data
 Data - class for loading, generating inferred and storing (in Sample) data
 """
+from collections import defaultdict
+
 from enum import Enum, unique, auto
 from functools import reduce
 
-from typing import Iterator, List, Tuple, Dict, Set
+from typing import Iterator, List, Tuple, Dict, Set, Any
 
 import datetime as dt
 import json
@@ -140,6 +142,19 @@ class LikeTypeEnum(Enum):
     FUNNY = 'funny'
 
 
+class Incrementer:
+    """Calling this function returns a number incremented by one per call.
+
+    First returned number is 1, so the returned number is how many this
+    instance has been already called."""
+    def __init__(self):
+        self.state: int = 0
+
+    def __call__(self) -> int:
+        self.state += 1
+        return self.state
+
+
 class Data:
     """Load data from specified files to memory and make it accessible.
 
@@ -262,10 +277,87 @@ TODO
 
         return train_size
 
-    def get_feature_matrix(self, like_type):
-        pass
+    # @staticmethod
+    # def _convert_feature_to_int(self, feature_value) -> int:
+    #     """Return integer represeantation of various attribute values.
+    #
+    #     :param feature_value: integers are returned as are
+    #                           string converted with feature_convert_table"""
+    #     if isinstance(feature_value, int):
+    #         return feature_value
+    #     return Data.feature_convert_table[feature_value]
 
-        # todo extract 1st, 3rd
+    def get_feature_matrix(self, dataset: SampleTypeEnum) -> List[List[int]]:
+        """Return feature matrix, columns are attributes, rows instances.
+        Last column is classification class.
+
+        Attr values are converted with function _convert_feature_to_int.
+        Matrix is represented as List [instance = List [ attr_value = Int] ]"""
+        # each instance is tuple ({feature dict}, 'classification')
+        raw_data: List[tuple] = self._sample.get_data_basic(dataset)
+        
+        all_keys: List[Set[str]] = [set(x[0].keys()) for x in raw_data]
+        # get all feature names, missing values are filled with 0
+        # convert to tuple to preserve the order
+        all_fs: Tuple[str] = tuple(reduce(lambda a, b: a.union(b), all_keys))
+
+        def new_incremental_dict():
+            """Return a dictionary where accessed non-existing value is len(dict)+1
+            """
+            inc: Incrementer = Incrementer()
+            return defaultdict(inc)
+
+        # this creates a two-dimensional dictionary
+        # It is for converted feature values into integers.
+        # Every time a new value of a feature is accessed, it is given
+        # a unique int identifier
+        # each Feature is incremented separately
+        # 0 is left for missing values
+        # usage: feature_convert_table[f1][v1] gives an int representation
+        # of feature f1 with value v1, it is always the same
+        feature_convert_table: Dict[str, Dict] \
+            = defaultdict(new_incremental_dict)
+
+        matrix: List[List[int]] = []
+
+        # iterating through instances
+        for fs, cls in raw_data:
+            row: List[int] = []
+            # iterating through features in the specified order
+            for key in all_fs:
+                if key in fs:
+                    row.append(feature_convert_table[key][fs[key]])
+                else:
+                    row.append(0)
+
+            # adding classification to the last column
+            row.append(feature_convert_table['classification'][cls])
+
+            matrix.append(row)
+
+        print(all_fs)
+
+        # convert to sparse matrix, is this needed?? TODO
+        # import scipy
+        # row = []
+        # x = X[0]
+        # X_matrix = scipy.sparse.lil_matrix([row])
+        # i = 0
+        # for x in X[1:]:
+        # row = []
+        # for key in all_fs:
+        # if key in x:
+        # row.append(get_int(x[key]))
+        # else:
+        # row.append(0)
+        # X_matrix = scipy.sparse.vstack((X_matrix, scipy.sparse.lil_matrix([row])), format='lil')
+        # i += 1
+        # # if i==1000:
+        # # break
+        # X_matrix
+        return matrix
+
+        # todo extract 1st, 3rd ??
 
     def get_feature_dict(self, dataset: SampleTypeEnum) -> List[tuple]:
         """Return list of instances, attributes being represented by dict.

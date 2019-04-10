@@ -83,6 +83,9 @@ class TestLoadData(unittest.TestCase):
                          14)
         self.assertEqual(len(data.get_feature_dict(load_data.SampleTypeEnum.TRAIN)[0][0]),
                          6)
+        # it's 6 + 7th is classification
+        self.assertEqual(len(data.get_feature_matrix(load_data.SampleTypeEnum.TRAIN)[0]),
+                         7)
         self.assertTrue('review_length' in data.get_feature_dict(load_data.SampleTypeEnum.TRAIN)[0][0])
 
         # number of instances
