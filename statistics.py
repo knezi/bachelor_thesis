@@ -65,10 +65,14 @@ class DataGraph:
     def add_points(self, x: float, value_dict: Dict[str, float]) -> None:
         """Add points with the same x and various y for different types.
 
+        Y values None are replaced with dummy -1
+
         :param x: x value same for all points
         :param value_dict: dictionary 'the name of the datatype' -> 'y value'
         """
         for key, val in value_dict.items():
+            if val is None:
+                val = -1
             self._data[key].points.append(Point(x, val))
 
     def set_fmt(self, data_type: str, fmt: str) -> None:

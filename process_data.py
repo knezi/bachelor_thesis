@@ -84,9 +84,9 @@ for train_size in map(lambda x: 2**x, range(1, ceil(log2(train_size)))):
     # print('fn', len(refsets['useful'] - testsets['useful']))
 
     point['bayes test set precision'] = scores.precision(refsets['useful'],
-                                                      testsets['useful'])
-    point['bayes test set recall'] = scores.recall(refsets['useful'],
                                                          testsets['useful'])
+    point['bayes test set recall'] = scores.recall(refsets['useful'],
+                                                   testsets['useful'])
     point['bayes test set f_measure'] = scores.f_measure(refsets['useful'],
                                                          testsets['useful'])
 
