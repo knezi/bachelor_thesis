@@ -287,12 +287,17 @@ TODO
     #         return feature_value
     #     return Data.feature_convert_table[feature_value]
 
-    def get_feature_matrix(self, dataset: SampleTypeEnum) -> List[List[int]]:
+    def get_feature_matrix(self, dataset: SampleTypeEnum) \
+            -> Tuple[Tuple[str], List[List[int]]]:
         """Return feature matrix, columns are attributes, rows instances.
         Last column is classification class.
 
         Attr values are converted with function _convert_feature_to_int.
-        Matrix is represented as List [instance = List [ attr_value = Int] ]"""
+        Matrix is represented as List [instance = List [ attr_value = Int] ]
+        :param dataset: which dataset from sample is used
+        :return: (header, matrix)
+                 header being tuple of string
+                 matrix in the format specified above"""
         # each instance is tuple ({feature dict}, 'classification')
         raw_data: List[tuple] = self._sample.get_data_basic(dataset)
         
@@ -355,7 +360,7 @@ TODO
         # # if i==1000:
         # # break
         # X_matrix
-        return matrix
+        return all_fs, matrix
 
         # todo extract 1st, 3rd ??
 

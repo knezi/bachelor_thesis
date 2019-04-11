@@ -90,7 +90,6 @@ for train_size in map(lambda x: 2**x, range(1, ceil(log2(train_size)))):
     point['bayes test set f_measure'] = scores.f_measure(refsets['useful'],
                                                          testsets['useful'])
 
-
     data.dump_fasttext_format('data/data_fasttext')
     out = run_fasttext('data/data_fasttext')
 
