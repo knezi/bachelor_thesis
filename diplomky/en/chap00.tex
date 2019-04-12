@@ -1,0 +1,86 @@
+\chapter{This is only content draft}
+
+Text classification
+
+\section{goal of the thesis}:
+
+Compare Different approaches to classification.  Evaluate on likes. Start with useful.
+
+\todoB[try them all - possible discussion on difficulty on different types].
+
+All measurements will be with respect to the size of dataset, to see how the usefulness of approaches improves with more data.
+
+In the first part, try to find best features. Start with single words chosen by different
+criteria (TD-idf, entropy...), then try to add *-grams. Later, try more linguistics features.
+
+In the next part, if you have time, try other approaches to improve performance. You can try PCA reduction, NN, or other ML algorithms/techniques.
+
+\section{OVERVIEW of the goals}:
+
+\subsection{First try classification with ngrams only:}
+
+\bf Words \rm
+
+ \todoA{- TD*IDF - with given threshholds}
+
+ \todoB{try TD*IDF not with a given threshold, but rather find te optimal threshold for cuts}
+
+ \todoB{- choose words with highest information gain; as in McCallum Event models}
+
+ \todoA{Fasttext}
+
+\bf Groups of words: \rm
+
+\bf entities extracted from geneea \rm
+
+ \todoB{- filter them based on the geneea value of importance}
+
+ \todoA{- occurrences - pick only the most frequent}
+
+\bf simple Bigrams, moregrams\rm
+\todoA{- same approach as for unigrams}
+
+\subsection{Later try adding more features (mainly linguistics):}
+
+\todoB{Cosine sim}
+
+\todoA{Spell check}
+
+\todoA{Review length}
+
+\todoB{Stars as non-linguistic feature}
+
+\todoC{Go your imagination wild}
+
+\subsection{Try non-feature improvements:}
+
+\todoB{PCA/SVD reduction}
+
+\todoC{Decision trees}
+
+\todoC{NN}
+
+\todoC{Let you imagination go wild}
+
+
+\section{contents}
+
+* description of the problem
+
+* intro into text class
+
+* **** further specification of data and problem
+
+* **** plus what to expect from the thesis
+
+* machine learning explained - Naive Bayes, [Decision trees...]
+
+* ****\todoB[PCA...]
+
+* how evaluation works
+
+* my architecture
+
+* experiments conducted + results (what data, what features, expectations) 
+
+* summary of the results
