@@ -1,0 +1,267 @@
+\documentclass{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[czech]{babel}
+\usepackage{palatino}
+\usetheme{Warsaw}
+\title[Medvědův průvodce bakalářkou]{Medvědův průvodce bakalářkou}
+\author[Martin Mareš]{Martin Mareš\\\texttt{mj@ucw.cz}}
+\institute{Katedra Aplikované Matematiky\\MFF UK Praha}
+\date{2019}
+\begin{document}
+\setbeamertemplate{navigation symbols}{}
+\setbeamerfont{title page}{family=\rmfamily}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Odevzdávání práce}
+
+Formality určují Směrnice děkana 8/2010, 2/2015 a 7/2016
+a Opatření rektora 72/2017.
+
+~
+
+Papírová verze:
+
+\begin{itemize}
+\item 3 výtisky: vedoucí, oponent, knihovna
+\item Oponentský výtisk se po obhajobě vrací autorovi
+\item Požadována pevná vazba
+\item Odevzdává se paní Košnářové z~KTIML
+\end{itemize}
+
+~
+
+Elektronická verze:
+
+\begin{itemize}
+\item PDF/A (level 1a nebo 2u) + přílohy (omezení formátů!)
+\item Odevzdává se do SISu
+\item Přílohy nad 800\thinspace{}MB mají speciální postup
+\item Již se k~práci nepřikládají CD/DVD
+\item Též se odevzdává abstrakt (český/slovenský a anglický)
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Úprava práce}
+
+Povinná úprava práce:
+
+\begin{itemize}
+\item Směrnice děkana 1/2015 a 5/2016
+\item Formát papíru a vazba
+\item Formality: desky, titulní strana, informační strana, \dots
+\end{itemize}
+
+Doporučená úprava práce:
+
+\begin{itemize}
+\item {\tt www.mff} / Studenti / Bc. a Mgr. / Bakalářské \dots{} práce
+\item Upřesňuje formát: okraje, velikost písma
+\item Jednostranný / oboustranný tisk (u delších prací)
+\item Obsah, seznam zkratek, obrázků a tabulek, \dots
+\item {\it Chcete-li něco dělat jinak, poraďte se s vedoucím.}
+\end{itemize}
+
+K~dispozici je šablona pro \LaTeX:
+
+\begin{itemize}
+\item Pracovní verze na \url{https://mj.ucw.cz/vyuka/bc/}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Jazykové zákoutí}
+
+\begin{itemize}
+\item Jakým jazykem: CS / SK / EN; jiný se souhlasem děkana
+   \begin{itemize}
+   \item Bakalářka by neměla být vaším prvním anglickým textem
+   \end{itemize}
+\item Jazyková kultura:
+   \begin{itemize}
+   \item Spisovný a přesný jazyk (žádná barbarština)
+   \item Terminologie: vyhýbejte se czengličtině i hyperkorektnosti
+   \item Slovosled (HTTP protokol, kompaktní CD disk)
+   \item Pravopys a syntaxe
+   \end{itemize}
+\item Obvykle píše{\bf me} v~1. osobě množného čísla.
+\item Vyhýbejte se složitým větám, potažmo souvětím (a~spoustě
+   závorek (že?)), jakož i dlouhatánským odstavcům.
+\item Nepište detektivky. Hned řekněte, že vrah je zahradník.
+\item Zamyslete se nad pořadím. Dopředné odkazy radši ne.
+\item Pište jednotně.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Jazykové zákoutí 2}
+
+\begin{itemize}
+\item Rozmyslete si, pro koho píšete:
+   \begin{itemize}
+   \item Pro kolegu matfyzáka (oponent, váš spolužák, \dots)
+   \item Čtenář má obecné informatické vzdělání (není třeba definovat graf),
+         ale není expertem přes váš obor.
+   \end{itemize}
+\item Stručnost je sestra talentu.
+\item Zkuste si text přečíst nahlas.
+\item Testujte na lidech.
+\item Vnímejte, jak píši jiní. Ale bezhlavě nekopírujte.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Typografické zákoutí}
+
+\begin{itemize}
+\item Použijte program určený k~sazbě textu (\TeX, Scribus, \dots),
+   Word v~nouzi poslouží, ale výstup obvykle vypadá hrozně.
+\item Zvolte si typ písma pro {\bf definice,} {\tt identifikátory,} {\it zvýraznění\/} \dots{} a
+   dodržujte ho v~celém textu.
+\item S~typy písma a barvami to nepřehánějte.
+\item Různé typy pomlček: Fordův-Fulkersonův, 100--200 bitů, případně -- jako tady -- kolem vsuvky.
+\item Desetinné tečky {\it xor\/} čárky.
+\item \clqq~české uvozovky \crqq
+\item Nedělitelné mezery: u{\tt\char32}předložek, vrchol{\tt\char32}$v$, a{\tt\char32}proto.
+\item Obrázky nejlépe vektorové nebo bitmapy ve~vysokém rozlišení. JPEG jen na fotky.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Formát práce: PDF/A}
+
+\begin{itemize}
+\item PDF/A je profil formátu PDF určený pro archivaci
+\item Různé varianty: na UK povoleno PDF/A-1a nebo PDF/A-2u
+\item Nesmí obsahovat:
+	\begin{itemize}
+	\item odkazy na externí fonty (včetně systémových)
+	\item audio, video, skripty, obskurnosti
+	\item transparentní vrstvy (povoleny ve 2u)
+	\end{itemize}
+\item Musí obsahovat:
+	\begin{itemize}
+	\item deklarace barevných prostorů
+	\item meta-data ve formátu XMP
+	\end{itemize}
+\item Ve všelijakých officech alespoň formálně OK
+\item V~pdf\LaTeX{}u použijte balíček {\bf pdfx} (viz šablona)
+\item Pozor na vložené obrázky, na opravu nabízíme\\\url{https://kam.mff.cuni.cz/pdfix/}
+\item Kontrola pomocí VeraPDF (\url{http://verapdf.org/})
+\item Dále viz \url{http://mj.ucw.cz/vyuka/bc/pdfaq.html}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Formát práce: Přílohy}
+
+Povolené formáty příloh jsou tyto:
+
+\begin{itemize}
+\item Text: prostý text v~UTF-8, PDF/A
+\item Obrázky: JPEG, PNG, PDF/A
+\item Zvuk: WAV, MP3
+\item Video: MPEG2, MPEG4
+\item Tabulky: CSV, XML
+\end{itemize}
+
+Ostatní po schválení fakultním koordinátorem.
+
+~
+
+Více příloh zabalit do jednoho ZIPu.
+
+\end{frame}
+
+\begin{frame}{Citace: Proč}
+
+\begin{block}{Příklad}
+Největší problém citátů na internetu je ten,
+že nevíte, jestli jsou pravé.
+
+\rightline{\it Josef Čapek\qquad}
+\end{block}
+
+\end{frame}
+
+\begin{frame}{Citace: Co a jak}
+
+\begin{itemize}
+\item Za~cizí myšlenky se nestyďte, ale správně je citujte.
+   \begin{itemize}
+   \item Použité věty, algoritmy, důkazy
+   \item Celá pasáž cizího textu -- měla by být jasně ohraničena
+   \end{itemize}
+\item Odkazy: \uv{$\,$O~{\it temnu\/} píší jak Balcar se Štěpánkem [1], tak Jirásek [2].}
+\item {\bf Špatně:} \uv{$\,$Jak najdeme v~[3]}
+\item Číslování: abecedně nebo podle pořadí odkazování
+\item Alternativně: [BŠ2005]~~~(hodí se, máte-li odkazů hodně)
+\end{itemize}
+
+\begin{itemize}
+\item Vhodné zdroje (kriteria: kredit, spolehlivost, dostupnost):
+   \begin{itemize}
+   \item Původní publikace (typicky článek)
+   \item Monografie
+   \item Učebnice
+   \item Lze i osobní komunikace :)
+   \item Raději ne encyklopedie
+   \item Rozhodně ne náhodné webové stránky
+   \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Citace: Formát bibliografie}
+
+\begin{itemize}
+\item Je doporučeno držet se ISO 690.
+\item Norma je ovšem obtížně dostupná (kdo ji četl?).
+\item Praxe: různé výtahy, třeba na \url{http://citace.com/}
+\item Pozor na rozpory normy se zvyklostmi oboru.
+\end{itemize}
+
+\vfill
+
+{\sc Balcar}, Bohuslav a {\sc Štěpánek}, Petr. {\it Teorie množin.\/}
+2.~vydání. Praha: Academia, 2005. ISBN 80-200-0470-X.
+
+\medskip
+
+{\sc Marný}, Tomáš. Tužkožrout obecný: tajuplný obyvatel akademické půdy.
+In: {\it Časopis pro pěstování strašidel.} \\
+2010, č.~5, s.~60--69. ISSN 1234-5678.
+
+\medskip
+
+{\sc Munroe,} Randall. Random Number.
+In: {\it XKCD: A~webcomic of romance, sarcasm, math and language\/} [online].
+2010 \hfil\break
+[cit. 2011-10-04]. Dostupné~z: \url{http://xkcd.com/221/}
+\end{frame}
+
+\begin{frame}{Citace: Nástroje}
+
+\begin{itemize}
+\item Formátování bibliografie:
+   \begin{itemize}
+   \item Bib\TeX{} -- poněkud obskurní, ale účinný
+   \item Bib\LaTeX{} -- novější, ohebnější
+   \item Pybibliographer -- pokud nepoužíváte \TeX
+   \end{itemize}
+\bigskip
+\item Sběr bibliografie:
+   \begin{itemize}
+   \item citeulike.org
+   \item Google Scholar
+   \item Citeseer
+   \item \dots{} každopádně nutno upravovat ručně
+   \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\end{document}

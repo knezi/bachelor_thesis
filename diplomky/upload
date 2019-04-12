@@ -1,0 +1,3 @@
+#!/bin/bash
+set -e
+rs vzor-*.zip jw:www/static/vyuka/bc/sablona/

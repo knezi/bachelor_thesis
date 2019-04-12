@@ -1,0 +1,97 @@
+#!/bin/bash
+set -e
+export LC_ALL=cs_CZ
+
+for a in bp dp phd ; do
+	rm -rf vzor-$a{,.zip}
+	git archive --prefix=vzor-$a/ HEAD | tar xf -
+	(
+		cd vzor-$a
+		rm -rf mkdist upload uprava slides TODO
+		(
+			date +'%Y-%m-%d'
+			echo -n 'Git commit: '
+			git rev-parse HEAD
+		) >VERSION
+	)
+done
+
+# BP
+(
+	echo "Generating BP"
+	cd vzor-bp
+	sed -i '
+		/^%\+ *ONLYPHD/N
+		/^%\+ *PHDONLY/,/^%\+ *ONLYPHD/d
+	' */*.tex README
+)
+
+# DP
+(
+	echo "Generating DP"
+	cd vzor-dp
+	sed -i '
+		s/bakalářsk/diplomov/g
+		s/BAKALÁŘSK/DIPLOMOV/g
+		s/bachelor/master/g
+		s/BACHELOR/MASTER/g
+		s/bp_uprava/dp_uprava/g
+		/^%\+ *ONLYPHD/N
+		/^%\+ *PHDONLY/,/^%\+ *ONLYPHD/d
+	' */*.tex README
+	if grep -Eri 'bakal|bachel' . ; then
+		echo >&2 "Substitutions failed"
+		exit 1
+	fi
+)
+
+# PhD
+(
+	echo "Generating PhD"
+	cd vzor-phd
+	sed -i '
+		s/bakalářská/disertační/g
+		s/bakalářské/disertační/g
+		s/bakalářských/disertačních/g
+		s/bakalářskou/disertační/g
+		s/BAKALÁŘSKÁ/DISERTAČNÍ/g
+		s/bachelor/doctoral/g
+		s/BACHELOR/DOCTORAL/g
+		s/bp_uprava/phd_uprava/g
+		/ Následuje vevázaný /,+2d
+		/^%\+ *PHDONLY/d
+		/^%\+ *ONLYPHD/d
+	' */*.tex README
+	if grep -Eri 'bakal|bachel' . ; then
+		echo >&2 "Substitutions failed"
+		exit 1
+	fi
+)
+
+for a in bp dp phd ; do
+	(
+		cd vzor-$a/cs
+		make
+		mv prace.pdf vzor.pdf
+		make clean
+	)
+	(
+		cd vzor-$a/en
+		make
+		mv thesis.pdf example.pdf
+		make clean
+	)
+	(
+		cd vzor-$a
+		sed -i '
+			/^%\+ *NEMICEPS/N
+			/^%\+ *SPECIMEN/,/^%\+ *NEMICEPS/d
+			s/ *\\X{[^}]*}//
+			/^\\XXX{/d
+		' */*.tex
+	)
+done
+
+for a in bp dp phd ; do
+	zip -r vzor-$a.zip vzor-$a
+done
