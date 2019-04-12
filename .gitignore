@@ -7,3 +7,11 @@ graphs
 .*
 __pycache__
 *.json
+*.aux
+*.out
+*.log
+*.lof
+*.lot
+*.pdf
+*.xmpi
+*.toc
