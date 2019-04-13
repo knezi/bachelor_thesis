@@ -339,8 +339,6 @@ TODO
 
             matrix.append(row)
 
-        print(all_fs)
-
         # convert to sparse matrix, is this needed?? TODO
         # import scipy
         # row = []
@@ -359,7 +357,10 @@ TODO
         # # if i==1000:
         # # break
         # X_matrix
-        return all_fs, matrix
+
+        # header must also contain the classification column
+        header: Tuple[str] = (*all_fs, 'classification')
+        return header, matrix
 
     def get_feature_dict(self, dataset: SampleTypeEnum) -> List[tuple]:
         """Return list of instances, attributes being represented by dict.
