@@ -14,11 +14,38 @@
 - abstract nejdulezitejsi
 - cil - uvod cilem teto prace je....
 uzivatelska doc??
+- diskuse a experiment nejdulezitejsi
+	- pseudo nahoda - generator ze seedem
+	-> metoda
+	-> vysledky  vizualizace
+	-> diskuse
+- replikvatelnost
+- hypoteza -> interpretace
+- prvni osoboa mnozneho cisla
+- nepiste detektivky
+- komu pises - kolega matfyzak
+	-> obecne znalosti, ale ne z oboru
+- precist nahlas
+- testujte na lidech
+- vnimejte, jak pisi jini
+- ruzne pomlcky
+- desetinna tecka!
+- nedelitelne mezery??
+- latex -pdfx
+- vlozene obrazky jako pdf nejsou pdfa (pdfix), asi nebude potreba
+- sis to kontroluje pomoci verapdf.org (online servis http://www.validatepdfa.com)
+- mj/bc
+- povolene formaty priloh
+- citace [2] - jako kdyby to mohlo byt vynechano - jak pise Balcar [1], i Jirasek [2]
+	- lze i prednasku
 
 ## psani
-- doc dat
+- dokumentace dat
+- geneea - memory overflow, sorting and stuff - reducing memory demands
+- precist smernice o bakalarce
 
 ## TODO programovani
+geneea data -sort na sandboxu and dont crop
 a slova dle entropie ne vyskyu
 v make... pridej execution unittesty
 format directive with function calling
@@ -33,13 +60,14 @@ TODO konstanty misto hodnot??
 brat jenom slova delsi nez neco??
 kouoknout rucne na data
 feature rozdelit na dve
-* Information Gain - snizit dimenzionality
+* Information Gain - snizit dimenzionality - or mutual information?
 Najit soouslovi - mutual information; compound detection
 lingv ficury
 podle mnozstvi dat a jake ficury
 embedding - gensym
 zkusit s plaintextem
 try to plot error rate of useful vs not useful and blah blah blah...
+todo Makefile and clean
 
 Drobnost v reportu:
 - Dejte mezi jednotlive casti nejaky oddelovac (pomlcky nebo prazdnou radku)
@@ -60,7 +88,7 @@ reduce_user.py - necessary??
 reduce_bus.py - necessary??
 my_unittests.py - zbalit hezky a dodelat
 compare_langs.py - useless?
-crop_geneea.py - todo
+crop_geneea.py - done
 process_data.py
 
 

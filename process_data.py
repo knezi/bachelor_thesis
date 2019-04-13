@@ -35,8 +35,8 @@ def run_fasttext(prefix):
                         finished_process.stdout.strip().split('\n'))))
 
 
-# data = Data('data/data_sample.json', 'data/geneea_data_extracted_sample.json')
-data = Data('data/data.json', 'data/geneea_data_extracted.json')
+# data = Data('data/data_sample.json', 'data/geneea_sample.json')
+data = Data('data/data.json', 'data/geneea.json')
 
 train_size = data.generate_sample(LikeTypeEnum.USEFUL,
                                   {FeatureSetEnum.REVIEWLEN,
@@ -45,6 +45,8 @@ train_size = data.generate_sample(LikeTypeEnum.USEFUL,
                                    FeatureSetEnum.COSINESIM})
 
 stats = DataGraph('summary', 'number of instances', 'percentage')
+
+
 
 
 # TODO this cannot exceed, but doesn't use up all data

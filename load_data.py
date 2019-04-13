@@ -24,6 +24,7 @@ from nltk import TweetTokenizer
 from pandas import DataFrame, Series
 
 import exceptions
+from geneea.analyzer.model import f2converter
 from statistics import PointsPlot, Statistics, DataGraph
 
 
@@ -194,17 +195,15 @@ TODO
             lines: List[DataFrame] = []
             for d, g in zip(data, geneea):
                 dj = json.loads(d)
-                gj = json.loads(g)
+                gx3 = f2converter.fromDict(json.loads(g))
 
                 # check line-by-line correspondence
-                if dj['review_id'] != gj['id']:
+                if dj['review_id'] != gx3.docId:
                     raise exceptions.DataMismatchException(
-                        f'ids {dj["review_id"]} and {gj["id"]} do not match.')
+                        f'ids {dj["review_id"]} and {gx3.docId} do not match.')
 
-                for key in gj:
-                    if key == 'id':
-                        continue
-                    dj[key] = gj[key]
+                dj['sentiment'] = gx3.sentiment.label
+                dj['entities'] = [ent.stdForm for ent in gx3.entities]
 
                 lines.append(pd.DataFrame([dj]))
 
@@ -362,14 +361,26 @@ TODO
         # X_matrix
         return all_fs, matrix
 
-        # todo extract 1st, 3rd ??
-
     def get_feature_dict(self, dataset: SampleTypeEnum) -> List[tuple]:
         """Return list of instances, attributes being represented by dict.
 
         Each instance is a tuple of
         (feature dictionary {'feature' -> 'value'}, classification)"""
         return self._sample.get_data_basic(dataset)
+
+    def get_raw_data(self, dataset: SampleTypeEnum, *attributes: str) \
+        -> List[Tuple]:
+        """Return raw data from specified dataset in a list of tuples.
+
+        Each instance is a tuple of attributes specified in the argument in
+        that order.
+
+        :param dataset: returned dataset
+        :param attributes: tuple of attributes as named in JSON
+        :return: list of instances in the dataset
+        """
+        return list(map(lambda row: row[1:],
+                        self._sample.get_data(dataset, *attributes)))
 
     def dump_fasttext_format(self, path_prefix: str) -> None:
         """Create training & testing files for fasttext from the current sample.
@@ -427,8 +438,6 @@ TODO
             = map(lambda k: f'_{k}_{fs[k]}', fs)
         feature_string: str = ' '.join(features_str_repre)
         return feature_string
-
-    # TODO get dump to be able to observe data!
 
     def _get_raw_sample(self, like_type: LikeTypeEnum) -> pd.DataFrame:
         """Return all usable raw data of the given like type in PandaSeries.

@@ -86,6 +86,12 @@ class TestLoadData(unittest.TestCase):
         # it's 6 + 7th is classification
         self.assertEqual(len(data.get_feature_matrix(load_data.SampleTypeEnum.TRAIN)[0]),
                          7)
+        # it's 1 feature only - classification
+        self.assertEqual(len(data.get_raw_data(load_data.SampleTypeEnum.TRAIN, 'classification')[0]),
+                         1)
+        cls = data.get_raw_data(load_data.SampleTypeEnum.TRAIN, 'classification')[0]
+        # test that we really got classification, not some other attribute
+        self.assertTrue(cls == 'useful' or cls == 'not-useful')
         self.assertTrue('review_length' in data.get_feature_dict(load_data.SampleTypeEnum.TRAIN)[0][0])
 
         # number of instances
