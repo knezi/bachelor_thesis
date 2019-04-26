@@ -112,6 +112,13 @@ class TestLoadData(unittest.TestCase):
         self.assertEqual(len(data.get_feature_dict(load_data.SampleTypeEnum.TRAIN)),
                          10)
 
+        # test insufficient data exception
+        self.assertRaises(exceptions.InsufficientDataException,
+                          lambda: data.generate_sample(load_data.LikeTypeEnum.USEFUL, {load_data.FeatureSetEnum.UNIGRAMS}))
+        data.used_gram_words = set()
+        self.assertEqual(data.generate_sample(load_data.LikeTypeEnum.USEFUL, {load_data.FeatureSetEnum.UNIGRAMS}),
+                         14)
+
 
 class TestStatistics(unittest.TestCase):
     def test_data_graph(self):

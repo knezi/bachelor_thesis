@@ -45,6 +45,9 @@ uzivatelska doc??
 - precist smernice o bakalarce
 
 ## TODO programovani
+split tokenizer usage in and outside Data Class??
+move entities/index and stuff outside Data class?
+have setters getters for word/entities/... inclusion
 geneea data -sort na sandboxu and dont crop
 a slova dle entropie ne vyskyu
 v make... pridej execution unittesty

@@ -186,6 +186,9 @@ TODO
         # reading data into Pandas array - review per line
         self.path: str = path_to_data
 
+        # set variables controlling feature creation
+        self.used_gram_words = None
+
         # self.path contain text, desired classification and some other features
         # Instances correspond line-by-line with file path_to_geneea_data
         # which contain extra linguistics features extracted from text
@@ -468,6 +471,9 @@ TODO
 
     def _prepare_tokens(self) -> None:
         """Building lists of words for features and gensim dictionary."""
+        # TODO REBUILD
+        # MOVE dictionary building somewhere else? Outside this classs
+        # for not needing to precompute gram_words?
         texts_tokenized = (self._tokenize(row.text) for index, row
                            in self.data.iterrows())
         words_freqs = nltk.FreqDist(w.lower() for tokens in texts_tokenized
@@ -484,17 +490,17 @@ TODO
         # all_words.plot(30)
 
         # only the right frequencies
-        self.words = words_freqs.copy()
+        gram_words = words_freqs.copy()
         for w, count in words_freqs.items():
             if count > 200 or count == 20:
                 # TODO Measure
-                del self.words[w]
+                del gram_words[w]
 
-        self.words = frozenset(self.words.keys())
+        gram_words = frozenset(gram_words.keys())
 
         # building a dictionary for counting cosine similarity
         texts = [[w for w in self._tokenize(row.text)
-                  if w in self.words]
+                  if w in gram_words]
                  for _, row in self.data.iterrows()]
         self.gensim_dictionary = corpora.Dictionary(texts)
 
@@ -546,24 +552,35 @@ TODO
 
         # TEXTUAL FEATURES
         # N-GRAMS
+        # TODO squeze this into a funciton call for all at once
         if FeatureSetEnum.UNIGRAMS in fs_selection:
+            if self.used_gram_words is None:
+                raise exceptions.InsufficientDataException('Word set not defined.')
             for w in txt_words:
-                if w in self.words:
+                if w in self.used_gram_words:
                     features[f'contains({w})'] = 'Yes'
 
         if FeatureSetEnum.BIGRAMS in fs_selection:
+            if self.used_gram_words is None:
+                raise exceptions.InsufficientDataException('Word set not defined.')
             for w, w2 in zip(txt_words, txt_words[1:]):
-                if w in self.words and w2 in self.words:
+                if w in self.used_gram_words and w2 in self.used_gram_words:
                     features[f'contains({w}&{w2})'] = 'Yes'
 
         if FeatureSetEnum.TRIGRAMS in fs_selection:
+            if self.used_gram_words is None:
+                raise exceptions.InsufficientDataException('Word set not defined.')
             for w, w2, w3 in zip(txt_words, txt_words[1:], txt_words[2:]):
-                if w in self.words and w2 in self.words and w3 in self.words:
+                if w in self.used_gram_words and w2 in self.used_gram_words \
+                        and w3 in self.used_gram_words:
                     features[f'contains({w}&{w2}&{w3})'] = 'Yes'
 
         if FeatureSetEnum.FOURGRAMS in fs_selection:
+            if self.used_gram_words is None:
+                raise exceptions.InsufficientDataException('Word set not defined.')
             for w, w2, w3, w4 in zip(txt_words, txt_words[1:], txt_words[2:], txt_words[3:]):
-                if w in self.words and w2 in self.words and w3 in self.words and w4 in self.words:
+                if w in self.used_gram_words and w2 in self.used_gram_words\
+                        and w3 in self.used_gram_words and w4 in self.used_gram_words:
                     features[f'contains({w}&{w2}&{w3}&{w4})'] = 'Yes'
 
         # MISC
