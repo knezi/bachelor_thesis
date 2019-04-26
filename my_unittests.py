@@ -3,6 +3,8 @@
 
 import pandas as pd
 import unittest
+
+import exceptions
 import load_data
 from statistics import DataGraph, Point, PointsPlot
 
@@ -67,6 +69,11 @@ class TestLoadData(unittest.TestCase):
                          [({'stars': 5}, 'useful')])
 
     def test_load_data(self):
+        # warning data has been tampered for testing purposes
+        self.assertRaises(exceptions.DataMismatchException,
+                          lambda: load_data.Data('unittests/data_unit_mismatch.json',
+                                                 'unittests/geneea_unit_mismatch.json'))
+
         # warning data has been tampered for testing purposes
         data = load_data.Data('unittests/data_unit.json', 'unittests/geneea_unit.json')
         # returns size of training set

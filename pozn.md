@@ -49,7 +49,6 @@ geneea data -sort na sandboxu and dont crop
 a slova dle entropie ne vyskyu
 v make... pridej execution unittesty
 format directive with function calling
-test for datamismatch exception
 word2vec for classif?
 fasttext - parameters tuning
 geenea entity -> s/ngrams/entities/
