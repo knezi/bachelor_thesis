@@ -25,7 +25,7 @@ from pandas import DataFrame, Series
 
 import exceptions
 from geneea.analyzer.model import f2converter
-from statistics import PointsPlot, Statistics, DataGraph
+from statistics import DataLine, Statistics, DataGraph
 
 
 @unique
@@ -163,6 +163,11 @@ class Data:
     generate_sample - create a sample stored internally
 TODO
     """
+    # only words contained in this set will be used
+    # when generating n-gram features
+    used_gram_words: Set[str]
+    # only these entities will be used when generating entity features
+    used_entities: Set[str]
     _statistics: Statistics
     _statPath: str
     tokenizer: TweetTokenizer = nltk.tokenize.TweetTokenizer()
@@ -188,6 +193,7 @@ TODO
 
         # set variables controlling feature creation
         self.used_gram_words = None
+        self.used_entities = None
 
         # self.path contain text, desired classification and some other features
         # Instances correspond line-by-line with file path_to_geneea_data
@@ -291,6 +297,7 @@ TODO
 
     def get_feature_matrix(self, dataset: SampleTypeEnum) \
             -> Tuple[Tuple[str], List[List[int]]]:
+        ### TODO tohle nefunguje presunout mimo viz pozn.md
         """Return feature matrix, columns are attributes, rows instances.
         Last column is classification class.
 
@@ -376,6 +383,8 @@ TODO
         -> List[Tuple]:
         """Return raw data from specified dataset in a list of tuples.
 
+        This method is used only for the purpose of observing data.
+
         Each instance is a tuple of attributes specified in the argument in
         that order.
 
@@ -387,6 +396,7 @@ TODO
                         self._sample.get_data(dataset, *attributes)))
 
     def dump_fasttext_format(self, path_prefix: str) -> None:
+        ### tohle se take musi predelat TODO
         """Create training & testing files for fasttext from the current sample.
 
         Train set is written into file {path_prefix}_train instance per line

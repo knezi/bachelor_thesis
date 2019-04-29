@@ -45,10 +45,73 @@ uzivatelska doc??
 - precist smernice o bakalarce
 
 ## TODO programovani
+yaml config file:
+experiments:
+ -
+   name: 'a'
+   classificator: 'name'
+   features:
+     - f1_name
+	 - f2_name
+	 - ...
+   preprocessing:
+     - preprocesing_function/class? TODO
+	 - ...
+   evaluation:
+     - eval1 class name
+	 - eval2
+	 - ...
+graphs:
+ - TODO
+ -
+   filename: 'a'
+   datalines:
+     - 
+	   dataline: experiment_name.eval1
+	   [fmt: '']
+	 - 
+	   dataline: experiment_name2.eval2
+	   [fmt: '']
+	 - ...
+   label_x
+   label_y
+ 
+
+ - running define:
+	algorithm
+	algo parameters:
+		- features - simply set of features
+		- preprocess
+		- run
+ 	eval function
+ - what to plot?
+
+Classes:
+ - eval functions
+ 	- receives classify instance and by classify gets shit done
+	Class Evaluate:
+		def __init__():
+
+		@virtual
+		def evaluate(aa: classify, test_sets: feature_dict) -> {"nameEvalFunction": val}
+
+ - classificator:
+ 	 - gets parameters from yaml
+	 - train(feature_dict)
+	 - classify(instance)
+	 	 - return dict{'precision': 11', 'aa': 1}
+
+- move feature_matrix conversion and dump fasttext to outside classes
+	-> class Data will only have one get_data method
+	-> where the conversion functions will be??
+
+
+
+split generate sample and features to allow feature change
+add set gram_words, used_entities to check whether data feature_dict get has been changed
 split tokenizer usage in and outside Data Class??
 move entities/index and stuff outside Data class?
 have setters getters for word/entities/... inclusion
-geneea data -sort na sandboxu and dont crop
 a slova dle entropie ne vyskyu
 v make... pridej execution unittesty
 format directive with function calling

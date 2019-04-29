@@ -6,7 +6,7 @@ import unittest
 
 import exceptions
 import load_data
-from statistics import DataGraph, Point, PointsPlot
+from statistics import DataGraph, Point, DataLine
 
 
 class TestLoadData(unittest.TestCase):
@@ -140,9 +140,9 @@ class TestStatistics(unittest.TestCase):
         # test data with the set view
         self.assertEqual(dg.get_data(),
                          {
-                             'a': PointsPlot([Point(1, 2)], 'ro'),
-                             'c': PointsPlot([Point(2, 3)], ''),
-                             'd': PointsPlot([Point(2, 4)], '')
+                             'a': DataLine([Point(1, 2)], 'ro'),
+                             'c': DataLine([Point(2, 3)], ''),
+                             'd': DataLine([Point(2, 4)], '')
                          })
 
     def test_statistics(self):

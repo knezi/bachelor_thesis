@@ -2,8 +2,8 @@
 """Creates helpers classes for plotting graphs and dumping textual data.
 
 Point - record class of a single point
-PointsPlot - record class for a list of types Point
-PointsPlots - store named PointsPlot
+DataLine - record class for a list of types Point
+DataLines - store named instances of DataLine
 DataGraph - accept data as it goes from the programme flow, aggregate it and
             can be passed as a whole for plotting
 Statistics - prepares directories for graphs and plots DataGraphs
@@ -26,7 +26,7 @@ class Point(RecordClass):
     y: float
 
 
-class PointsPlot(RecordClass):
+class DataLine(RecordClass):
     """Store data points and format specs for a one type of data.
 
     points - list of RecordClasses Point
@@ -35,8 +35,8 @@ class PointsPlot(RecordClass):
     fmt: str = ''
 
 
-PointsPlots = Dict[str, PointsPlot]
-"""Typename for a dictionary holding several PointsPlots accesible by names.
+DataLines = Dict[str, DataLine]
+"""Typename for a dictionary holding several DataLine_s accesible by names.
 Used for plotting graphs with more datalines.""" # TODO how to do this?
 
 
@@ -47,7 +47,7 @@ class DataGraph:
         and can be passed to Statistics as a whole for plotting"""
     _keys: Set
     _name: str
-    _data: PointsPlots
+    _data: DataLines
 
     def __init__(self, name: str = '', xlabel: str = '', ylabel: str = '') -> None:
         """Init empty data object.
@@ -56,7 +56,7 @@ class DataGraph:
         :param xlabel: label of x axis
         :param ylabel: label of y axis
         """
-        self._data = defaultdict(lambda: PointsPlot([], ''))
+        self._data = defaultdict(lambda: DataLine([], ''))
         self.name = name
         self.xlabel = xlabel
         self.ylabel = ylabel
@@ -84,7 +84,7 @@ class DataGraph:
         self._data[data_type].fmt = fmt
 
     def clear_data(self):
-        """Empty PointsPlots container."""
+        """Empty DataLines container."""
         self._data.clear()
 
     def set_view(self, keys: Set) -> None:
@@ -93,8 +93,8 @@ class DataGraph:
         :param keys: names of data types"""
         self._keys = keys
 
-    def get_data(self) -> PointsPlots:
-        """Returns PointsPlots of data from restricted view.
+    def get_data(self) -> DataLines:
+        """Returns DataLines of data from restricted view.
 
         The view is set by self.restrict_view"""
 
@@ -144,7 +144,7 @@ class Statistics:
         # setting Axes
         ax.set_xlabel(data.xlabel)
         ax.set_ylabel(data.ylabel)
-        pps: PointsPlots = data.get_data()
+        pps: DataLines = data.get_data()
         for label, pp in pps.items():
             # convert data from [(x1,y1),...] to [[x1,x2...], [y1, y2...]]
             ax.plot(*zip(*pp.points), pp.fmt, label=label)
