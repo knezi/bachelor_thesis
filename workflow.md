@@ -5,3 +5,4 @@ ctrl shift a - find commands
 gt / gT switch files
 ^F4 close file
 ^+Shift+N open file
+git ranger

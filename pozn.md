@@ -73,7 +73,7 @@ graphs:
 	   dataline: experiment_name2.eval2
 	   [fmt: '']
 	 - ...
-   label_x
+   label_x TODO??
    label_y
  
 
@@ -96,10 +96,11 @@ Classes:
 		def evaluate(aa: classify, test_sets: feature_dict) -> {"nameEvalFunction": val}
 
  - classificator:
- 	 - gets parameters from yaml
+ 	 - gets parameters from yaml (only preprocessing though???? is this necessary? - change/think)
 	 - train(feature_dict)
 	 - classify(instance)
-	 	 - return dict{'precision': 11', 'aa': 1}
+	 	 - return classified class
+	 - name (readonly)
 
 - move feature_matrix conversion and dump fasttext to outside classes
 	-> class Data will only have one get_data method
