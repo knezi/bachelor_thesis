@@ -106,7 +106,10 @@ Classes:
 	-> class Data will only have one get_data method
 	-> where the conversion functions will be??
 
+# TODODDO TADY jsme skoncil
+pridej klasifikovanou tridu do configu yamlu??
 
+ztratili jsme naivebayes train set accuracy - pridej to do konfigu, chcem to ale vubec?
 
 split generate sample and features to allow feature change
 add set gram_words, used_entities to check whether data feature_dict get has been changed

@@ -2,6 +2,7 @@
 # TODO COMMENT AUTHOR
 import sys
 from collections import defaultdict
+from functools import reduce
 from math import log2, ceil
 
 from nltk.metrics import scores
@@ -11,8 +12,10 @@ from subprocess import PIPE
 
 import nltk
 import subprocess as sp
-from typing import DefaultDict
+from typing import DefaultDict, Dict, List, Tuple
 
+from classifiers.baseclassifier import Classifier
+from classifiers.naivebayes import NaiveBayes
 from load_data import Data, SampleTypeEnum, FeatureSetEnum, LikeTypeEnum
 from statistics import DataGraph
 
@@ -35,8 +38,57 @@ def run_fasttext(prefix):
                         finished_process.stdout.strip().split('\n'))))
 
 
-# data = Data('data/data_sample.json', 'data/geneea_sample.json')
-data = Data('data/data.json', 'data/geneea.json')
+def compute_evaluation_scores(classifier: Classifier,
+                              data_set: List[Tuple[Dict, str]],
+                              evaluated_class: str) \
+        -> Dict[str, float]:
+    """Evaluate classifier on dataset with common metrics.
+
+    Namely calculates:
+    precision, recall, accuracy, f-measure.
+
+    And adds:
+    tp, fp, np, tn (true/false positives/negatives)."""
+    clas_scores: dict = {}
+    correctly_classified: int = 0
+
+    # metrics
+    refsets: DefaultDict[str, set] = defaultdict(set)
+    testsets: DefaultDict[str, set] = defaultdict(set)
+    for i, (fs, label) in enumerate(data_set):
+        refsets[label].add(i)
+        classified = classifier.classify(fs)
+        testsets[classified].add(i)
+
+        if label == classified:
+            correctly_classified += 1
+
+    # we don't know how many and what are the values of negative classes
+    # therefore we compute union of all and subtract positive elements
+    negative_test: set = reduce(lambda a,b: a.union(b), testsets.values())\
+                         - testsets[evaluated_class]
+    negative_ref: set = reduce(lambda a,b: a.union(b), refsets.values())\
+                        - refsets[evaluated_class]
+    positive_test: set = testsets[evaluated_class]
+    positive_ref: set = refsets[evaluated_class]
+
+    clas_scores['tp'] = len(positive_test & positive_ref) / len(data_set)
+    clas_scores['fp'] = len(positive_test & negative_ref) / len(data_set)
+    clas_scores['tn'] = len(negative_test & negative_ref) / len(data_set)
+    clas_scores['fn'] = len(negative_test & positive_ref) / len(data_set)
+
+    clas_scores['precision'] = scores.precision(positive_ref,
+                                                positive_test)
+    clas_scores['recall'] = scores.recall(positive_ref,
+                                          positive_test)
+    clas_scores['f_measure'] = scores.f_measure(positive_ref,
+                                                positive_test)
+    # accuracy is true positives and true negatives over all instances
+    clas_scores['accuracy'] =  correctly_classified / len(data_set)
+
+    return clas_scores
+
+
 
 train_size = data.generate_sample(LikeTypeEnum.USEFUL,
                                   {FeatureSetEnum.REVIEWLEN,
@@ -46,8 +98,29 @@ train_size = data.generate_sample(LikeTypeEnum.USEFUL,
 
 stats = DataGraph('summary', 'number of instances', 'percentage')
 
-
-
+# texts_tokenized = (self._tokenize(row.text) for index, row
+#                    in self.data.iterrows())
+# words_freqs = nltk.FreqDist(w.lower() for tokens in texts_tokenized
+#                             for w in tokens)
+#
+# # TODO statistics
+# # for x in all_words:
+# # print(all_words[x])
+#
+# # self.print('total number of words:', sum(all_words.values()))
+# # self.print('unique words:', len(all_words))
+# # self.print('words present only once:',
+# # sum(c for c in all_words.values() if c == 1))
+# # all_words.plot(30)
+#
+# # only the right frequencies
+# self.gram_words = words_freqs.copy()
+# for w, count in words_freqs.items():
+#     if count > 200 or count == 20:
+#         # TODO Measure
+#         del self.gram_words[w]
+#
+# self.gram_words = frozenset(self.gram_words.keys())
 
 # TODO this cannot exceed, but doesn't use up all data
 for train_size in map(lambda x: 2**x, range(1, ceil(log2(train_size)))):
@@ -58,52 +131,29 @@ for train_size in map(lambda x: 2**x, range(1, ceil(log2(train_size)))):
     classifier = nltk.NaiveBayesClassifier.train(train_set)
 
     print(f'SIZE {train_size}')
-    print(nltk.classify.accuracy(classifier, test_set))
-    print(nltk.classify.accuracy(classifier, train_set))
+    point: dict = dict()
 
-    point = dict()
-    point['bayes train set accuracy'] = nltk.classify.accuracy(classifier, train_set)
-    # TODO is this accuracy only from the positive sample or both?
-    point['bayes test set accuracy'] = nltk.classify.accuracy(classifier, test_set)
+    cls = NaiveBayes({})
+    cls.train(train_set)
 
-    # metrics
-    refsets: DefaultDict[str, set] = defaultdict(set)
-    testsets: DefaultDict[str, set] = defaultdict(set)
-    for i, (fs, label) in enumerate(test_set):
-        refsets[label].add(i)
-        classified = classifier.classify(fs)
-        testsets[classified].add(i)
+    eval: dict = compute_evaluation_scores(cls, test_set, 'useful')
 
-    print("data line")
-    print("size of useful vs not-useful:", len(refsets['useful']), len(refsets['not-useful']))
-    print("predicted sizes:", len(testsets['useful']), len(testsets['not-useful']))
-    print('tp', len(testsets['useful'] & refsets['useful']))
-    print('fp', len(testsets['useful'] & refsets['not-useful']))
-    print('tn', len(testsets['not-useful'] & refsets['not-useful']))
-    print('fn', len(testsets['not-useful'] & refsets['useful']))
-
-    # print('fp', len(testsets['useful'] - refsets['useful']))
-    # print('fn', len(refsets['useful'] - testsets['useful']))
-
-    point['bayes test set precision'] = scores.precision(refsets['useful'],
-                                                         testsets['useful'])
-    point['bayes test set recall'] = scores.recall(refsets['useful'],
-                                                   testsets['useful'])
-    point['bayes test set f_measure'] = scores.f_measure(refsets['useful'],
-                                                         testsets['useful'])
-
-    data.dump_fasttext_format('data/data_fasttext')
-    out = run_fasttext('data/data_fasttext')
-
-    point['fasttext accuracy'] = out['accuracy']
-    point['fasttext precision'] = out['precision']
-    point['fasttext recall'] = out['recall']
-    f_mes = 2 * out['precision'] * out['recall'] / (out['precision'] + out['recall'])
-    point['fasttext f_measure'] = f_mes
-
-    stats.add_points(train_size, point)
+    stats.add_points(train_size, eval)
 
 data.plot(stats)
+
+
+# FASTTEXT
+# data.dump_fasttext_format('data/data_fasttext')
+# out = run_fasttext('data/data_fasttext')
+#
+# point['fasttext accuracy'] = out['accuracy']
+# point['fasttext precision'] = out['precision']
+# point['fasttext recall'] = out['recall']
+# f_mes = 2 * out['precision'] * out['recall'] / (out['precision'] + out['recall'])
+# point['fasttext f_measure'] = f_mes
+
+
 
 # pridani jednotlivych slov tady snizi presnost jen na 65, je to ocekavane?
 

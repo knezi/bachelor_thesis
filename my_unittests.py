@@ -1,11 +1,13 @@
 #!/bin/env python3
-
+import math
 
 import pandas as pd
 import unittest
 
 import exceptions
 import load_data
+from classifiers.naivebayes import NaiveBayes
+from process_data import compute_evaluation_scores
 from statistics import DataGraph, Point, DataLine
 
 
@@ -148,6 +150,54 @@ class TestStatistics(unittest.TestCase):
     def test_statistics(self):
         # for testing statistics, run statistics as main, it'll produce graphs
         pass
+
+
+class TestClassifier(unittest.TestCase):
+    def test_naive_bayes(self):
+        nb = NaiveBayes({})
+        nb.train([({'a': 1, 'b': 1}, 'a'),
+                  ({'a': 1, 'b': 2}, 'b')])
+
+        self.assertEqual(nb.classify({'a': 1, 'b': 1}), 'a')
+        self.assertEqual(nb.classify({'a': 1, 'b': 2}), 'b')
+
+
+class TestProcessData(unittest.TestCase):
+    def test_evaluation(self):
+        nb = NaiveBayes({})
+        nb.train([({'a': 1, 'b': 1}, 'a'),
+                  ({'a': 1, 'b': 2}, 'b'),
+                  ({'a': 1, 'b': 3}, 'b')])
+
+        test_set = [({'a': 1, 'b': 1}, 'a'), # TP
+                   ({'a': 1, 'b': 2}, 'b'), # TN
+                   ({'a': 1, 'b': 2}, 'b'), # TN
+                   ({'a': 1, 'b': 3}, 'a'), # FN
+                   ({'a': 1, 'b': 3}, 'a'), # FN
+                   ({'a': 1, 'b': 3}, 'a'), # FN
+                   ({'a': 1, 'b': 1}, 'b'), # FP
+                   ({'a': 1, 'b': 1}, 'b'), # FP
+                   ({'a': 1, 'b': 1}, 'b'), # FP
+                   ({'a': 1, 'b': 1}, 'b')] # FP
+        # TP 1
+        # TN 2
+        # FP 4
+        # FN 3
+
+        metrics: dict = compute_evaluation_scores(nb, test_set, 'a')
+        expected_out: dict = {'accuracy': 3/10,
+                              'precision': 1/(1+4),
+                              'recall': 1/(1+3),
+                              'f_measure': 2 * 1/5 * 1/4 / (1/5 + 1/4),
+                              'tp': 1 / 10,
+                              'tn': 2 / 10,
+                              'fp': 4 / 10,
+                              'fn': 3 / 10}
+
+        for k in expected_out.keys():
+            self.assertEqual(round(metrics[k], 3),
+                             round(expected_out[k], 3),
+                             msg=f'metrics {k} failed.')
 
 
 if __name__ == "__main__":
