@@ -4,7 +4,7 @@ from typing import Dict, Tuple, List
 import abc
 
 
-class Classifier(metaclass=abc.ABCMeta):
+class ClassifierBase(metaclass=abc.ABCMeta):
 
     def __init__(self, parameters: Dict) -> None:
         """Set parameters of the classifier as defined in YAML file."""

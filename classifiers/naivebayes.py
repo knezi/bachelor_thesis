@@ -5,10 +5,10 @@ import abc
 import nltk
 from typing import List, Tuple, Dict
 
-from classifiers.baseclassifier import Classifier
+from classifiers.classifierbase import ClassifierBase
 
 
-class NaiveBayes(Classifier):
+class Classifier(ClassifierBase):
 
     def __init__(self, parameters: Dict) -> None:
         super().__init__(parameters)

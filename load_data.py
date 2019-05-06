@@ -47,19 +47,18 @@ class Sample:
 
     def __init__(self) -> None:
         """Construct empty objects."""
-        self._samples = dict()
+        self._samples: Dict[SampleTypeEnum, List[Series]] = dict()
         for x in SampleTypeEnum:
             self._samples[x] = []
         self._train_size = None
 
     def set_data(self,
                  dataset: SampleTypeEnum,
-                 sample: List[Tuple[dict, Series]]) \
+                 sample: List[Series]) \
             -> None:
         """Set data to the given set
 
-        Data must be list of instances. Each element being a tuple of
-        feature dictionary and attribute dictionary
+        Data must be list of instances. Each element being panda Series
 
         :param dataset: given type - SampleTypeEnum
         :param sample:  the actual sample being set
@@ -73,34 +72,18 @@ class Sample:
             return row
         # self._samples[dataset] = [add_f(x) for x in self._samples[dataset]]
 
-    def get_data_basic(self, dataset: SampleTypeEnum) \
-            -> List[Tuple]:
-        """Only calls self.get_data(dataset, 'classification')
-
-        :param dataset: wanted type - SampleTypeEnum
-        :return: wanted dataset
-        """
-        return self.get_data(dataset, 'classification')
-
-    def get_data(self, dataset: SampleTypeEnum, *args: str) \
-            -> List[Tuple]:
-        """Return list of instances represented by tuples.
-
-        Each tuple contains feature dictionary of an instance at the index 0.
-        The remaining indices are attribute values defined by
-        the remaining arguments passed to this function.
-
-        Feature dictionary is mapping feature(str) -> value(scalar type)
+    def get_data(self, dataset: SampleTypeEnum) \
+            -> List[Series]:
+        """Return list of instances represented by panda Series.
 
         :param dataset: wanted type
-        :param args: columns being added to the end of each tuple
         :return: wanted dataset
         """
-        res = [(row[0], *Sample._filter_row(row[1], args)) for row
-               in self._samples[dataset]]
-        if dataset == SampleTypeEnum.TRAIN and self._train_size is not None:
-            res = res[0:self._train_size]
-        return res
+        size = self._train_size if (
+                dataset == SampleTypeEnum.TRAIN and
+                self._train_size is not None) \
+            else len(self._samples[dataset])
+        return self._samples[dataset][:size]
 
     def limit_train_size(self, size: int) -> None:
         """Limit the accessible part of train data to [:size]
@@ -111,28 +94,18 @@ class Sample:
             raise IndexError('Train set is not big enough.')
         self._train_size = size
 
-    @staticmethod
-    def _filter_row(row: pd.Series, args: Tuple[str]) -> tuple:
-        """Convert a given row to a tuple containing only the specified columns.
-
-        :param row: panda Series of data
-        :param args: tuple of wanted columns
-        :return: resulting tuple
-        """
-        return tuple(row[arg] for arg in args)
-
 
 @unique
 class FeatureSetEnum(Enum):
     """Enum used for defining sets of features"""
-    UNIGRAMS     = auto()
-    BIGRAMS      = auto()
-    TRIGRAMS     = auto()
-    FOURGRAMS    = auto()
-    STARS        = auto()
-    REVIEWLEN    = auto()
-    SPELLCHECK   = auto()
-    COSINESIM    = auto()
+    UNIGRAMS = auto()
+    BIGRAMS = auto()
+    TRIGRAMS = auto()
+    FOURGRAMS = auto()
+    STARS = auto()
+    REVIEWLEN = auto()
+    SPELLCHECK = auto()
+    COSINESIM = auto()
 
 
 @unique
@@ -148,6 +121,7 @@ class Incrementer:
 
     First returned number is 1, so the returned number is how many this
     instance has been already called."""
+
     def __init__(self):
         self.state: int = 0
 
@@ -179,6 +153,7 @@ TODO
         :param path_to_geneea_data: extracted data as output of?? TODO
         """
         self._sample: Sample = Sample()
+        self.index: Similarity = None
 
         # prepare statistics
         timestamp: str = dt.datetime.now().isoformat()
@@ -242,20 +217,15 @@ TODO
         """
         return self.tokenizer.tokenize(text.lower())
 
-    def generate_sample(self, like_type: LikeTypeEnum,
-                        fs_selection: Set[FeatureSetEnum]) -> int:
+    def generate_sample(self, like_type: LikeTypeEnum) -> int:
         """Generate sample from all data available of the particular like type.
 
         Create train and test set and set them as the current sample used
-        by methods returning instances of data (get_feature_matrix,
-        get_feature_dict, dump_fasttext_format). It doesn't create
+        by methods returning instances of data. It doesn't create
         crossvalidation set as of now.
 
         :param like_type: class being classified
                       It is returned by _generate_cosine_similarity_index.
-        :param fs_selection: set specifying which features will be used.
-                             each element is of type FeatureSet which
-                             corresponds to a subset of features.
         :return: int the size of train set
         """
         self._sample: Sample = Sample()
@@ -269,13 +239,10 @@ TODO
         sample_for_index: List[str] = random.sample(list(
             raw_sample[raw_sample['classification'] == like_type.value]['text']
         ), 10)
-        index: Similarity = self._generate_cosine_similarity_index(sample_for_index)
+        self.index = self._generate_cosine_similarity_index(sample_for_index)
 
-        # computing features for instances and creating datastructures
-        # for samples to be given further
-        sample: List[Tuple[Dict, Series]]\
-            = [(self.generate_features(row, index, fs_selection), row)
-               for _, row in raw_sample.iterrows()]
+        # creating datastructures for samples to be given further
+        sample: List[Series] = [row for _, row in raw_sample.iterrows()]
 
         # splitting data into sample sets train and test (7:3 ratio)
         random.shuffle(sample)
@@ -295,155 +262,186 @@ TODO
     #         return feature_value
     #     return Data.feature_convert_table[feature_value]
 
-    def get_feature_matrix(self, dataset: SampleTypeEnum) \
-            -> Tuple[Tuple[str], List[List[int]]]:
-        ### TODO tohle nefunguje presunout mimo viz pozn.md
-        """Return feature matrix, columns are attributes, rows instances.
-        Last column is classification class.
+    # def get_feature_matrix(self, dataset: SampleTypeEnum) \
+    #         -> Tuple[Tuple[str], List[List[int]]]:
+    #     ### TODO tohle nefunguje presunout mimo viz pozn.md
+    #     """Return feature matrix, columns are attributes, rows instances.
+    #     Last column is classification class.
+    #
+    #     Attr values are converted with function _convert_feature_to_int.
+    #     Matrix is represented as List [instance = List [ attr_value = Int] ]
+    #     :param dataset: which dataset from sample is used
+    #     :return: (header, matrix)
+    #              header being tuple of string
+    #              matrix in the format specified above"""
+    #     # each instance is tuple ({feature dict}, 'classification')
+    #     raw_data: List[tuple] = self._sample.get_data_basic(dataset)
+    #
+    #     all_keys: List[Set[str]] = [set(x[0].keys()) for x in raw_data]
+    #     # get all feature names, missing values are filled with 0
+    #     # convert to tuple to preserve the order
+    #     all_fs: Tuple[str] = tuple(reduce(lambda a, b: a.union(b), all_keys))
+    #
+    #     def new_incremental_dict():
+    #         """Return a dictionary where accessed non-existing value is len(dict)+1
+    #         """
+    #         inc: Incrementer = Incrementer()
+    #         return defaultdict(inc)
+    #
+    #     # this creates a two-dimensional dictionary
+    #     # It is for converted feature values into integers.
+    #     # Every time a new value of a feature is accessed, it is given
+    #     # a unique int identifier
+    #     # each Feature is incremented separately
+    #     # 0 is left for missing values
+    #     # usage: feature_convert_table[f1][v1] gives an int representation
+    #     # of feature f1 with value v1, it is always the same
+    #     feature_convert_table: Dict[str, Dict] \
+    #         = defaultdict(new_incremental_dict)
+    #
+    #     matrix: List[List[int]] = []
+    #
+    #     # iterating through instances
+    #     for fs, cls in raw_data:
+    #         row: List[int] = []
+    #         # iterating through features in the specified order
+    #         for key in all_fs:
+    #             if key in fs:
+    #                 row.append(feature_convert_table[key][fs[key]])
+    #             else:
+    #                 row.append(0)
+    #
+    #         # adding classification to the last column
+    #         row.append(feature_convert_table['classification'][cls])
+    #
+    #         matrix.append(row)
+    #
+    #     # convert to sparse matrix, is this needed?? TODO
+    #     # import scipy
+    #     # row = []
+    #     # x = X[0]
+    #     # X_matrix = scipy.sparse.lil_matrix([row])
+    #     # i = 0
+    #     # for x in X[1:]:
+    #     # row = []
+    #     # for key in all_fs:
+    #     # if key in x:
+    #     # row.append(get_int(x[key]))
+    #     # else:
+    #     # row.append(0)
+    #     # X_matrix = scipy.sparse.vstack((X_matrix, scipy.sparse.lil_matrix([row])), format='lil')
+    #     # i += 1
+    #     # # if i==1000:
+    #     # # break
+    #     # X_matrix
+    #
+    #     # header must also contain the classification column
+    #     header: Tuple[str] = (*all_fs, 'classification')
+    #     return header, matrix
 
-        Attr values are converted with function _convert_feature_to_int.
-        Matrix is represented as List [instance = List [ attr_value = Int] ]
-        :param dataset: which dataset from sample is used
-        :return: (header, matrix)
-                 header being tuple of string
-                 matrix in the format specified above"""
-        # each instance is tuple ({feature dict}, 'classification')
-        raw_data: List[tuple] = self._sample.get_data_basic(dataset)
-        
-        all_keys: List[Set[str]] = [set(x[0].keys()) for x in raw_data]
-        # get all feature names, missing values are filled with 0
-        # convert to tuple to preserve the order
-        all_fs: Tuple[str] = tuple(reduce(lambda a, b: a.union(b), all_keys))
-
-        def new_incremental_dict():
-            """Return a dictionary where accessed non-existing value is len(dict)+1
-            """
-            inc: Incrementer = Incrementer()
-            return defaultdict(inc)
-
-        # this creates a two-dimensional dictionary
-        # It is for converted feature values into integers.
-        # Every time a new value of a feature is accessed, it is given
-        # a unique int identifier
-        # each Feature is incremented separately
-        # 0 is left for missing values
-        # usage: feature_convert_table[f1][v1] gives an int representation
-        # of feature f1 with value v1, it is always the same
-        feature_convert_table: Dict[str, Dict] \
-            = defaultdict(new_incremental_dict)
-
-        matrix: List[List[int]] = []
-
-        # iterating through instances
-        for fs, cls in raw_data:
-            row: List[int] = []
-            # iterating through features in the specified order
-            for key in all_fs:
-                if key in fs:
-                    row.append(feature_convert_table[key][fs[key]])
-                else:
-                    row.append(0)
-
-            # adding classification to the last column
-            row.append(feature_convert_table['classification'][cls])
-
-            matrix.append(row)
-
-        # convert to sparse matrix, is this needed?? TODO
-        # import scipy
-        # row = []
-        # x = X[0]
-        # X_matrix = scipy.sparse.lil_matrix([row])
-        # i = 0
-        # for x in X[1:]:
-        # row = []
-        # for key in all_fs:
-        # if key in x:
-        # row.append(get_int(x[key]))
-        # else:
-        # row.append(0)
-        # X_matrix = scipy.sparse.vstack((X_matrix, scipy.sparse.lil_matrix([row])), format='lil')
-        # i += 1
-        # # if i==1000:
-        # # break
-        # X_matrix
-
-        # header must also contain the classification column
-        header: Tuple[str] = (*all_fs, 'classification')
-        return header, matrix
-
-    def get_feature_dict(self, dataset: SampleTypeEnum) -> List[tuple]:
+    def get_feature_dict(self, dataset: SampleTypeEnum,
+                         fs_selection: Set[FeatureSetEnum],
+                         extra_columns: Tuple[str] = ()) -> List[tuple]:
         """Return list of instances, attributes being represented by dict.
 
         Each instance is a tuple of
-        (feature dictionary {'feature' -> 'value'}, classification)"""
-        return self._sample.get_data_basic(dataset)
+        (feature dictionary {'feature' -> 'value'}, classification,
+        columns specified in *extra_columns)
 
-    def get_raw_data(self, dataset: SampleTypeEnum, *attributes: str) \
-        -> List[Tuple]:
-        """Return raw data from specified dataset in a list of tuples.
+        :param dataset: data set being returned
+        :param fs_selection: set specifying which features will be used.
+            each element is of type FeatureSet which
+            corresponds to a subset of features.
+        :param extra_columns: any extra columns from raw data that will be
+            appended to the end of each tuple
+        :return: list of instances represented by tuples, each tuple being:
+        (dict of features, classification: str, extra_columns)"""
 
-        This method is used only for the purpose of observing data.
+        sample: List[Series] = self._sample.get_data(dataset)
 
-        Each instance is a tuple of attributes specified in the argument in
-        that order.
+        res: List[tuple] = [
+            (self.generate_features(row, fs_selection),
+             row['classification'],
+             *self._filter_row(row, extra_columns))
+            for row in sample]
 
-        :param dataset: returned dataset
-        :param attributes: tuple of attributes as named in JSON
-        :return: list of instances in the dataset
+        return res
+
+    @staticmethod
+    def _filter_row(row: pd.Series, args: Tuple[str]) -> tuple:
+        """Convert a given row to a tuple containing only the specified columns.
+
+        :param row: panda Series of data
+        :param args: tuple of wanted columns
+        :return: resulting tuple
         """
-        return list(map(lambda row: row[1:],
-                        self._sample.get_data(dataset, *attributes)))
+        return tuple(row[arg] for arg in args)
 
-    def dump_fasttext_format(self, path_prefix: str) -> None:
-        ### tohle se take musi predelat TODO
-        """Create training & testing files for fasttext from the current sample.
-
-        Train set is written into file {path_prefix}_train instance per line
-        in format:
-            __label__classification \
-            features in the format _feature_value \
-            text
-
-        Test set is divided into two files:
-            {path_prefix}_test_data - format same as for the training file
-                without __label__classification
-
-            {path_prefix}_test_lables - file containing only lables
-                __label__classification
-                Order of lines corresponds to first test file
-
-        :param path_prefix: prefix used for all three files"""
-        train_p: str = f'{path_prefix}_train'
-        test_data_p: str = f'{path_prefix}_test_data'
-        test_lables_p: str = f'{path_prefix}_test_lables'
-
-        with open(train_p, 'w') as train, \
-                open(test_data_p, 'w') as test_data, \
-                open(test_lables_p, 'w') as test_lables:
-
-            # instance per line, newline is forbidden
-            erase_nl_trans = str.maketrans({'\n': None})
-
-            # train set
-            train_sample: List[tuple] \
-                = self._sample.get_data(SampleTypeEnum.TRAIN,
-                                        'text', 'classification')
-            for (fs, txt, clsf) in train_sample:
-                print(f'__label__{clsf} '
-                      f'{Data._convert_fs2fasttext(fs)} '
-                      f'{txt.translate(erase_nl_trans)}', file=train)
-
-            # test set
-            test_sample: List[tuple] \
-                = self._sample.get_data(SampleTypeEnum.TEST,
-                                        'text', 'classification')
-            for (fs, txt, clsf) in test_sample:
-                # test file - data
-                print(Data._convert_fs2fasttext(fs) + ' ' +
-                      txt.translate(erase_nl_trans), file=test_data)
-                # test file - lables
-                print(f'__label__{clsf}', file=test_lables)
+    # def get_raw_data(self, dataset: SampleTypeEnum, *attributes: str) \
+    #         -> List[Tuple]:
+    #     """Return raw data from specified dataset in a list of tuples.
+    #
+    #     This method is used only for the purpose of observing data.
+    #
+    #     Each instance is a tuple of attributes specified in the argument in
+    #     that order.
+    #
+    #     :param dataset: returned dataset
+    #     :param attributes: tuple of attributes as named in JSON
+    #     :return: list of instances in the dataset
+    #     """
+    #     return list(map(lambda row: row[1:],
+    #                     self._sample.get_data(dataset, *attributes)))
+    #
+    # def dump_fasttext_format(self, path_prefix: str) -> None:
+    #     ### tohle se take musi predelat TODO
+    #     """Create training & testing files for fasttext from the current sample.
+    #
+    #     Train set is written into file {path_prefix}_train instance per line
+    #     in format:
+    #         __label__classification \
+    #         features in the format _feature_value \
+    #         text
+    #
+    #     Test set is divided into two files:
+    #         {path_prefix}_test_data - format same as for the training file
+    #             without __label__classification
+    #
+    #         {path_prefix}_test_lables - file containing only lables
+    #             __label__classification
+    #             Order of lines corresponds to first test file
+    #
+    #     :param path_prefix: prefix used for all three files"""
+    #     train_p: str = f'{path_prefix}_train'
+    #     test_data_p: str = f'{path_prefix}_test_data'
+    #     test_lables_p: str = f'{path_prefix}_test_lables'
+    #
+    #     with open(train_p, 'w') as train, \
+    #             open(test_data_p, 'w') as test_data, \
+    #             open(test_lables_p, 'w') as test_lables:
+    #
+    #         # instance per line, newline is forbidden
+    #         erase_nl_trans = str.maketrans({'\n': None})
+    #
+    #         # train set
+    #         train_sample: List[tuple] \
+    #             = self._sample.get_data(SampleTypeEnum.TRAIN,
+    #                                     'text', 'classification')
+    #         for (fs, txt, clsf) in train_sample:
+    #             print(f'__label__{clsf} '
+    #                   f'{Data._convert_fs2fasttext(fs)} '
+    #                   f'{txt.translate(erase_nl_trans)}', file=train)
+    #
+    #         # test set
+    #         test_sample: List[tuple] \
+    #             = self._sample.get_data(SampleTypeEnum.TEST,
+    #                                     'text', 'classification')
+    #         for (fs, txt, clsf) in test_sample:
+    #             # test file - data
+    #             print(Data._convert_fs2fasttext(fs) + ' ' +
+    #                   txt.translate(erase_nl_trans), file=test_data)
+    #             # test file - lables
+    #             print(f'__label__{clsf}', file=test_lables)
 
     @staticmethod
     def _convert_fs2fasttext(fs: dict) -> str:
@@ -474,7 +472,7 @@ TODO
                          'business_id', 'words', 'incorrect_words',
                          'sentiment']] \
             .reset_index(drop=True)
-        
+
         sample.rename(columns={like_type.value: 'likes'})
 
         return sample
@@ -514,7 +512,7 @@ TODO
                  for _, row in self.data.iterrows()]
         self.gensim_dictionary = corpora.Dictionary(texts)
 
-    def _generate_cosine_similarity_index(self, rand_samp: List[str])\
+    def _generate_cosine_similarity_index(self, rand_samp: List[str]) \
             -> Similarity:
         """Built index from the given rand_samp for computing cosine similarity.
 
@@ -535,14 +533,12 @@ TODO
         """
         print(*line, file=self.stats)
 
-    def generate_features(self, row: pd.Series, index: Similarity,
-                          fs_selection: Set[FeatureSetEnum])\
+    def generate_features(self, row: pd.Series,
+                          fs_selection: Set[FeatureSetEnum]) \
             -> Dict[str, any]:
         """Create dictionary of features from the given row.
 
         :param row: Data of a review
-        :param index: Gensim index for computing cosine similarity.
-                      It is returned by _generate_cosine_similarity_index.
         :param fs_selection: set specifying which features will be used.
                              each element is of type FeatureSet which
                              corresponds to a subset of features.
@@ -589,7 +585,7 @@ TODO
             if self.used_gram_words is None:
                 raise exceptions.InsufficientDataException('Word set not defined.')
             for w, w2, w3, w4 in zip(txt_words, txt_words[1:], txt_words[2:], txt_words[3:]):
-                if w in self.used_gram_words and w2 in self.used_gram_words\
+                if w in self.used_gram_words and w2 in self.used_gram_words \
                         and w3 in self.used_gram_words and w4 in self.used_gram_words:
                     features[f'contains({w}&{w2}&{w3}&{w4})'] = 'Yes'
 
@@ -619,7 +615,7 @@ TODO
             features['error_total20'] = 'good' if rate < 20 else 'bad'
 
         if FeatureSetEnum.COSINESIM in fs_selection:
-            cos_sims = index[self.gensim_dictionary.doc2bow(self._tokenize(text))]
+            cos_sims = self.index[self.gensim_dictionary.doc2bow(self._tokenize(text))]
             for i, x in enumerate(cos_sims):
                 features[f'cos_sim0.4_{i}'] = True if x > 0.4 else False
                 features[f'cos_sim0.6_{i}'] = True if x > 0.6 else False

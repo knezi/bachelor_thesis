@@ -2,6 +2,8 @@
 # TODO COMMENT AUTHOR
 import sys
 from collections import defaultdict
+
+import yaml
 from functools import reduce
 from math import log2, ceil
 
@@ -14,10 +16,13 @@ import nltk
 import subprocess as sp
 from typing import DefaultDict, Dict, List, Tuple
 
-from classifiers.baseclassifier import Classifier
-from classifiers.naivebayes import NaiveBayes
+import classifiers
+from classifiers.classifierbase import ClassifierBase
 from load_data import Data, SampleTypeEnum, FeatureSetEnum, LikeTypeEnum
 from statistics import DataGraph
+
+## TODO
+config_file = 'experiment.yaml'
 
 
 def run_fasttext(prefix):
@@ -38,9 +43,9 @@ def run_fasttext(prefix):
                         finished_process.stdout.strip().split('\n'))))
 
 
-def compute_evaluation_scores(classifier: Classifier,
+def compute_evaluation_scores(classifier: ClassifierBase,
                               data_set: List[Tuple[Dict, str]],
-                              evaluated_class: str) \
+                              evaluated_class: LikeTypeEnum) \
         -> Dict[str, float]:
     """Evaluate classifier on dataset with common metrics.
 
@@ -66,11 +71,11 @@ def compute_evaluation_scores(classifier: Classifier,
     # we don't know how many and what are the values of negative classes
     # therefore we compute union of all and subtract positive elements
     negative_test: set = reduce(lambda a,b: a.union(b), testsets.values())\
-                         - testsets[evaluated_class]
+                         - testsets[evaluated_class.value]
     negative_ref: set = reduce(lambda a,b: a.union(b), refsets.values())\
-                        - refsets[evaluated_class]
-    positive_test: set = testsets[evaluated_class]
-    positive_ref: set = refsets[evaluated_class]
+                        - refsets[evaluated_class.value]
+    positive_test: set = testsets[evaluated_class.value]
+    positive_ref: set = refsets[evaluated_class.value]
 
     clas_scores['tp'] = len(positive_test & positive_ref) / len(data_set)
     clas_scores['fp'] = len(positive_test & negative_ref) / len(data_set)
@@ -89,12 +94,11 @@ def compute_evaluation_scores(classifier: Classifier,
     return clas_scores
 
 
+with open(config_file, 'r') as cfg:
+    experiments: dict = yaml.load(cfg)
 
-train_size = data.generate_sample(LikeTypeEnum.USEFUL,
-                                  {FeatureSetEnum.REVIEWLEN,
-                                   FeatureSetEnum.STARS,
-                                   FeatureSetEnum.SPELLCHECK,
-                                   FeatureSetEnum.COSINESIM})
+
+train_size = data.generate_sample(LikeTypeEnum.USEFUL)
 
 stats = DataGraph('summary', 'number of instances', 'percentage')
 
@@ -126,19 +130,22 @@ stats = DataGraph('summary', 'number of instances', 'percentage')
 for train_size in map(lambda x: 2**x, range(1, ceil(log2(train_size)))):
     data.limit_train_size(train_size)
 
-    train_set = data.get_feature_dict(SampleTypeEnum.TRAIN)
-    test_set = data.get_feature_dict(SampleTypeEnum.TEST)
-    classifier = nltk.NaiveBayesClassifier.train(train_set)
 
     print(f'SIZE {train_size}')
+
     point: dict = dict()
 
-    cls = NaiveBayes({})
-    cls.train(train_set)
+    for ex in experiments['experiments']:
+        train_set = data.get_feature_dict(SampleTypeEnum.TRAIN, ex['features'])
+        test_set = data.get_feature_dict(SampleTypeEnum.TEST, ex['features'])
+        cls: ClassifierBase \
+            = getattr(classifiers, ex['classificator']).Classifier({})
+        cls.train(train_set)
 
-    eval: dict = compute_evaluation_scores(cls, test_set, 'useful')
+        evaluation: dict \
+            = compute_evaluation_scores(cls, test_set, LikeTypeEnum.USEFUL)
 
-    stats.add_points(train_size, eval)
+        stats.add_points(train_size, evaluation)
 
 data.plot(stats)
 

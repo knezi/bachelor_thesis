@@ -108,6 +108,8 @@ Classes:
 
 # TODODDO TADY jsme skoncil
 pridej klasifikovanou tridu do configu yamlu??
+dodelat FASTTEXT klasifikator
+nacitani YAMLu
 
 ztratili jsme naivebayes train set accuracy - pridej to do konfigu, chcem to ale vubec?
 
