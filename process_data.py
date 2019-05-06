@@ -94,290 +94,290 @@ def compute_evaluation_scores(classifier: ClassifierBase,
     return clas_scores
 
 
-with open(config_file, 'r') as cfg:
-    experiments: dict = yaml.load(cfg)
+if __name__ == "__main__":
 
+    with open(config_file, 'r') as cfg:
+        experiments: dict = yaml.load(cfg)
 
-train_size = data.generate_sample(LikeTypeEnum.USEFUL)
 
-stats = DataGraph('summary', 'number of instances', 'percentage')
+    train_size = data.generate_sample(LikeTypeEnum.USEFUL)
 
-# texts_tokenized = (self._tokenize(row.text) for index, row
-#                    in self.data.iterrows())
-# words_freqs = nltk.FreqDist(w.lower() for tokens in texts_tokenized
-#                             for w in tokens)
-#
-# # TODO statistics
-# # for x in all_words:
-# # print(all_words[x])
-#
-# # self.print('total number of words:', sum(all_words.values()))
-# # self.print('unique words:', len(all_words))
-# # self.print('words present only once:',
-# # sum(c for c in all_words.values() if c == 1))
-# # all_words.plot(30)
-#
-# # only the right frequencies
-# self.gram_words = words_freqs.copy()
-# for w, count in words_freqs.items():
-#     if count > 200 or count == 20:
-#         # TODO Measure
-#         del self.gram_words[w]
-#
-# self.gram_words = frozenset(self.gram_words.keys())
+    stats = DataGraph('summary', 'number of instances', 'percentage')
 
-# TODO this cannot exceed, but doesn't use up all data
-for train_size in map(lambda x: 2**x, range(1, ceil(log2(train_size)))):
-    data.limit_train_size(train_size)
+    # texts_tokenized = (self._tokenize(row.text) for index, row
+    #                    in self.data.iterrows())
+    # words_freqs = nltk.FreqDist(w.lower() for tokens in texts_tokenized
+    #                             for w in tokens)
+    #
+    # # TODO statistics
+    # # for x in all_words:
+    # # print(all_words[x])
+    #
+    # # self.print('total number of words:', sum(all_words.values()))
+    # # self.print('unique words:', len(all_words))
+    # # self.print('words present only once:',
+    # # sum(c for c in all_words.values() if c == 1))
+    # # all_words.plot(30)
+    #
+    # # only the right frequencies
+    # self.gram_words = words_freqs.copy()
+    # for w, count in words_freqs.items():
+    #     if count > 200 or count == 20:
+    #         # TODO Measure
+    #         del self.gram_words[w]
+    #
+    # self.gram_words = frozenset(self.gram_words.keys())
 
+    # TODO this cannot exceed, but doesn't use up all data
+    for train_size in map(lambda x: 2**x, range(1, ceil(log2(train_size)))):
+        data.limit_train_size(train_size)
 
-    print(f'SIZE {train_size}')
+        print(f'SIZE {train_size}')
 
-    point: dict = dict()
+        for ex in experiments['experiments']:
+            train_set = data.get_feature_dict(SampleTypeEnum.TRAIN, ex['features'])
+            test_set = data.get_feature_dict(SampleTypeEnum.TEST, ex['features'])
+            cls: ClassifierBase \
+                = getattr(classifiers, ex['classificator']).Classifier({})
+            cls.train(train_set)
 
-    for ex in experiments['experiments']:
-        train_set = data.get_feature_dict(SampleTypeEnum.TRAIN, ex['features'])
-        test_set = data.get_feature_dict(SampleTypeEnum.TEST, ex['features'])
-        cls: ClassifierBase \
-            = getattr(classifiers, ex['classificator']).Classifier({})
-        cls.train(train_set)
+            evaluation: dict \
+                = compute_evaluation_scores(cls, test_set, LikeTypeEnum.USEFUL)
 
-        evaluation: dict \
-            = compute_evaluation_scores(cls, test_set, LikeTypeEnum.USEFUL)
+            stats.add_points(train_size, ex['name'], evaluation)
 
-        stats.add_points(train_size, evaluation)
+    # stats.set_view()
+    data.plot(stats)
 
-data.plot(stats)
 
+    # FASTTEXT
+    # data.dump_fasttext_format('data/data_fasttext')
+    # out = run_fasttext('data/data_fasttext')
+    #
+    # point['fasttext accuracy'] = out['accuracy']
+    # point['fasttext precision'] = out['precision']
+    # point['fasttext recall'] = out['recall']
+    # f_mes = 2 * out['precision'] * out['recall'] / (out['precision'] + out['recall'])
+    # point['fasttext f_measure'] = f_mes
 
-# FASTTEXT
-# data.dump_fasttext_format('data/data_fasttext')
-# out = run_fasttext('data/data_fasttext')
-#
-# point['fasttext accuracy'] = out['accuracy']
-# point['fasttext precision'] = out['precision']
-# point['fasttext recall'] = out['recall']
-# f_mes = 2 * out['precision'] * out['recall'] / (out['precision'] + out['recall'])
-# point['fasttext f_measure'] = f_mes
 
 
+    # pridani jednotlivych slov tady snizi presnost jen na 65, je to ocekavane?
 
-# pridani jednotlivych slov tady snizi presnost jen na 65, je to ocekavane?
+    # classifier.show_most_informative_features(30)
 
-# classifier.show_most_informative_features(30)
+    # # classifier = nltk.DecisionTreeClassifier.train(train_set)
+    # # print(nltk.classify.accuracy(classifier, test_set))
+    # # print(nltk.classify.accuracy(classifier, train_set))
 
-# # classifier = nltk.DecisionTreeClassifier.train(train_set)
-# # print(nltk.classify.accuracy(classifier, test_set))
-# # print(nltk.classify.accuracy(classifier, train_set))
 
+    # # ## logistic regression
 
-# # ## logistic regression
+    # # In[55]:
 
-# # In[55]:
 
+    # from sklearn.linear_model import LogisticRegression
 
-# from sklearn.linear_model import LogisticRegression
+    # # In[56]:
 
-# # In[56]:
 
+    # lr = LogisticRegression()
 
-# lr = LogisticRegression()
+    # # In[57]:
 
-# # In[57]:
 
+    # half = int(len(X) / 2)
+    # print(half)
 
-# half = int(len(X) / 2)
-# print(half)
+    # # In[58]:
 
-# # In[58]:
 
+    # train_set_X, test_set_X = X_matrix[:half, :], X_matrix[half:, :]
+    # train_set_Y, test_set_Y = Y[:half], Y[half:]
 
-# train_set_X, test_set_X = X_matrix[:half, :], X_matrix[half:, :]
-# train_set_Y, test_set_Y = Y[:half], Y[half:]
+    # # In[59]:
 
-# # In[59]:
 
+    # lr.fit(train_set_X, train_set_Y)
 
-# lr.fit(train_set_X, train_set_Y)
+    # # In[60]:
 
-# # In[60]:
 
+    # lr.score(test_set_X, test_set_Y)
 
-# lr.score(test_set_X, test_set_Y)
+    # # ## Dimension reduction - LSA - SVD
 
-# # ## Dimension reduction - LSA - SVD
+    # # In[55]:
 
-# # In[55]:
 
+    # from sklearn.decomposition import TruncatedSVD
+    # from sklearn.preprocessing import scale
 
-# from sklearn.decomposition import TruncatedSVD
-# from sklearn.preprocessing import scale
+    # # In[56]:
 
-# # In[56]:
 
+    # svd = TruncatedSVD(n_components=100)
+    # # scale(X_matrix.tocsc())
+    # svdMatrix = svd.fit_transform(X_matrix)
 
-# svd = TruncatedSVD(n_components=100)
-# # scale(X_matrix.tocsc())
-# svdMatrix = svd.fit_transform(X_matrix)
+    # # In[57]:
 
-# # In[57]:
 
+    # feature_set_reduced = [(dict(enumerate(x)), y) for (x, y) in zip(svdMatrix, Y)]
 
-# feature_set_reduced = [(dict(enumerate(x)), y) for (x, y) in zip(svdMatrix, Y)]
+    # # In[58]:
 
-# # In[58]:
 
+    # random.shuffle(feature_set_reduced)
+    # half = int(len(feature_sets) / 2)
+    # train_set, test_set = feature_sets[:half], feature_sets[half:]
+    # half
 
-# random.shuffle(feature_set_reduced)
-# half = int(len(feature_sets) / 2)
-# train_set, test_set = feature_sets[:half], feature_sets[half:]
-# half
+    # # # training
 
-# # # training
+    # # In[59]:
 
-# # In[59]:
 
+    # classifier = nltk.NaiveBayesClassifier.train(train_set)
+    # print(nltk.classify.accuracy(classifier, test_set))
 
-# classifier = nltk.NaiveBayesClassifier.train(train_set)
-# print(nltk.classify.accuracy(classifier, test_set))
+    # # # get feature matrix
 
-# # # get feature matrix
+    # # In[60]:
 
-# # In[60]:
 
+    # X, Y = [x[0] for x in test_set], [x[1] for x in test_set]
 
-# X, Y = [x[0] for x in test_set], [x[1] for x in test_set]
+    # # In[61]:
 
-# # In[61]:
 
+    # from sklearn.datasets import fetch_20newsgroups
+    # from sklearn.feature_selection import mutual_info_classif
+    # from sklearn.feature_extraction.text import CountVectorizer
 
-# from sklearn.datasets import fetch_20newsgroups
-# from sklearn.feature_selection import mutual_info_classif
-# from sklearn.feature_extraction.text import CountVectorizer
+    # # In[62]:
 
-# # In[62]:
 
+    # X[0]
 
-# X[0]
+    # # In[63]:
 
-# # In[63]:
 
+    # cv_gain = CountVectorizer(max_df=0.95, min_df=2,
+    # max_features=10000)
 
-# cv_gain = CountVectorizer(max_df=0.95, min_df=2,
-# max_features=10000)
+    # # In[64]:
 
-# # In[64]:
 
+    # all_keys = [set(x.keys()) for x in X]
 
-# all_keys = [set(x.keys()) for x in X]
+    # # In[65]:
 
-# # In[65]:
 
+    # import functools
 
-# import functools
+    # all_fs = functools.reduce(lambda a, b: a.union(b), all_keys)
+    # all_fs = list(all_fs)
 
-# all_fs = functools.reduce(lambda a, b: a.union(b), all_keys)
-# all_fs = list(all_fs)
+    # # In[66]:
 
-# # In[66]:
 
+    # len(all_fs)
 
-# len(all_fs)
 
+    # # In[67]:
 
-# # In[67]:
 
+    # def get_int(val):
+    # if isinstance(val, int):
+    # return val
+    # if isinstance(val, float):
+    # return val
+    # vals = {'Yes': 1, 'No': 0, 'middle': 1, 'long': 2, 'short': 0, 'good': 1, 'bad': 0}
+    # return vals[val]
 
-# def get_int(val):
-# if isinstance(val, int):
-# return val
-# if isinstance(val, float):
-# return val
-# vals = {'Yes': 1, 'No': 0, 'middle': 1, 'long': 2, 'short': 0, 'good': 1, 'bad': 0}
-# return vals[val]
 
+    # # In[68]:
 
-# # In[68]:
 
+    # # X_matrix=[]
+    # #
+    # # for x in X:
+    # #    row=[]
+    # #    for key in all_fs:
+    # #        if key in x:
+    # #            row.append(get_int(x[key]))
+    # #        else:
+    # #            row.append(0)
+    # #    X_matrix.append(row)
 
-# # X_matrix=[]
-# #
-# # for x in X:
-# #    row=[]
-# #    for key in all_fs:
-# #        if key in x:
-# #            row.append(get_int(x[key]))
-# #        else:
-# #            row.append(0)
-# #    X_matrix.append(row)
 
+    # # In[69]:
 
-# # In[69]:
 
+    # import scipy
 
-# import scipy
+    # # In[70]:
 
-# # In[70]:
 
+    # row = []
+    # x = X[0]
 
-# row = []
-# x = X[0]
+    # for key in all_fs:
+    # if key in x:
+    # row.append(get_int(x[key]))
+    # else:
+    # row.append(0)
 
-# for key in all_fs:
-# if key in x:
-# row.append(get_int(x[key]))
-# else:
-# row.append(0)
+    # X_matrix = scipy.sparse.lil_matrix([row])
 
-# X_matrix = scipy.sparse.lil_matrix([row])
+    # i = 0
+    # for x in X[1:]:
+    # row = []
+    # for key in all_fs:
+    # if key in x:
+    # row.append(get_int(x[key]))
+    # else:
+    # row.append(0)
+    # X_matrix = scipy.sparse.vstack((X_matrix, scipy.sparse.lil_matrix([row])))
+    # i += 1
+    # # if i==1000:
+    # # break
 
-# i = 0
-# for x in X[1:]:
-# row = []
-# for key in all_fs:
-# if key in x:
-# row.append(get_int(x[key]))
-# else:
-# row.append(0)
-# X_matrix = scipy.sparse.vstack((X_matrix, scipy.sparse.lil_matrix([row])))
-# i += 1
-# # if i==1000:
-# # break
+    # # In[71]:
 
-# # In[71]:
 
+    # len(X)
 
-# len(X)
+    # # In[72]:
 
-# # In[72]:
 
+    # X_matrix
 
-# X_matrix
+    # # # information gaion
 
-# # # information gaion
+    # # In[73]:
 
-# # In[73]:
 
+    # res_gain = list(zip(all_fs, mutual_info_classif(X_matrix, Y, discrete_features=True)))
 
-# res_gain = list(zip(all_fs, mutual_info_classif(X_matrix, Y, discrete_features=True)))
+    # # In[74]:
 
-# # In[74]:
 
+    # # res_gain
 
-# # res_gain
 
+    # # In[75]:
 
-# # In[75]:
 
+    # [(x, y) for (x, y) in res_gain if y > 0.0005]
 
-# [(x, y) for (x, y) in res_gain if y > 0.0005]
+    # # In[76]:
 
-# # In[76]:
 
+    # [(x, y) for (x, y) in res_gain if y > 0.001]
 
-# [(x, y) for (x, y) in res_gain if y > 0.001]
+    # # In[77]:
 
-# # In[77]:
 
-
-# sorted([(x, y) for (x, y) in res_gain if x[:3] == '@@@'])
+    # sorted([(x, y) for (x, y) in res_gain if x[:3] == '@@@'])

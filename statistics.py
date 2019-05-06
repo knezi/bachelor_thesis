@@ -13,7 +13,6 @@ from collections import defaultdict
 from typing import List, Dict, Generator, Set
 
 from matplotlib.axes import Axes
-from matplotlib.figure import Figure
 from recordclass import RecordClass
 
 from matplotlib import pyplot
@@ -37,7 +36,7 @@ class DataLine(RecordClass):
 
 DataLines = Dict[str, DataLine]
 """Typename for a dictionary holding several DataLine_s accesible by names.
-Used for plotting graphs with more datalines.""" # TODO how to do this?
+Used for plotting graphs with more datalines."""  # TODO how to do this?
 
 
 class DataGraph:
@@ -45,9 +44,10 @@ class DataGraph:
 
         DataGraph - accept data as it goes from the programme flow, aggregate it
         and can be passed to Statistics as a whole for plotting"""
-    _keys: Set
-    _name: str
-    _data: DataLines
+    _keys: Dict[str, Set]
+    name: str
+    # DataLines are stored in dict, each element represent a namespace
+    _data: Dict[str, DataLines]
 
     def __init__(self, name: str = '', xlabel: str = '', ylabel: str = '') -> None:
         """Init empty data object.
@@ -56,50 +56,56 @@ class DataGraph:
         :param xlabel: label of x axis
         :param ylabel: label of y axis
         """
-        self._data = defaultdict(lambda: DataLine([], ''))
+        self._data = defaultdict(lambda: defaultdict(lambda: DataLine([], '')))
         self.name = name
         self.xlabel = xlabel
         self.ylabel = ylabel
         self._keys = None
 
-    def add_points(self, x: float, value_dict: Dict[str, float]) -> None:
+    def add_points(self, x: float, namespace: str, value_dict: Dict[str, float]) \
+            -> None:
         """Add points with the same x and various y for different types.
 
         Y values None are replaced with dummy -1
 
+        :param namespace: all points are accessed by namespace.name
         :param x: x value same for all points
         :param value_dict: dictionary 'the name of the datatype' -> 'y value'
         """
         for key, val in value_dict.items():
             if val is None:
                 val = -1
-            self._data[key].points.append(Point(x, val))
+            self._data[namespace][key].points.append(Point(x, val))
 
-    def set_fmt(self, data_type: str, fmt: str) -> None:
+    def set_fmt(self, namespace: str, data_type: str, fmt: str) -> None:
         """Set fmt string for given type (default empty).
 
+        :param namespace: namespace of the type
         :param data_type: type of data
         :param fmt: formatting directive for mathplotlib
         """
-        self._data[data_type].fmt = fmt
+        self._data[namespace][data_type].fmt = fmt
 
     def clear_data(self):
         """Empty DataLines container."""
         self._data.clear()
 
-    def set_view(self, keys: Set) -> None:
+    def set_view(self, keys: Dict[str, Set]) -> None:
         """Set keys visible when dumping data with get_data.
 
-        :param keys: names of data types"""
+        :param keys: dictionary of namespaces, values are individual keys"""
         self._keys = keys
 
-    def get_data(self) -> DataLines:
+    def get_data(self) -> Dict[str, DataLines]:
         """Returns DataLines of data from restricted view.
 
         The view is set by self.restrict_view"""
 
         if self._keys is not None:
-            return {key: self._data[key] for key in self._keys}
+            res = dict()
+            for ns in self._keys:
+                res[ns] = {key: self._data[ns][key] for key in self._keys[ns]}
+            return res
         return self._data
 
 
@@ -135,7 +141,7 @@ class Statistics:
         """Plot&text dump data of given types defined in a dictionary.
 
         :param data: plotted data"""
-        fname: str= self._file_prefix + data.name
+        fname: str = self._file_prefix + data.name
 
         # Each graph has exactly one axes for plotting
         self._fig.clf()
@@ -144,33 +150,47 @@ class Statistics:
         # setting Axes
         ax.set_xlabel(data.xlabel)
         ax.set_ylabel(data.ylabel)
-        pps: DataLines = data.get_data()
-        for label, pp in pps.items():
-            # convert data from [(x1,y1),...] to [[x1,x2...], [y1, y2...]]
-            ax.plot(*zip(*pp.points), pp.fmt, label=label)
+        pps: Dict[str, DataLines] = data.get_data()
+        for ns in pps:
+            for label, pp in pps[ns].items():
+                # convert data from [(x1,y1),...] to [[x1,x2...], [y1, y2...]]
+                ax.plot(*zip(*pp.points), pp.fmt, label=f'{ns}.{label}')
         ax.legend()
 
         self._fig.savefig(os.path.join(self._path, f'{fname}.png'))
 
         # dump textual representation in CSV, columns being:
         # property1,x;prop1.y;...;propn.x;propn.y
-        # convert keys to tuple to preserve the order
-        keys = tuple(pps.keys())
+        # convert keys to tuples to preserve the order
+        # it's ((namespace, (keys)), (namespace2, (keys2))...)
+        keys_ordered = tuple()
+        for ns in pps:
+            keys_ordered += ((ns, (key for key in pps[ns])),)
+
+        # dump of points in format p.x;p.y
+        # points are grouped in lines on x axes
         with open(os.path.join(self._path, f'{fname}.csv'), 'w') as w:
             # header
-            w.write(';y;'.join(keys)+';y\n')
+            # y is left for Y axis
+            # it produces:
+            # namespace1.key1;y;namespace1.key2;y;....nsn.key1;y;nsnkey2...
+            for (ns, ks) in keys_ordered:
+                w.write(';y;'.join((f'{ns}.{k}' for k in ks)))
+                w.write(';y\n')
 
             # convert data into iterable of lines being list of strings
             # and round values to three digits
             # zip(*iterable) reverses columns and rows
             data_lists: Generator[List[str], None, None] \
                 = zip(*map(lambda x: [f'{round(p.x, 3)};{round(p.y, 3)}' for p in x],
-                           [pps[k].points for k in keys]))
+                           [pps[ns][k].points
+                            for (ns, keys) in pps.items() for k in keys]))
+
             # convert data into lines (str)
             data_lines: Generator[str, None, None] = map(';'.join, data_lists)
 
             for line in data_lines:
-                w.write(line+'\n')
+                w.write(line + '\n')
 
 
 # only for testing purposes
@@ -178,14 +198,14 @@ if __name__ == '__main__':
     s = Statistics('graphs', 'P')
 
     dg = DataGraph()
-    dg.add_points(1, {'hey': 2, 'a': 3})
-    dg.add_points(2, {'hey': 4, 'a': 3})
+    dg.add_points(1, 'n', {'hey': 2, 'a': 3})
+    dg.add_points(2, 'n', {'hey': 4, 'a': 3})
 
-    dg.set_fmt('hey', '')
-    dg.set_fmt('a', 'ro')
+    dg.set_fmt('n', 'hey', '')
+    dg.set_fmt('n', 'a', 'ro')
 
-    dg.set_name('trial')
+    dg.name = 'trial'
     s.plot(dg)
-    dg.set_name('trial2')
-    dg.set_view(['hey'])
+    dg.name = 'trial2'
+    dg.set_view({'n': {'hey'}})
     s.plot(dg)
