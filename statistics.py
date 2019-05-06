@@ -176,7 +176,8 @@ class Statistics:
             # namespace1.key1;y;namespace1.key2;y;....nsn.key1;y;nsnkey2...
             for (ns, ks) in keys_ordered:
                 w.write(';y;'.join((f'{ns}.{k}' for k in ks)))
-                w.write(';y\n')
+                w.write(';y')
+            w.write('\n')
 
             # convert data into iterable of lines being list of strings
             # and round values to three digits

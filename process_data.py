@@ -99,6 +99,8 @@ if __name__ == "__main__":
     with open(config_file, 'r') as cfg:
         experiments: dict = yaml.load(cfg)
 
+    data = Data('data/data_sample.json', 'data/geneea_sample.json')
+    # data = Data('data/data.json', 'data/geneea.json')
 
     train_size = data.generate_sample(LikeTypeEnum.USEFUL)
 
