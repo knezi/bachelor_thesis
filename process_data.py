@@ -12,9 +12,8 @@ from nltk.metrics import scores
 from subprocess import CompletedProcess
 from subprocess import PIPE
 
-import nltk
 import subprocess as sp
-from typing import DefaultDict, Dict, List, Tuple
+from typing import DefaultDict, Dict, List, Tuple, Set
 
 import classifiers
 from classifiers.classifierbase import ClassifierBase
@@ -99,8 +98,8 @@ if __name__ == "__main__":
     with open(config_file, 'r') as cfg:
         experiments: dict = yaml.load(cfg)
 
-    data = Data('data/data_sample.json', 'data/geneea_sample.json')
-    # data = Data('data/data.json', 'data/geneea.json')
+    # data = Data('data/data_sample.json', 'data/geneea_sample.json')
+    data = Data('data/data.json', 'data/geneea.json')
 
     train_size = data.generate_sample(LikeTypeEnum.USEFUL)
 
@@ -137,8 +136,11 @@ if __name__ == "__main__":
         print(f'SIZE {train_size}')
 
         for ex in experiments['experiments']:
-            train_set = data.get_feature_dict(SampleTypeEnum.TRAIN, ex['features'])
-            test_set = data.get_feature_dict(SampleTypeEnum.TEST, ex['features'])
+            # convert features to set:
+            features: Set[FeatureSetEnum] \
+                = {FeatureSetEnum[f] for f in ex['features']}
+            train_set = data.get_feature_dict(SampleTypeEnum.TRAIN, features)
+            test_set = data.get_feature_dict(SampleTypeEnum.TEST, features)
             cls: ClassifierBase \
                 = getattr(classifiers, ex['classificator']).Classifier({})
             cls.train(train_set)
