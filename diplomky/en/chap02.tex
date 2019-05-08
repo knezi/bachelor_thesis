@@ -1,5 +1,62 @@
-\chapter{Title of the second chapter}
+\chapter{What is text classification}
 
-\section{Title of the first subchapter of the second chapter}
+\section{Further specification of the data and the problem}
 
-\section{Title of the second subchapter of the second chapter}
+\section{What to expect from the thesis}
+
+\todoB[try them all - possible discussion on difficulty on different types].
+
+All measurements will be with respect to the size of dataset, to see how the usefulness of approaches improves with more data.
+
+In the first part, try to find best features. Start with single words chosen by different
+criteria (TD-idf, entropy...), then try to add *-grams. Later, try more linguistics features.
+
+In the next part, if you have time, try other approaches to improve performance. You can try PCA reduction, NN, or other ML algorithms/techniques.
+
+\section{OVERVIEW of the goals}:
+
+\subsection{First try classification with ngrams only:}
+
+\bf Words \rm
+
+ \todoA{- TD*IDF - with given threshholds}
+
+ \todoB{try TD*IDF not with a given threshold, but rather find te optimal threshold for cuts}
+
+ \todoB{- choose words with highest information gain; as in McCallum Event models}
+
+ \todoA{Fasttext}
+
+\bf Groups of words: \rm
+
+\bf entities extracted from geneea \rm
+
+ \todoB{- filter them based on the geneea value of importance}
+
+ \todoA{- occurrences - pick only the most frequent}
+
+\bf simple Bigrams, moregrams\rm
+
+\todoA{- same approach as for unigrams}
+
+\subsection{Later try adding more features (mainly linguistics):}
+
+\todoB{Cosine sim}
+
+\todoA{Spell check}
+
+\todoA{Review length}
+
+\todoB{Stars as non-linguistic feature}
+
+\todoC{Go your imagination wild}
+
+\subsection{Try non-feature improvements:}
+
+\todoB{PCA/SVD reduction}
+
+\todoC{Decision trees}
+
+\todoC{NN}
+
+\todoC{Let you imagination go wild}
