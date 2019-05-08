@@ -1,9 +1,59 @@
 \chapter{Feature engineering}
 
-\section{bag-of-word}
+\todoA{FEATURE SELECTION FOR
+KNOWLEDGE DISCOVERY AND
+DATA MINING
+Huan Liu
+Hiroshi Motoda}
 
-\section{td-idt}
+\todoA{do these two paragraphs need citation too?}
 
-\section{Singular Value Decomposition (SVD/PCA)}
+Features are divided by their values into three categories~---~nominal, ordinal and continuous. Nominal features are discrete and their values do~not convey any relationship. When a~feature is ordinal, it means it is discrete and also convey ordering of the values. Continuous feature is then any real-valued variable.
 
-\section{Word embeddings}
+In this text we will deal with nominal and ordinal only. The simplest way to treat ordinal features is to omit the order. This of course loses information conveyed in this ordering, but will allow us easier feature manipulation.
+
+
+\begin{defn}\label{feature_vector} TODO
+\end{defn}
+
+\section{extraction}
+
+
+
+\section{selection}
+
+Machine learning is used in contexts where the true natural and inner logic of~data is~not known. Therefore it is difficult to intuitively select only useful features. Having fewer features which are informative enough leads to three direct benefits.
+
+Trained model is far less complex and as~such easier to~interpret. The~model also generalises better, because the~risk of overfitting is lower. Overfitting happens when the~model recognises irregularities in training data and classifies individual already seen instances, whereas it should approximate the~original model to~be able to~classify unseen instances. Lastly, fewer features result in shorter training time.
+
+Three types of feature selection are generally recognised and approaches from all three are often combined to achieve best results.
+
+\subsection{filters}
+
+Filters select a~subset of features by considering them one-by-one. This process is also independent of~any supervised classification learner. Filters are popular, because their time complexity is linear in the~number of~features. However, they may~not be optimal, because they do not take into account a~given classificator and feature correlation. When there are features highly correlated, it is unnecessary to choose all of them, because the information conveyed in some may be inferred from others. Any filter will, however, choose all of them, because filters consider features independently of each other.
+
+\subsubsection{PMI}
+
+\subsubsection{MI}
+
+\subsubsection{$\chi^2$}
+
+\subsection{wrappers}
+
+greedy
+
+\subsection{embedded methods}
+
+\section{featuers broadly used}
+
+\subsection{bag-of-word}
+
+\subsection{td-idt}
+
+\subsection{Singular Value Decomposition (SVD/PCA)}
+
+\subsection{Word embeddings}
+
+\subsection{hand crafted features}
+
+\subsection{non-textual features -- metadata}

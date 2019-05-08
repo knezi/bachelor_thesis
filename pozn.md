@@ -5,6 +5,8 @@
 
 
 ## odevzdani
+- nezalomitelne mezery
+- pomlcky bracho
 50 min
 - pdfa
 - vazba nemusi byt nerozebiratelna
