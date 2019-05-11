@@ -10,3 +10,43 @@
 
 \section{evaluation}
 
+Architecture
+
+Software was designed and developed with extensibility in mind. It allows adding new features, specify different subsets of data and convert them into various format without breaking older classifications and measurements.
+The entire project is written mostly in Python and bash with high usage of libraries for both higher performance and easier mantainability.
+
+
+DIAGRAM
+-> preprocess (denormalization, joining files, computing additional data - geneea, spell check…)
+-> load [data] (generate samples, convert \& prepare for classification)
+-> process (classify, measure performance)
+-> visualise (statistics, graphs)
+
+Preprocessing
+
+Loading data
+
+After preprocessing, all necessary data is stored in two files. The former provides data from yelp and the latter provides linguistics features extracted from textual reviews analysed by Geneea.
+
+Both files are in JSON-line format and the instances are in the same order in both of them to guarantee line-by-line correspondence.
+
+The entire process is controlled by the class Data. First, it loads all reviews into pandas Dataframe to achieve high performance and convenient manipulation. Businesses with less than 50 reviews or 10 attributes are dropped for the sake of working with trustworthy restaurants only.
+
+Subsequently, samples are generated from this raw data. Method generate\_sample takes which class will be used for classification and what features are going to be used. Features are then generated from the raw data and instances are split into train and test sets. (TODO CROSSVALI>>). These samples are stored in class Sample, which provides unified interface for accessing them. It also allows to restrict the number of instances being used for experimental purposes.
+
+All samples are stored and remain the same, unless overwritten with a new sample. Thus comparison among different classification algorithms can be made.
+
+When samples are generated, they can be used for classification. The following methods are provided for converting data:
+
+dump\_fasttext\_format - stores samples in files for fasttext
+
+get\_feature\_matrix - returns list of instances represented as rows of matrix; features are filled with empty values for instances without values
+
+get\_feature\_dict - returns list of instances represented by dictionary of feature -> value; not all features are present in all instances
+
+
+Processing
+
+Samples generated in the class Data are passed to classification algorithms in this part. Different combinations of attributes and size of data sets are used for experiments.
+
+For unified measurement of performance wrapper class DataGraph has been created. It acts as a buffer for individual measurement. It allows adding single points of graphs. An instance of DataGraph containing all results is passed to the instance of Data. Data class instantiates the class Statistics, set paths and create directories form graphs. This instance of Statistics than plots everything. Furthermore, all plotted graphs are also stored in csv files for further analysis.

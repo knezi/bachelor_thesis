@@ -1,7 +1,25 @@
-\chapter{Yelp reviews classification}
+\chapter{Yelp Open Dataset}
 
-\section{goal of the thesis}:
+Yelp is a US-based company whose goal is: ``to connect people with great local businesses.''\footnote{\url{https://yelp.com/about}}
+It provides both mobile and web interface listing businesses such as restaurants or shopping centres.
+Users can easily post a review for any business based on their recent visit.
+All this makes the platform very popular and because of its convenience many people review businesses.
 
-Compare Different approaches to classification.  Evaluate on likes. Start with useful.
+There are three main reasons we chose to evaluate our algorithms on this dataset.
+As we mentioned this platform is very popular and as such has sufficient data.
 
-Description of the problem.
+Secondly, the company publishes every year an open dataset which can be downloaded for academic
+purposes.
+It covers most information conveyed in their system ---  information about businesses and users, pictures taken by the users and most importantly for us textual reviews.
+As such it is possible to download the entire dataset without having to scrape some data.
+
+Lastly, this dataset allows us to asses the needed properties of individual reviews.
+The platform not only allows users to post reviews, but also to asses other reviews in form of \emph{likes}.
+Each review has three buttons --- \emph{useful}, \emph{funny} and \emph{cool}.
+A user can express the property of a review by clicking on one of these buttons. Information how many times these buttons have been clicked is also present in the dataset and as such makes it a great dataset for evaluating how well our algorithms perform.
+
+\section{Format of the Dataset}
+
+All files are in JSON-line format where each line is one element. We will use two files --- \texttt{review.json} and \texttt{business.json}. The former contains text of reviews, how many users clicked on the \emph{like buttons} and few more attributes. On top of this, it also contains business identification which refers to the file \texttt{business.json}. This file contains properties of business such as opening hours or location. We will use this information to filter out non-restaurants and restaurants that are not popular enough to be reliable source of information.
+
+\todoA{either filter out non-resta, or say it's negligible}.  

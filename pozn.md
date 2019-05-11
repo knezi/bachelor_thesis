@@ -5,6 +5,9 @@
 
 
 ## odevzdani
+say how awesome jupyter is
+\it -jmena algoritmu, postupu a tak
+\bb - definice
 - nezalomitelne mezery
 - pomlcky bracho
 50 min
@@ -42,6 +45,8 @@ uzivatelska doc??
 	- lze i prednasku
 
 ## psani
+https://grammarsherpa.wordpress.com/2011/08/13/capital-letters-in-titles-headline-styling/
+capitalization
 - dokumentace dat
 - geneea - memory overflow, sorting and stuff - reducing memory demands
 - precist smernice o bakalarce
@@ -108,7 +113,7 @@ Classes:
 	-> class Data will only have one get_data method
 	-> where the conversion functions will be??
 
-# TODODDO TADY jsme skoncil
+## TODODDO TADY jsme skoncil
 pridej klasifikovanou tridu do configu yamlu??
 dodelat FASTTEXT klasifikator
 nacitani YAMLu
