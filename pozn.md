@@ -2,12 +2,15 @@
 /data/students/knizek
 
 ## clanky
+tohle vypadata vazne dobre:
+	Short text classification in twitter to improve information filtering
 
 
 ## odevzdani
 say how awesome jupyter is
 \it -jmena algoritmu, postupu a tak
 \bb - definice
+
 - nezalomitelne mezery
 - pomlcky bracho
 50 min

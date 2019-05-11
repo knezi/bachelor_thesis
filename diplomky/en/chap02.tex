@@ -1,8 +1,27 @@
-\chapter{What is text classification}
+\chapter{Text Classification}
 
-supervised vs unsupervised
+The process of~filtering data we described in the~first chapter is known as {\bf text classification}.
+\citet{AggZhai12} describe text classification as follows.
+We have a~set of~training records~$\mathcal{D} = \left\{X_1, \ldots, X_N\right\}$ and each record is labeled with one~of the~class labels indexed by~$\left\{1,\ldots, k\right\}$.
+Every record consists of~attributes which contain some~information about it.
+
+The~training set is used for building a~{\bf classification model}. Classification model is a~mapping between a~record and a~class label.
+In~this document we will take into account only \emph{hard version} of~classification which explicitly maps one and only one label to each record.  
+
+
+Subsequently, we have a~set of testing records.
+These records are classified by our built models and used for comparing their performance.
+More on exact evaluation in \autoref{chap:eval}.
+
+To be consistent with machine learning terminology, we will refer to a~record as {\bf an~instance} and to an~ attribute as {\bf a~feature}.
 
 \section{Further specification of the data and the problem}
+
+Let us define our task again with the introduced terminology. Each review is an instance and file \texttt{review.json} contains an instance per line. 
+
+no features -> have to select them and that's it -> chapter engineering
+
+
 
 \section{What to expect from the thesis}
 
