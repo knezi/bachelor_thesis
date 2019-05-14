@@ -13,71 +13,34 @@ Subsequently, we have a~set of testing records.
 These records are classified by our built models and used for comparing their performance.
 More on exact evaluation in \autoref{chap:eval}.
 
-To be consistent with machine learning terminology, we will refer to a~record as {\bf an~instance} and to an~ attribute as {\bf a~feature}.
+To be consistent with machine learning terminology, we will refer to a~record as {\bf an~instance} and to an~attribute as {\bf a~feature}.
 
-\section{Further specification of the data and the problem}
+\section{Text Classification Process}
 
-Let us define our task again with the introduced terminology. Each review is an instance and file \texttt{review.json} contains an instance per line. 
+\todoA{diagram:}
 
-no features -> have to select them and that's it -> chapter engineering
+text cat : a survey -norove - Aas
 
+training set -\> preprocessing {extraction} -\> feature selection -\> 
 
+\citet{Song14} 
 
-\section{What to expect from the thesis}
+\section{Thorough Specification of Data}
 
-\todoB[try them all - possible discussion on difficulty on different types].
+Let us define our task again with the~introduced terminology.
+Each review is an~instance and file \texttt{review.json} contains an~instance per line.
+Because the raw data cannot be directly used as features, we have to extract our features first.
+An~example of such a~feature is the~number of words in a~review, which is calculated from the~review's text.
+More on feature creation is discussed in \autoref{chap:fea}.
+Business information will be only used indirectly to drop reviews coming for unreliable sources.
 
-All measurements will be with respect to the size of dataset, to see how the usefulness of approaches improves with more data.
+\section{Overview of the Classification Process}
 
-In the first part, try to find best features. Start with single words chosen by different
-criteria (TD-idf, entropy...), then try to add *-grams. Later, try more linguistics features.
+As mentioned above, we will describe {\it feature engineering} in \autoref{chap:fea}.
+Firstly, we will introduce several common approaches to creating features and also discuss possibilities of features tailored exactly for our problem.
+Secondly, we will talk about {\it feature selection}, that is a process of identifying and eliminating unhelpful features for both classification and computational performance reasons.
 
-In the next part, if you have time, try other approaches to improve performance. You can try PCA reduction, NN, or other ML algorithms/techniques.
+The general concept of classifiers will be introduced in \autoref{chap:clsgen}, individual classifiers then in \autoref{chap:clscon}.
+Common metrics used for evaluating performance of our classifier are discussed in \autoref{chap:eval}.
 
-\section{OVERVIEW of the goals}:
-
-\subsection{First try classification with ngrams only:}
-
-\bf Words \rm
-
- \todoA{- TD*IDF - with given threshholds}
-
- \todoB{try TD*IDF not with a given threshold, but rather find te optimal threshold for cuts}
-
- \todoB{- choose words with highest information gain; as in McCallum Event models}
-
- \todoA{Fasttext}
-
-\bf Groups of words: \rm
-
-\bf entities extracted from geneea \rm
-
- \todoB{- filter them based on the geneea value of importance}
-
- \todoA{- occurrences - pick only the most frequent}
-
-\bf simple Bigrams, moregrams\rm
-
-\todoA{- same approach as for unigrams}
-
-\subsection{Later try adding more features (mainly linguistics):}
-
-\todoB{Cosine sim}
-
-\todoA{Spell check}
-
-\todoA{Review length}
-
-\todoB{Stars as non-linguistic feature}
-
-\todoC{Go your imagination wild}
-
-\subsection{Try non-feature improvements:}
-
-\todoB{PCA/SVD reduction}
-
-\todoC{Decision trees}
-
-\todoC{NN}
-
-\todoC{Let you imagination go wild}
+Last three chapters are then left for the architecture of the software developed (\autoref{chap:arch}), demonstration of conducted experiments (\autoref{chap:exp}) and final discussion (\autoref{chap:concl}).
