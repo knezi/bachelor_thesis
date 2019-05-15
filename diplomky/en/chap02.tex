@@ -1,5 +1,17 @@
 \chapter{Text Classification}
 
+\begin{tikzpicture}
+  \begin{scope}[blend group = soft light]
+    \fill[red!30!white]   ( 90:1.2) circle (2);
+    \fill[green!30!white] (210:1.2) circle (2);
+    \fill[blue!30!white]  (330:1.2) circle (2);
+  \end{scope}
+  \node at ( 90:2)    {Typography};
+  \node at ( 210:2)   {Design};
+  \node at ( 330:2)   {Coding};
+  \node [font=\Large] {\LaTeX};
+\end{tikzpicture}
+
 The process of~filtering data we described in the~first chapter is known as {\bf text classification}.
 \citet{AggZhai12} describe text classification as follows.
 We have a~set of~training records~$\mathcal{D} = \left\{X_1, \ldots, X_N\right\}$ and each record is labeled with one~of the~class labels indexed by~$\left\{1,\ldots, k\right\}$.
@@ -8,20 +20,31 @@ Every record consists of~attributes which contain some~information about it.
 The~training set is used for building a~{\bf classification model}. Classification model is a~mapping between a~record and a~class label.
 In~this document we will take into account only \emph{hard version} of~classification which explicitly maps one and only one label to each record.  
 
+\section{Text Classification Process}
+
+\todoA{diagram:}
+\begin{code}
+obtaining dataset
+-> preprocessing {extraction} -> feature selection
+ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    		feature engineering
+
+-> training -> evaluation
+\end{code}
+\begin{figure}
+	blah blah
+\label{cls_process}
+\end{figure}
+
+JOIN 2.1 and 2.3, reorganize thorough spec
+
+To get a model and measure performance, we will follow the process of building a classifier as depicted in~\ref{cls_process}.
 
 Subsequently, we have a~set of testing records.
 These records are classified by our built models and used for comparing their performance.
 More on exact evaluation in \autoref{chap:eval}.
 
 To be consistent with machine learning terminology, we will refer to a~record as {\bf an~instance} and to an~attribute as {\bf a~feature}.
-
-\section{Text Classification Process}
-
-\todoA{diagram:}
-
-text cat : a survey -norove - Aas
-
-training set -\> preprocessing {extraction} -\> feature selection -\> 
 
 \citet{Song14} 
 
