@@ -1,7 +1,9 @@
 #!/bin/env python3
 # TODO COMMENT AUTHOR
+import sys
 from collections import defaultdict
 
+import argparse
 import yaml
 from functools import reduce
 from math import log2, ceil
@@ -15,9 +17,6 @@ from classifiers.classifierbase import ClassifierBase
 from load_data import Data, SampleTypeEnum, FeatureSetEnum, LikeTypeEnum
 from preprocessors.preprocessingbase import PreprocessorBase
 from statistics import DataGraph
-
-## TODO
-config_file = 'experiment.yaml'
 
 
 def compute_evaluation_scores(classifier: ClassifierBase,
@@ -71,13 +70,12 @@ def compute_evaluation_scores(classifier: ClassifierBase,
     return clas_scores
 
 
-if __name__ == "__main__":
-
-    with open(config_file, 'r') as cfg:
+def main(config: argparse.Namespace) -> None:
+    # TODO docstring
+    with open(config.config_file, 'r') as cfg:
         experiments: dict = yaml.load(cfg)
 
-    # data = Data('data/data_sample.json', 'data/geneea_sample.json')
-    data = Data('data/data.json', 'data/geneea.json')
+    data = Data(config.yelp_file, config.geneea_file)
 
     train_size = data.generate_sample(LikeTypeEnum.USEFUL)
 
@@ -142,6 +140,23 @@ if __name__ == "__main__":
         stats.name = g['name']
         stats.set_view(g['data'])
         data.plot(stats)
+
+
+if __name__ == '__main__':
+    argparser = argparse.ArgumentParser(description=__doc__)
+
+    argparser.add_argument('config_file', type=str,
+                           help='Config file in YAML.')
+    argparser.add_argument('yelp_file', type=str,
+                           help='Yelp data file.')
+    argparser.add_argument('geneea_file', type=str,
+                           help='Geneea data file.')
+
+    main(argparser.parse_args(sys.argv[1:]))
+
+
+
+
 
     # pridani jednotlivych slov tady snizi presnost jen na 65, je to ocekavane?
 
