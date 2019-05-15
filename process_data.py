@@ -1,6 +1,5 @@
 #!/bin/env python3
 # TODO COMMENT AUTHOR
-import sys
 from collections import defaultdict
 
 import yaml
@@ -8,38 +7,17 @@ from functools import reduce
 from math import log2, ceil
 
 from nltk.metrics import scores
-
-from subprocess import CompletedProcess
-from subprocess import PIPE
-
-import subprocess as sp
 from typing import DefaultDict, Dict, List, Tuple, Set
 
 import classifiers
+import preprocessors
 from classifiers.classifierbase import ClassifierBase
 from load_data import Data, SampleTypeEnum, FeatureSetEnum, LikeTypeEnum
+from preprocessors.preprocessingbase import PreprocessorBase
 from statistics import DataGraph
 
 ## TODO
 config_file = 'experiment.yaml'
-
-
-def run_fasttext(prefix):
-    """Capture output of run_fasttext.sh
-
-    :param prefix: path that is passed to the script as an argument
-    :return: dictionary of results property_name -> value
-    """
-    finished_process: CompletedProcess = sp.run(['./run_fasttext.sh', prefix],
-                                                encoding='utf-8',
-                                                stdout=PIPE)
-
-    if finished_process.returncode != 0:
-        print(f'fasttext with prefix {prefix} failed.', file=sys.stderr)
-
-    return dict(map(lambda x: (x[0], float(x[1])),
-                    map(lambda a: a.split(' '),
-                        finished_process.stdout.strip().split('\n'))))
 
 
 def compute_evaluation_scores(classifier: ClassifierBase,
@@ -69,9 +47,9 @@ def compute_evaluation_scores(classifier: ClassifierBase,
 
     # we don't know how many and what are the values of negative classes
     # therefore we compute union of all and subtract positive elements
-    negative_test: set = reduce(lambda a,b: a.union(b), testsets.values())\
+    negative_test: set = reduce(lambda a, b: a.union(b), testsets.values()) \
                          - testsets[evaluated_class.value]
-    negative_ref: set = reduce(lambda a,b: a.union(b), refsets.values())\
+    negative_ref: set = reduce(lambda a, b: a.union(b), refsets.values()) \
                         - refsets[evaluated_class.value]
     positive_test: set = testsets[evaluated_class.value]
     positive_ref: set = refsets[evaluated_class.value]
@@ -88,7 +66,7 @@ def compute_evaluation_scores(classifier: ClassifierBase,
     clas_scores['f_measure'] = scores.f_measure(positive_ref,
                                                 positive_test)
     # accuracy is true positives and true negatives over all instances
-    clas_scores['accuracy'] =  correctly_classified / len(data_set)
+    clas_scores['accuracy'] = correctly_classified / len(data_set)
 
     return clas_scores
 
@@ -130,7 +108,7 @@ if __name__ == "__main__":
     # self.gram_words = frozenset(self.gram_words.keys())
 
     # TODO this cannot exceed, but doesn't use up all data
-    for train_size in map(lambda x: 2**x, range(1, ceil(log2(train_size)))):
+    for train_size in map(lambda x: 2 ** x, range(1, ceil(log2(train_size)))):
         data.limit_train_size(train_size)
 
         print(f'SIZE {train_size}')
@@ -139,10 +117,20 @@ if __name__ == "__main__":
             # convert features to set:
             features: Set[FeatureSetEnum] \
                 = {FeatureSetEnum[f] for f in ex['features']}
-            train_set = data.get_feature_dict(SampleTypeEnum.TRAIN, features)
-            test_set = data.get_feature_dict(SampleTypeEnum.TEST, features)
+            train_set = data.get_feature_dict(SampleTypeEnum.TRAIN, features,
+                                              ex['extra_data'])
+            test_set = data.get_feature_dict(SampleTypeEnum.TEST, features,
+                                             ex['extra_data'])
+
+            # preprocess data
+            for pp in ex['preprocessing']:
+                prep: PreprocessorBase \
+                    = getattr(preprocessors, pp).Preprocessor(ex['config'])
+                train_set = prep.process(train_set, SampleTypeEnum.TRAIN)
+                test_set = prep.process(test_set, SampleTypeEnum.TEST)
+
             cls: ClassifierBase \
-                = getattr(classifiers, ex['classificator']).Classifier({})
+                = getattr(classifiers, ex['classificator']).Classifier(ex['config'])
             cls.train(train_set)
 
             evaluation: dict \
@@ -154,18 +142,6 @@ if __name__ == "__main__":
     data.plot(stats)
 
 
-    # FASTTEXT
-    # data.dump_fasttext_format('data/data_fasttext')
-    # out = run_fasttext('data/data_fasttext')
-    #
-    # point['fasttext accuracy'] = out['accuracy']
-    # point['fasttext precision'] = out['precision']
-    # point['fasttext recall'] = out['recall']
-    # f_mes = 2 * out['precision'] * out['recall'] / (out['precision'] + out['recall'])
-    # point['fasttext f_measure'] = f_mes
-
-
-
     # pridani jednotlivych slov tady snizi presnost jen na 65, je to ocekavane?
 
     # classifier.show_most_informative_features(30)
@@ -174,38 +150,31 @@ if __name__ == "__main__":
     # # print(nltk.classify.accuracy(classifier, test_set))
     # # print(nltk.classify.accuracy(classifier, train_set))
 
-
     # # ## logistic regression
 
     # # In[55]:
-
 
     # from sklearn.linear_model import LogisticRegression
 
     # # In[56]:
 
-
     # lr = LogisticRegression()
 
     # # In[57]:
-
 
     # half = int(len(X) / 2)
     # print(half)
 
     # # In[58]:
 
-
     # train_set_X, test_set_X = X_matrix[:half, :], X_matrix[half:, :]
     # train_set_Y, test_set_Y = Y[:half], Y[half:]
 
     # # In[59]:
 
-
     # lr.fit(train_set_X, train_set_Y)
 
     # # In[60]:
-
 
     # lr.score(test_set_X, test_set_Y)
 
@@ -213,12 +182,10 @@ if __name__ == "__main__":
 
     # # In[55]:
 
-
     # from sklearn.decomposition import TruncatedSVD
     # from sklearn.preprocessing import scale
 
     # # In[56]:
-
 
     # svd = TruncatedSVD(n_components=100)
     # # scale(X_matrix.tocsc())
@@ -226,11 +193,9 @@ if __name__ == "__main__":
 
     # # In[57]:
 
-
     # feature_set_reduced = [(dict(enumerate(x)), y) for (x, y) in zip(svdMatrix, Y)]
 
     # # In[58]:
-
 
     # random.shuffle(feature_set_reduced)
     # half = int(len(feature_sets) / 2)
@@ -241,7 +206,6 @@ if __name__ == "__main__":
 
     # # In[59]:
 
-
     # classifier = nltk.NaiveBayesClassifier.train(train_set)
     # print(nltk.classify.accuracy(classifier, test_set))
 
@@ -249,11 +213,9 @@ if __name__ == "__main__":
 
     # # In[60]:
 
-
     # X, Y = [x[0] for x in test_set], [x[1] for x in test_set]
 
     # # In[61]:
-
 
     # from sklearn.datasets import fetch_20newsgroups
     # from sklearn.feature_selection import mutual_info_classif
@@ -261,22 +223,18 @@ if __name__ == "__main__":
 
     # # In[62]:
 
-
     # X[0]
 
     # # In[63]:
-
 
     # cv_gain = CountVectorizer(max_df=0.95, min_df=2,
     # max_features=10000)
 
     # # In[64]:
 
-
     # all_keys = [set(x.keys()) for x in X]
 
     # # In[65]:
-
 
     # import functools
 
@@ -285,12 +243,9 @@ if __name__ == "__main__":
 
     # # In[66]:
 
-
     # len(all_fs)
 
-
     # # In[67]:
-
 
     # def get_int(val):
     # if isinstance(val, int):
@@ -300,9 +255,7 @@ if __name__ == "__main__":
     # vals = {'Yes': 1, 'No': 0, 'middle': 1, 'long': 2, 'short': 0, 'good': 1, 'bad': 0}
     # return vals[val]
 
-
     # # In[68]:
-
 
     # # X_matrix=[]
     # #
@@ -315,14 +268,11 @@ if __name__ == "__main__":
     # #            row.append(0)
     # #    X_matrix.append(row)
 
-
     # # In[69]:
-
 
     # import scipy
 
     # # In[70]:
-
 
     # row = []
     # x = X[0]
@@ -350,11 +300,9 @@ if __name__ == "__main__":
 
     # # In[71]:
 
-
     # len(X)
 
     # # In[72]:
-
 
     # X_matrix
 
@@ -362,26 +310,20 @@ if __name__ == "__main__":
 
     # # In[73]:
 
-
     # res_gain = list(zip(all_fs, mutual_info_classif(X_matrix, Y, discrete_features=True)))
 
     # # In[74]:
 
-
     # # res_gain
 
-
     # # In[75]:
-
 
     # [(x, y) for (x, y) in res_gain if y > 0.0005]
 
     # # In[76]:
 
-
     # [(x, y) for (x, y) in res_gain if y > 0.001]
 
     # # In[77]:
-
 
     # sorted([(x, y) for (x, y) in res_gain if x[:3] == '@@@'])

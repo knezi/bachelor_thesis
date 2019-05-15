@@ -393,63 +393,6 @@ TODO
     #     return list(map(lambda row: row[1:],
     #                     self._sample.get_data(dataset, *attributes)))
     #
-    # def dump_fasttext_format(self, path_prefix: str) -> None:
-    #     ### tohle se take musi predelat TODO
-    #     """Create training & testing files for fasttext from the current sample.
-    #
-    #     Train set is written into file {path_prefix}_train instance per line
-    #     in format:
-    #         __label__classification \
-    #         features in the format _feature_value \
-    #         text
-    #
-    #     Test set is divided into two files:
-    #         {path_prefix}_test_data - format same as for the training file
-    #             without __label__classification
-    #
-    #         {path_prefix}_test_lables - file containing only lables
-    #             __label__classification
-    #             Order of lines corresponds to first test file
-    #
-    #     :param path_prefix: prefix used for all three files"""
-    #     train_p: str = f'{path_prefix}_train'
-    #     test_data_p: str = f'{path_prefix}_test_data'
-    #     test_lables_p: str = f'{path_prefix}_test_lables'
-    #
-    #     with open(train_p, 'w') as train, \
-    #             open(test_data_p, 'w') as test_data, \
-    #             open(test_lables_p, 'w') as test_lables:
-    #
-    #         # instance per line, newline is forbidden
-    #         erase_nl_trans = str.maketrans({'\n': None})
-    #
-    #         # train set
-    #         train_sample: List[tuple] \
-    #             = self._sample.get_data(SampleTypeEnum.TRAIN,
-    #                                     'text', 'classification')
-    #         for (fs, txt, clsf) in train_sample:
-    #             print(f'__label__{clsf} '
-    #                   f'{Data._convert_fs2fasttext(fs)} '
-    #                   f'{txt.translate(erase_nl_trans)}', file=train)
-    #
-    #         # test set
-    #         test_sample: List[tuple] \
-    #             = self._sample.get_data(SampleTypeEnum.TEST,
-    #                                     'text', 'classification')
-    #         for (fs, txt, clsf) in test_sample:
-    #             # test file - data
-    #             print(Data._convert_fs2fasttext(fs) + ' ' +
-    #                   txt.translate(erase_nl_trans), file=test_data)
-    #             # test file - lables
-    #             print(f'__label__{clsf}', file=test_lables)
-
-    @staticmethod
-    def _convert_fs2fasttext(fs: dict) -> str:
-        """convert  feature dict to string in the format _featurename_value"""
-        features_str_repre: Iterator[str] \
-            = map(lambda k: f'_{k}_{fs[k]}', fs)
-        feature_string: str = ' '.join(features_str_repre)
-        return feature_string
 
     def _get_raw_sample(self, like_type: LikeTypeEnum) -> pd.DataFrame:
         """Return all usable raw data of the given like type in PandaSeries.

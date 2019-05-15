@@ -7,3 +7,8 @@ class DataMismatchException(Exception):
 
 class InsufficientDataException(Exception):
     """Some part of data needed for analisys is missing."""
+    pass
+
+class NotTrainedException(Exception):
+    """Some part of data needed for analisys is missing."""
+    pass

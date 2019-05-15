@@ -4,6 +4,7 @@
 ## clanky
 tohle vypadata vazne dobre:
 	Short text classification in twitter to improve information filtering
+	short tet classification: A Survey Song
 
 
 ## odevzdani
@@ -48,75 +49,36 @@ uzivatelska doc??
 	- lze i prednasku
 
 ## psani
+### diagramy
+ - tikz - nefunguje?? - zeptat
 https://grammarsherpa.wordpress.com/2011/08/13/capital-letters-in-titles-headline-styling/
 capitalization
 - dokumentace dat
 - geneea - memory overflow, sorting and stuff - reducing memory demands
 - precist smernice o bakalarce
 
-## TODO programovani
-yaml config file:
-experiments:
- -
-   name: 'a'
-   classificator: 'name'
-   features:
-     - f1_name
-	 - f2_name
-	 - ...
-   preprocessing:
-     - preprocesing_function/class? TODO
-	 - ...
-   evaluation:
-     - eval1 class name
-	 - eval2
-	 - ...
-graphs:
- - TODO
- -
-   filename: 'a'
-   datalines:
-     - 
-	   dataline: experiment_name.eval1
-	   [fmt: '']
-	 - 
-	   dataline: experiment_name2.eval2
-	   [fmt: '']
-	 - ...
-   label_x TODO??
-   label_y
- 
-
- - running define:
-	algorithm
-	algo parameters:
-		- features - simply set of features
-		- preprocess
-		- run
- 	eval function
- - what to plot?
-
-Classes:
- - eval functions
- 	- receives classify instance and by classify gets shit done
-	Class Evaluate:
-		def __init__():
-
-		@virtual
-		def evaluate(aa: classify, test_sets: feature_dict) -> {"nameEvalFunction": val}
-
- - classificator:
- 	 - gets parameters from yaml (only preprocessing though???? is this necessary? - change/think)
-	 - train(feature_dict)
-	 - classify(instance)
-	 	 - return classified class
-	 - name (readonly)
-
-- move feature_matrix conversion and dump fasttext to outside classes
-	-> class Data will only have one get_data method
-	-> where the conversion functions will be??
 
 ## TODODDO TADY jsme skoncil
+zkratka
+last preproces musi vratit tuple (whatever, label) for testing data - training go fuck yourself
+YAML speci:
+if you have extra_data, you need to get rid of them in preprocessing - classifier gets first element of the tuple
+	- for training also label
+experiments [
+	{name,
+	classificator,
+	features: [],
+	preprocessing: [],
+	extra_data: [],
+	config: {/* this depends of the classificator and preprocessor */}
+]
+graphs : [
+]
+
+TODO fasttext - check files exist
+preprocessing base class, abych si tam mohl neco ukladat
+- je zajisteno, ze nejdrive pujdou trenovaci data a pak testovaci
+yaml - pridej additional data do feature_dict
 pridej klasifikovanou tridu do configu yamlu??
 dodelat FASTTEXT klasifikator
 nacitani YAMLu

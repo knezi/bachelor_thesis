@@ -19,6 +19,6 @@ class Classifier(ClassifierBase):
         super().train(train_set)
         self._classifier = nltk.NaiveBayesClassifier.train(train_set)
 
-    def classify(self, instance: Dict) -> str:
+    def classify(self, instance) -> str:
         super().classify(instance)
         return self._classifier.classify(instance)
