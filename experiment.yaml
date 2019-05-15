@@ -1,0 +1,30 @@
+experiments:
+  - name: 'Trial'
+    classificator: 'naivebayes'
+    features:
+      - REVIEWLEN
+      - STARS
+    preprocessing: []
+    extra_data: []
+    config: []
+
+  - name: 'FastText'
+    classificator: 'fasttext'
+    features: []
+    preprocessing: ['dumpfasttext']
+    extra_data: ['text']
+    config:
+      path_prefix: 'data/data_fasttext'
+      executable: 'fastText/fasttext'
+      config_ft:
+        - '-epoch'
+        - '50'
+        - '-wordNgrams'
+        - '3'
+
+  - name: 'pokus'
+    classificator: 'naivebayes'
+    features: []
+    preprocessing: []
+    extra_data: []
+    config: []
