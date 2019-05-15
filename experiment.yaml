@@ -28,3 +28,17 @@ experiments:
     preprocessing: []
     extra_data: []
     config: []
+
+graphs:
+  - name: 'Trial_graph'
+    data:
+      FastText:
+        - 'tp'
+        - 'precision'
+      Trial:
+        - 'recall'
+
+  - name: 'Trial_graph_2'
+    data:
+      Trial:
+        - 'recall'

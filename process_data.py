@@ -81,7 +81,7 @@ if __name__ == "__main__":
 
     train_size = data.generate_sample(LikeTypeEnum.USEFUL)
 
-    stats = DataGraph('summary', 'number of instances', 'percentage')
+    stats = DataGraph('', 'number of instances', 'percentage')
 
     # texts_tokenized = (self._tokenize(row.text) for index, row
     #                    in self.data.iterrows())
@@ -138,9 +138,10 @@ if __name__ == "__main__":
 
             stats.add_points(train_size, ex['name'], evaluation)
 
-    # stats.set_view()
-    data.plot(stats)
-
+    for g in experiments['graphs']:
+        stats.name = g['name']
+        stats.set_view(g['data'])
+        data.plot(stats)
 
     # pridani jednotlivych slov tady snizi presnost jen na 65, je to ocekavane?
 

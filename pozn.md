@@ -73,14 +73,21 @@ experiments [
 	config: {/* this depends of the classificator and preprocessor */}
 ]
 graphs : [
+	{name,
+	data:
+	 - namespace
+	 	- line
+	 	- line
+	 - namespace
+	 	- line
+	}
+
 ]
 
 TODO fasttext - check files exist
 preprocessing base class, abych si tam mohl neco ukladat
 - je zajisteno, ze nejdrive pujdou trenovaci data a pak testovaci
-yaml - pridej additional data do feature_dict
 pridej klasifikovanou tridu do configu yamlu??
-dodelat FASTTEXT klasifikator
 nacitani YAMLu
 
 ztratili jsme naivebayes train set accuracy - pridej to do konfigu, chcem to ale vubec?

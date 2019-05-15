@@ -5,12 +5,9 @@ SampleTypeEnum - distinguishing between TRAIN, TEST, CROSSVALIDATION
 Sample - container holding separately train,test,cv data
 Data - class for loading, generating inferred and storing (in Sample) data
 """
-from collections import defaultdict
-
 from enum import Enum, unique, auto
-from functools import reduce
 
-from typing import Iterator, List, Tuple, Dict, Set, Any
+from typing import List, Tuple, Dict, Set
 
 import datetime as dt
 import json
