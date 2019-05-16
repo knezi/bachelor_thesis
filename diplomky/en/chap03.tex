@@ -53,13 +53,45 @@ In this text we will deal with nominal and ordinal only. The simplest way to tre
 
 \section{Commonly Used Features}
 
-\subsection{bag-of-word (BOW)}
+\subsection{Bag-Of-Words}
 
-\subsubsection{td-idt}
+Since the information a sentence carries is not contained only in the words, but also in their positions in the sentence, an ideal algorithm would take into account both the words and their positions.
+However, working with sentences as a whole is somewhat difficult. Hence, the order of words is often omitted and only the number of word occurrences matters.
+This approach is called {\bf Bag-Of-Words} (BOW). Bag-Of-Words for an instance is simply a mapping of every word onto the number of occurrences in the given text.
 
-\todoA{source: Using TF-IDF to Determine Word Relevance in Document Queries - downloaded}
+\subsubsection{TF-IDF}
 
-\subsubsection{*-gram}
+In a general document there are many words that are not directly useful.
+{\it TF--IDF} is a way to evaluate which words are the most important for individual documents.  
+\citet{SalBuc88} describe the motivation for introducing this.
+The goal is to select such words that it will be define the document well enough, yet leaves enough room for describing all relevant documents.
+We will introduce two metrics to convey these two requirements and then use a combination of those two to gain the best results.
+
+First, we will simply use only words occurring enough times in a document. This is referred to as {\it term-frequency}.
+We will introduce {\it inverse-document frequency} (IDF) to skip words such as {\it an}, {\it the} which appear in virtually every sentence and carry very little information.
+IDF is indirectly proportional to the number of documents which contain a given word.
+Thanks to this, words like articles will be given very little weight.
+
+There are many implementations of this general idea. We will explore the implementation described in \citet{Ramos03}. Given a set of documents~$D$, word~$w$ and an individual document~$d$,
+we can calculate TF-IDF as
+
+\[
+	w_d = TF \times IDF = f_{w, d} \times \log \left( {\abs{D}\over f_{w,D}}  \right),
+\]
+
+where $TF = f_{w, d}$ is the number of times~$w$~occured~$d$ and IDF corresponds to $\log \left( {\abs{D}\over f_{w,D}}  \right)$ for $\abs{D}$ being the total number of documents and $f_{w, D}$ the number of documents containing~$w$.
+
+Let us explore how the value changes with different variable values. For such words that $\abs{D} \sim f_{w, D}$ will the value of logarithm very low. This will decrease the importance of the word. This is desired behaviour because such words occur in virtually every document and, as argued above, are not very useful. On the other hand, words having $f_{w,d}$ large and $f_{w,D}$ will be given much higher importance, which is again desired, because these words occur relatively often in the given document and not so often in the document set overall.
+
+\todoA{Is this really the way we're going to use it? We have very short texts}
+
+
+\subsection{N-grams}
+
+When using BOW, we can potentially loose useful information.
+Unfortunately, it is often computationally infeasible to retain the complete order.
+To find a balance between these two issues, {\bf N-grams} try to convey the order only partially.
+N-gram is simply an ordered group of words 
 
 
 
