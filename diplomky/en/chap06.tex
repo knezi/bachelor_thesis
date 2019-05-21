@@ -1,8 +1,79 @@
 \chapter{Evaluation}
 \label{chap:eval}
 
-\section{holdout, ...}
+Until now we showed various possibilities to construct a model.
+In this chapter we will describe how to compare the performance of models.
+We cannot mathematically prove that a model is a correct estimation of what we are trying to classify.
+This is because we do not know the actual model.
+Therefore, we will use statistical methods.
 
-\section{prec, recall, f-measure}
+We cannot validate a model based on how well it fits our training data, because that would yield over-optimistic results.
+Hence, we will create a special training set, which has not been seen by the algorithm during the training phase.
+We will also introduce different metrics for expressing properties of the model.
 
-guyon kniha - good overview on dangers of evaluation 29- on
+\section{Overfitting}
+
+In previous chapter \todoA{ref} we discussed that a model has to generalise well. This means it has to be able to predict even
+instances it has not seen during the training phase. When a model fits well training data, but does not generalise well, it is called
+{\bf overfitting} (sometimes referred to as {\bf bias}).
+This is caused when an algorithm learns to recognise idiosyncrasies of the training set, rather than to understand the underlying logic.
+These idiosyncrasies can be caused by incomplete data or noise introduced during obtaining the data.
+
+We should keep in mind a phenomena known as {\it occam's razor} in order to avoid overfitting. \todoA{citation}
+It basically advice us to choose the least complicated solution while
+maintaining satisfactory results.
+This in our case means using a model with less parameters. An example can be a {\bf Decision Tree}.
+If we have two trees with comparable performance, the one with less nodes is less likely to suffer from overfitting. \citet{TanBachKum08} describe this in chapter 4.
+
+\todoA{add mention of underfittin???}
+
+\section{Partitioning Data}
+
+Usually, we do not get data divided into training and testing sets.
+Even though it gives us more flexibility, it also introduces a new challenge how to obtain the two sets.
+
+\subsection{Holdout Method}
+
+The simplest approach is to randomly divide data into two sets, such that their size will be of a given ration.
+This approach is called {\bf Holdout}.
+The exact ratio is at the discretion of a further analysis and usually ranges between 50 and 70~\% for the training set. \todoA{citation}.
+
+As \citet{TanBachKum08} note there are three issues with this approach.
+First, having fewer training examples can lead to lower performance.
+Also, the model can be depended on the actual subset chosen for training.
+Second, If we use too much data for training, the performance estimation will be less reliable.
+Statistically speaking, it will have wider confidence interval.
+Finally, the training and testing sets are not independent of each other anymore.
+An example of this dependency is when a class is overrepresented in one subset, it must be underrepresented in the other one.
+
+\subsection{Cross-Validation}
+
+To address some of the issues listed above, {\bf Cross-Validation} has been introduced.
+The underlying idea is that each instance is used the same number of times for training and exactly once for testing.
+We split the dataset into~$k$~equally-sized subsets.
+For each subsets, we train our algorithm on all subsets but the one chosen and the one will be used as a testing set.
+This approach is called {\bf k-fold cross-validation} for~$k$~subsets. The variable~$k$~is chosen arbitrarily.
+
+Special case for~$k=N$, where~$N$~is the number of instances is called {\bf leave-one-out} and has the advantage of 
+utilizing as much data for training as we can.
+However, it is computationally expensive and we therefore generally choose lower~$k$~for practical uses.
+
+Because we compute metrics separately for each subset, we need to aggregate those into one number.
+We sum them for error rate or average them for other metrics. \todoB{elaborate more?}
+
+
+
+
+\section{metrics}
+
+\subsection{prec, recall, f-measure}
+
+
+
+\todoC{guyon - kniha -a pendix A hezky prehled null hypothesis}
+
+\todoB{error analysis - see w8}
+
+\todoB{interpretability -see w8}
+
+\todoB{learning curves - overfitting/underfitting}
