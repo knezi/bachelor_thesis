@@ -46,7 +46,7 @@ Dale k koreni repa vytvorte:
 
 Pro data staci nakopirovat slozku /data/students/knizek/data/ do korenu. Nakonec staci 500MB. To jsou rovnou denormalizovane pouzite soubory.
 
-`./process_data.py | tee dump`
+`./process_data.py experiments.yaml data/data.json data/geneea.json | tee dump`
 
 Po dobehnuti je graf v `graphs/Psummary.png` a ta sama data v csv dumpu:
 `graphs/Psummary.csv`
