@@ -1,4 +1,24 @@
 experiments:
+  - name: 'zero-R'
+    classificator: 'baseline'
+    features:
+      - REVIEWLEN
+      - STARS
+    preprocessing: []
+    extra_data: []
+    config:
+      algorithm: 'zero-R'
+
+  - name: 'one-R'
+    classificator: 'baseline'
+    features:
+      - REVIEWLEN
+      - STARS
+    preprocessing: []
+    extra_data: []
+    config:
+      algorithm: 'one-R'
+
   - name: 'Trial'
     classificator: 'naivebayes'
     features:
@@ -6,7 +26,7 @@ experiments:
       - STARS
     preprocessing: []
     extra_data: []
-    config: []
+    config: {}
 
   - name: 'FastText'
     classificator: 'fasttext'
@@ -27,9 +47,22 @@ experiments:
     features: []
     preprocessing: []
     extra_data: []
-    config: []
+    config: {}
 
 graphs:
+  - name: 'baseline'
+    data:
+      zero-R:
+        - 'f-measure'
+      one-R:
+        - 'f-measure'
+      Trial:
+        - 'f-measure'
+      FastText:
+        - 'f-measure'
+      pokus:
+        - 'f-measure'
+
   - name: 'Trial_graph'
     data:
       FastText:
