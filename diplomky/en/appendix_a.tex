@@ -1,0 +1,9 @@
+\chapter*{Appendix A}
+\addcontentsline{toc}{chapter}{Appendix A}
+
+
+\section{Format of the Dataset}
+
+All files are in JSON-line format where each line is one element. We will use two files --- \texttt{review.json} and \texttt{business.json}. The former contains text of reviews, how many users clicked on the \emph{like buttons} and few more attributes. On top of this, it also contains business identification which refers to the file \texttt{business.json}. This file contains properties of business such as opening hours or location. We will use this information to filter out non-restaurants and restaurants that are not popular enough to be reliable source of information.
+
+\todoA{either filter out non-resta, or say it's negligible}.  
