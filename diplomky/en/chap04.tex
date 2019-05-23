@@ -1,16 +1,17 @@
 \chapter{Evaluation}
-continue kumar 188
+
 
 \label{chap:eval}
 
-Until now we showed various possibilities to construct a model.
+Until now we showed various possibilities of constructing a model.
 In this chapter we will describe how to compare the performance of models.
 We cannot mathematically prove that a model is a correct estimation of what we are trying to classify.
 This is because we do not know the actual model.
-Therefore, we will use statistical methods.
+Therefore, we will use statistical methods on a testing set.
 
 We cannot validate a model based on how well it fits our training data, because that would yield over-optimistic results.
-Hence, we will create a special training set, which has not been seen by the algorithm during the training phase.
+Also, it wouldn't give us any idea how well the classifier performs on data it has not seen during the training phase.
+Hence, we will create a special testing set, which has not been seen by the algorithm during the training phase.
 We will also introduce different metrics for expressing properties of the model.
 
 \section{Overfitting}
@@ -18,14 +19,15 @@ We will also introduce different metrics for expressing properties of the model.
 In previous chapter \todoA{ref} we discussed that a model has to generalise well. This means it has to be able to predict even
 instances it has not seen during the training phase. When a model fits well training data, but does not generalise well, it is called
 {\bf overfitting} (sometimes referred to as {\bf bias}).
-This is caused when an algorithm learns to recognise idiosyncrasies of the training set, rather than to understand the underlying logic.
-These idiosyncrasies can be caused by incomplete data or noise introduced during obtaining the data.
+This happens when an algorithm learns to recognise idiosyncrasies of the training set, rather than to understand the underlying logic.
+These idiosyncrasies can appear by incomplete data or noise introduced during obtaining the data.
 
-We should keep in mind a phenomena known as {\it occam's razor} in order to avoid overfitting. \todoA{citation}
-It basically advice us to choose the least complicated solution while
-maintaining satisfactory results.
-This in our case means using a model with less parameters. An example can be a {\bf Decision Tree}.
+One way of thinking about it describes a phenomena known as {\it occam's razor}. \todoA{citation}
+It basically advice us to prefer less complicated solution over the more complicated as it is less likely to suffer from overfitting.
+An example of such a process can be a {\bf Decision Tree}.
 If we have two trees with comparable performance, the one with less nodes is less likely to suffer from overfitting. \citet{TanBachKum08} describe this in chapter 4.
+
+{source: kumar 188}
 
 \todoA{add mention of underfittin???}
 
@@ -36,9 +38,9 @@ Even though it gives us more flexibility, it also introduces a new challenge how
 
 \subsection{Holdout Method}
 
-The simplest approach is to randomly divide data into two sets, such that their size will be of a given ration.
+The simplest approach is to randomly divide data into two sets, such that their size will be of a given ratio.
 This approach is called {\bf Holdout}.
-The exact ratio is at the discretion of a further analysis and usually ranges between 50 and 70~\% for the training set. \todoA{citation}.
+The exact ratio is at the discretion of further analysis and usually ranges between 50 and 70~\% for the training set. \todoA{citation}.
 
 As \citet{TanBachKum08} note there are three issues with this approach.
 First, having fewer training examples can lead to lower performance.
@@ -60,22 +62,72 @@ Special case for~$k=N$, where~$N$~is the number of instances is called {\bf leav
 utilizing as much data for training as we can.
 However, it is computationally expensive and we therefore generally choose lower~$k$~for practical uses.
 
-Because we compute metrics separately for each subset, we need to aggregate those into one number.
-We sum them for error rate or average them for other metrics. \todoA{add min, max, average, odchylka elaborate more?}
+For evaluation we compute evaluation metrics for each pair training and testing set separately and report their average along with minimal and maximal value and standard deviation.
+
+\todoA{should I elaborate more on this statistics?}
+
+
+\section{Evaluation Metrics}
+
+When have our training and testing sets, we can train our classifier.
+Subsequently, we predict labels of instances in the testing set with our newly
+built classifier.
+To say how well the classifier performs, we need to express how well the predicted
+labels fit the actual labels.
+For doing this we will introduce several {\bf evaluation metrics}.
+
+We will define a confusion matrix first for easier metrics demonstration.
+Let us have a binary classification problem, then matrix~$A$~of the dimensions 2x2 is a {\bf confusion matrix} if and only if~$A_{1,1}$~and~$A_{1,2}$~are the numbers of correctly and incorrectly classified positive instances, respectively. $A_{2,1}$ and~$A_{2,2}$~are then analogically correctly and incorrectly classified negative instances.
+So in the example below, 2 not-useful instances have been classified as useful.
+
+\todoA{example}
+\begin{code}
+        classified    useful       not
+actual
+useful                 10          5
+not                     2         11
+\end{code}
+
+
+The most straightforward metrics are accuracy and error rate.
+{\bf Accuracy} is the ratio of correctly classified instances and {\bf error rate} incorrectly.
+In the confusion matrix it is then:
+
+
+\todoA{formula}
+
+accura = a11+a22 / sum
+
+error\_rate = a12+a21 / sum
+
+In our toy example accuracy is~$21/28$ and error rate~$7/28$.
+
+\todoB{problems with accuracy}.
+
+More commonly used metrics for their better properties are precision, recall and f-measure.
+{\bf Precision} is the ratio of correctly classified instances out of those classified as positive.
+It expresses our confidence on how likely an instance is positive when we classify it so.
+
+{\bf Recall} is the ratio how many instances we classified as positive out of those that are truly positive.
+It expresses our confidence on how many instances we revealed out of the positive cluster.
+
+In the contex of confusion matrix, precission is a11 over column and recall a11 over row. In our toy example precision and recall are 10/15 and 10/12 respectively.
+
+To combine recall and precision {\bf f-measure} is commonly used.
+It is harmonic average of the two and expresses combination of both properties.
+
+\todoA{formula}
+
+
+{source: KUMAR - 150, 550}
 
 
 
 
-\section{metrics}
+\subsection{\todoC{guyon - kniha -a pendix A hezky prehled null hypothesis}}
 
-\subsection{prec, recall, f-measure}
+\subsection{\todoB{error analysis - see w8}}
 
+How to debug and improve from what we saw.
 
-
-\todoC{guyon - kniha -a pendix A hezky prehled null hypothesis}
-
-\todoB{error analysis - see w8}
-
-\todoB{interpretability -see w8}
-
-\todoB{learning curves - overfitting/underfitting}
+\subsection{\todoB{learning curves - overfitting/underfitting}}
