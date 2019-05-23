@@ -1,81 +1,61 @@
-\chapter{Evaluation}
-continue kumar 188
+\chapter{My architecture}
+\label{chap:arch}
 
-\label{chap:eval}
+\todoB[try them all - possible discussion on difficulty on different types].
 
-Until now we showed various possibilities to construct a model.
-In this chapter we will describe how to compare the performance of models.
-We cannot mathematically prove that a model is a correct estimation of what we are trying to classify.
-This is because we do not know the actual model.
-Therefore, we will use statistical methods.
+All measurements will be with respect to the~size of dataset, to see how the~usefulness of approaches improves with more data.
 
-We cannot validate a model based on how well it fits our training data, because that would yield over-optimistic results.
-Hence, we will create a special training set, which has not been seen by the algorithm during the training phase.
-We will also introduce different metrics for expressing properties of the model.
+criteria (TD-idf, entropy...), then try to add *-grams. Later, try more linguistics features.
 
-\section{Overfitting}
+In the~next part, if you have time, try other approaches to improve performance. You can try PCA reduction, NN, or other ML algorithms/techniques.
 
-In previous chapter \todoA{ref} we discussed that a model has to generalise well. This means it has to be able to predict even
-instances it has not seen during the training phase. When a model fits well training data, but does not generalise well, it is called
-{\bf overfitting} (sometimes referred to as {\bf bias}).
-This is caused when an algorithm learns to recognise idiosyncrasies of the training set, rather than to understand the underlying logic.
-These idiosyncrasies can be caused by incomplete data or noise introduced during obtaining the data.
+\section{denormalization}
 
-We should keep in mind a phenomena known as {\it occam's razor} in order to avoid overfitting. \todoA{citation}
-It basically advice us to choose the least complicated solution while
-maintaining satisfactory results.
-This in our case means using a model with less parameters. An example can be a {\bf Decision Tree}.
-If we have two trees with comparable performance, the one with less nodes is less likely to suffer from overfitting. \citet{TanBachKum08} describe this in chapter 4.
+\section{data loading/feature generation}
 
-\todoA{add mention of underfittin???}
+\subsection{mention statistics dump (word length distribution -- choosing threshold and such)}
 
-\section{Partitioning Data}
+\section{experiments (trainiong + YAML config file)}
 
-Usually, we do not get data divided into training and testing sets.
-Even though it gives us more flexibility, it also introduces a new challenge how to obtain the two sets.
+\section{evaluation}
 
-\subsection{Holdout Method}
+Architecture
 
-The simplest approach is to randomly divide data into two sets, such that their size will be of a given ration.
-This approach is called {\bf Holdout}.
-The exact ratio is at the discretion of a further analysis and usually ranges between 50 and 70~\% for the training set. \todoA{citation}.
-
-As \citet{TanBachKum08} note there are three issues with this approach.
-First, having fewer training examples can lead to lower performance.
-Also, the model can be depended on the actual subset chosen for training.
-Second, If we use too much data for training, the performance estimation will be less reliable.
-Statistically speaking, it will have wider confidence interval.
-Finally, the training and testing sets are not independent of each other anymore.
-An example of this dependency is when a class is overrepresented in one subset, it must be underrepresented in the other one.
-
-\subsection{Cross-Validation}
-
-To address some of the issues listed above, {\bf Cross-Validation} has been introduced.
-The underlying idea is that each instance is used the same number of times for training and exactly once for testing.
-We split the dataset into~$k$~equally-sized subsets.
-For each subsets, we train our algorithm on all subsets but the one chosen and the one will be used as a testing set.
-This approach is called {\bf k-fold cross-validation} for~$k$~subsets. The variable~$k$~is chosen arbitrarily.
-
-Special case for~$k=N$, where~$N$~is the number of instances is called {\bf leave-one-out} and has the advantage of 
-utilizing as much data for training as we can.
-However, it is computationally expensive and we therefore generally choose lower~$k$~for practical uses.
-
-Because we compute metrics separately for each subset, we need to aggregate those into one number.
-We sum them for error rate or average them for other metrics. \todoA{add min, max, average, odchylka elaborate more?}
+Software was designed and developed with extensibility in mind. It allows adding new features, specify different subsets of data and convert them into various format without breaking older classifications and measurements.
+The entire project is written mostly in Python and bash with high usage of libraries for both higher performance and easier mantainability.
 
 
+DIAGRAM
+-> preprocess (denormalization, joining files, computing additional data - geneea, spell check…)
+-> load [data] (generate samples, convert \& prepare for classification)
+-> process (classify, measure performance)
+-> visualise (statistics, graphs)
+
+Preprocessing
+
+Loading data
+
+After preprocessing, all necessary data is stored in two files. The former provides data from yelp and the latter provides linguistics features extracted from textual reviews analysed by Geneea.
+
+Both files are in JSON-line format and the instances are in the same order in both of them to guarantee line-by-line correspondence.
+
+The entire process is controlled by the class Data. First, it loads all reviews into pandas Dataframe to achieve high performance and convenient manipulation. Businesses with less than 50 reviews or 10 attributes are dropped for the sake of working with trustworthy restaurants only.
+
+Subsequently, samples are generated from this raw data. Method generate\_sample takes which class will be used for classification and what features are going to be used. Features are then generated from the raw data and instances are split into train and test sets. (TODO CROSSVALI>>). These samples are stored in class Sample, which provides unified interface for accessing them. It also allows to restrict the number of instances being used for experimental purposes.
+
+All samples are stored and remain the same, unless overwritten with a new sample. Thus comparison among different classification algorithms can be made.
+
+When samples are generated, they can be used for classification. The following methods are provided for converting data:
+
+dump\_fasttext\_format - stores samples in files for fasttext
+
+get\_feature\_matrix - returns list of instances represented as rows of matrix; features are filled with empty values for instances without values
+
+get\_feature\_dict - returns list of instances represented by dictionary of feature -> value; not all features are present in all instances
 
 
-\section{metrics}
+Processing
 
-\subsection{prec, recall, f-measure}
+Samples generated in the class Data are passed to classification algorithms in this part. Different combinations of attributes and size of data sets are used for experiments.
 
-
-
-\todoC{guyon - kniha -a pendix A hezky prehled null hypothesis}
-
-\todoB{error analysis - see w8}
-
-\todoB{interpretability -see w8}
-
-\todoB{learning curves - overfitting/underfitting}
+For unified measurement of performance wrapper class DataGraph has been created. It acts as a buffer for individual measurement. It allows adding single points of graphs. An instance of DataGraph containing all results is passed to the instance of Data. Data class instantiates the class Statistics, set paths and create directories form graphs. This instance of Statistics than plots everything. Furthermore, all plotted graphs are also stored in csv files for further analysis.
