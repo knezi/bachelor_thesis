@@ -69,23 +69,34 @@ For evaluation we compute evaluation metrics for each pair training and testing 
 
 \section{Evaluation Metrics}
 
-When have our training and testing sets, we can train our classifier.
+When we have our training and testing sets, we can train our classifier.
 Subsequently, we predict labels of instances in the testing set with our newly
 built classifier.
 To say how well the classifier performs, we need to express how well the predicted
 labels fit the actual labels.
 For doing this we will introduce several {\bf evaluation metrics}.
 
-We will define a confusion matrix first for easier metrics demonstration.
-Let us have a binary classification problem, then matrix~$A$~of the dimensions 2x2 is a {\bf confusion matrix} if and only if~$A_{1,1}$~and~$A_{1,2}$~are the numbers of correctly and incorrectly classified positive instances, respectively. $A_{2,1}$ and~$A_{2,2}$~are then analogically correctly and incorrectly classified negative instances.
-So in the example below, 2 not-useful instances have been classified as useful.
+Let us have a binary classification problem and a classificator we want to evaluate.
+For evaluation we always have to decide which label we will evaluate it on.
+In our case we will choose ``useful''.
+All instances that our classifier predicted as this label are then {\bf positive} and the rest is {\bf negative}.
+Both categories are further divided into true and false.
+True being instances that our classifier predicted correctly and false incorrectly.
+Together we have four categories;
+true positive, false postive, true negative and false negative.
+For clarity we can arange these four categories into the so-called {\bf confusion matrix}.
+Each cell represents the number of instances from one of the categories.
+First and second columns correspond to positive and negative instances, respectivelly.
+Rows to true and false.
+%then matrix~$A$~of the dimensions 2x2 is a {\bf confusion matrix} if and only if~$A_{1,1}$~and~$A_{1,2}$~are the numbers of correctly and incorrectly classified positive instances, respectively. $A_{2,1}$ and~$A_{2,2}$~are then analogically correctly and incorrectly classified negative instances.
+In the example below, 2 not-useful instances have been classified as useful - these are false positives.
 
 \todoA{example}
 \begin{code}
         classified    useful       not
 actual
-useful                 10          5
-not                     2         11
+useful                TP 10        FN  5
+not                   FP  2        TN  11
 \end{code}
 
 
@@ -96,9 +107,9 @@ In the confusion matrix it is then:
 
 \todoA{formula}
 
-accura = a11+a22 / sum
+accura = TP + TN / sum
 
-error\_rate = a12+a21 / sum
+error\_rate = FP + FN / sum
 
 In our toy example accuracy is~$21/28$ and error rate~$7/28$.
 
@@ -108,10 +119,14 @@ More commonly used metrics for their better properties are precision, recall and
 {\bf Precision} is the ratio of correctly classified instances out of those classified as positive.
 It expresses our confidence on how likely an instance is positive when we classify it so.
 
+precision = Tp / tp + fp
+
 {\bf Recall} is the ratio how many instances we classified as positive out of those that are truly positive.
 It expresses our confidence on how many instances we revealed out of the positive cluster.
 
-In the contex of confusion matrix, precission is a11 over column and recall a11 over row. In our toy example precision and recall are 10/15 and 10/12 respectively.
+recall = tp / tp+ fn
+
+In our toy example precision and recall are 10/15 and 10/12 respectively.
 
 To combine recall and precision {\bf f-measure} is commonly used.
 It is harmonic average of the two and expresses combination of both properties.
