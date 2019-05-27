@@ -1,6 +1,6 @@
 #!/bin/env python3
 """TODO comment"""
-from typing import List, Tuple, Dict, Iterator
+from typing import List, Tuple, Dict, Iterator, Any
 
 from load_data import SampleTypeEnum
 from preprocessors.preprocessingbase import PreprocessorBase
@@ -11,8 +11,8 @@ class Preprocessor(PreprocessorBase):
         super().__init__(parameters)
         self.path_prefix = parameters['path_prefix']
 
-    def process(self, dataset: List[Tuple], dataset_purpose: SampleTypeEnum) \
-            -> List[Tuple]:
+    def process(self, dataset, dataset_purpose: SampleTypeEnum) \
+        -> List[Tuple[Any, str]]:
         """Create training & testing files for fasttext from the current sample.
 
         This must be the last preprocessing done.

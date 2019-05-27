@@ -1,10 +1,18 @@
 # bakalářka
+
 /data/students/knizek
 
 ## clanky
 tohle vypadata vazne dobre:
 	Short text classification in twitter to improve information filtering
 	short tet classification: A Survey Song
+
+error analysis - add section
+	http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.441.6742&rep=rep1&type=pdf
+
+exploring data
+ - visualisation
+ Kumar data Mining
 
 
 ## odevzdani
@@ -49,6 +57,7 @@ uzivatelska doc??
 	- lze i prednasku
 
 ## psani
+- zminit jupyter a nastroje pouzite
 ### diagramy
  - tikz - nefunguje?? - zeptat
 https://grammarsherpa.wordpress.com/2011/08/13/capital-letters-in-titles-headline-styling/
@@ -84,7 +93,9 @@ graphs : [
 
 ]
 
+## programovani
 TODO fasttext - check files exist
+add n-gramy - config manipulace s Data clas
 preprocessing base class, abych si tam mohl neco ukladat
 - je zajisteno, ze nejdrive pujdou trenovaci data a pak testovaci
 pridej klasifikovanou tridu do configu yamlu??

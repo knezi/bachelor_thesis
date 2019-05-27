@@ -14,7 +14,7 @@ class Classifier(ClassifierBase):
         super().__init__(parameters)
         self._classifier = None
 
-    def train(self, train_set: List[Tuple[Dict, str]]) -> None:
+    def train(self, train_set) -> None:
         """Train NaiveBayes."""
         super().train(train_set)
         self._classifier = nltk.NaiveBayesClassifier.train(train_set)

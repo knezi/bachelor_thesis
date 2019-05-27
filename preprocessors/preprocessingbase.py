@@ -1,6 +1,6 @@
 #!/bin/env python3
 """todo comment"""
-from typing import Dict, Tuple, List
+from typing import Dict, Tuple, List, Any
 import abc
 
 from load_data import SampleTypeEnum
@@ -13,8 +13,8 @@ class PreprocessorBase(metaclass=abc.ABCMeta):
         self.parameters: Dict = parameters
 
     @abc.abstractmethod
-    def process(self, dataset: List[Tuple], dataset_purpose: SampleTypeEnum)\
-            ->  List[Tuple]:
+    def process(self, dataset, dataset_purpose: SampleTypeEnum)\
+            -> List[Tuple[Any, str]]:
         """Filter taking data as returned from get_feature_dict
         and return changed data in the same format.
 

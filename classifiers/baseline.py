@@ -22,7 +22,7 @@ class Classifier(ClassifierBase):
         else:
             raise Exception(f'Unknown classifier {self.parameters["algorithm"]}')
 
-    def train(self, train_set: List[Tuple[Dict, str]]) -> None:
+    def train(self, train_set) -> None:
         """Train Baseline Classifier."""
         super().train(train_set)
         # split into data and target

@@ -15,7 +15,7 @@ class Classifier(ClassifierBase):
         self.executable = self.parameters['executable']
         self.config_ft = self.parameters['config_ft']
 
-    def train(self, train_set: List[Tuple[Dict, str]]) -> None:
+    def train(self, train_set) -> None:
         """Train FastText model."""
         super().train(train_set)
 

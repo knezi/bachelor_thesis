@@ -14,11 +14,13 @@ class ClassifierBase(metaclass=abc.ABCMeta):
         self.trained = False
 
     @abc.abstractmethod
-    def train(self, train_set: List[Tuple[Dict, str]]) -> None:
+    def train(self, train_set) -> None:
         """Train model with the given train_set.
 
         Can be used multiple times with different sets. The model will be
-        always retrained from the beginning."""
+        always retrained from the beginning.
+
+        type of train_set is dependent on the classifier and preprocessors"""
         self.trained = True
 
     @abc.abstractmethod
