@@ -1,8 +1,9 @@
 #!/bin/env python3
 """TODO comment"""
+from scipy import sparse
 from subprocess import CompletedProcess
 from typing import List, Tuple, Dict
-import subprocess as sp
+import numpy as np
 from sklearn.dummy import DummyClassifier
 from sklearn.tree import DecisionTreeClassifier
 
@@ -26,10 +27,11 @@ class Classifier(ClassifierBase):
         """Train Baseline Classifier."""
         super().train(train_set)
         # split into data and target
-        X, y = zip(*train_set)
+        Xlist, y = zip(*train_set)
+        X = sparse.vstack(Xlist)
         self._classifier.fit(X, y)
 
     def classify(self, instance) -> str:
         super().classify(instance)
 
-        return self._classifier.predict([instance])[0]
+        return self._classifier.predict(instance)[0]

@@ -58,7 +58,7 @@ class Preprocessor(PreprocessorBase):
         # iterating through instances
         for fs, cls in dataset:
             matrix_row: sparse\
-                = sparse.lil_matrix((1, len(self.all_fs)))
+                = sparse.lil_matrix((1, len(self.all_fs)), dtype=int)
             # iterating through features in the specified order
             for key_no, key in enumerate(self.all_fs):
                 if key in fs:

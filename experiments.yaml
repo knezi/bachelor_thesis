@@ -12,9 +12,9 @@ experiments:
   - name: 'one-R'
     classificator: 'baseline'
     features:
-      - REVIEWLEN
-      - STARS
-    preprocessing: []
+     - REVIEWLEN
+     - STARS
+    preprocessing: ['featurematrixconversion']
     extra_data: []
     config:
       algorithm: 'one-R'
