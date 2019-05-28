@@ -1,10 +1,14 @@
 #!/bin/env python3
 """todo comment"""
-from sklearn.feature_selection import chi2
+from scipy import sparse
+from sklearn.feature_selection import chi2, mutual_info_classif
 from twisted.trial import unittest
 from typing import Dict, Tuple, List, Any, Set
+import abc
 
+from load_data import SampleTypeEnum
 from preprocessors import featureselectionbase, featurematrixconversion
+from preprocessors.preprocessingbase import PreprocessorBase
 
 
 class Preprocessor(featureselectionbase.Preprocessor):
@@ -15,10 +19,10 @@ class Preprocessor(featureselectionbase.Preprocessor):
         """Abstract: define metrics for feature selection
 
         :returns: returns the actual evaluation"""
-        return chi2(matrix, labels)[0]
+        return mutual_info_classif(matrix, labels)
 
 
-class Chi2Test(unittest.TestCase):
+class MITest(unittest.TestCase):
     def test(self):
         pr = Preprocessor({'features_to_select': 1})
         pr.set_feature_restriction([

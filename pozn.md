@@ -14,9 +14,11 @@ exploring data
  - visualisation
  Kumar data Mining
 
+ - najit bakalarky podobneho zamezeni
+ - najit sentiment analysis and classification
+ - find state of the art of language modelingz
 
 ## odevzdani
-say how awesome jupyter is
 \it -jmena algoritmu, postupu a tak
 \bb - definice
 
@@ -57,7 +59,16 @@ uzivatelska doc??
 	- lze i prednasku
 
 ## psani
+### TODO
+* dopsat todo haha
 - zminit jupyter a nastroje pouzite
+ - pridat kecy o poctu ruznych review a tak, proc co jsem jak vybiral
+ 	-> grafy poctu slov/error rate and stuff
+ - taking only business_review_count > 50
+ - don't include word error unles you check the language
+ - taking only attributes with at least 10 and at least 50 reviews
+ - measure if reducing non-restaurants helps (no, doesn't)
+ - zmerit ruzne konfigurace (kosinova vzdalenost...)
 ### diagramy
  - tikz - nefunguje?? - zeptat
 https://grammarsherpa.wordpress.com/2011/08/13/capital-letters-in-titles-headline-styling/
@@ -67,8 +78,7 @@ capitalization
 - precist smernice o bakalarce
 
 
-## TODODDO TADY jsme skoncil
-zkratka
+## programatorska dokumentace
 last preproces musi vratit tuple (whatever, label) for testing data - training go fuck yourself
 YAML speci:
 if you have extra_data, you need to get rid of them in preprocessing - classifier gets first element of the tuple
@@ -90,53 +100,23 @@ graphs : [
 	 - namespace
 	 	- line
 	}
-
 ]
 
 ## programovani
-TODO fasttext - check files exist
-add n-gramy - config manipulace s Data clas
-preprocessing base class, abych si tam mohl neco ukladat
-- je zajisteno, ze nejdrive pujdou trenovaci data a pak testovaci
-pridej klasifikovanou tridu do configu yamlu??
-nacitani YAMLu
-
-ztratili jsme naivebayes train set accuracy - pridej to do konfigu, chcem to ale vubec?
-
-split generate sample and features to allow feature change
-add set gram_words, used_entities to check whether data feature_dict get has been changed
-split tokenizer usage in and outside Data Class??
-move entities/index and stuff outside Data class?
-have setters getters for word/entities/... inclusion
-a slova dle entropie ne vyskyu
-v make... pridej execution unittesty
-format directive with function calling
-word2vec for classif?
-fasttext - parameters tuning
-geenea entity -> s/ngrams/entities/
-log - tp/fp/tn/fn....
-should I care about overwriting files and such?
-116 n/a sentiment
-TODO konstanty misto hodnot??
-brat jenom slova delsi nez neco??
-kouoknout rucne na data
-feature rozdelit na dve
+* TODO fasttext - check files exist
+* add n-gramy - config manipulace s Data clas - dle entropie, vyskytu...
+* add entities
+* pridej klasifikovanou tridu do configu yamlu??
+* pridej multiple testing, cross_val mean, av...
+* TODOB learning curves
+* vytvor make nebo neco podobneho
+* dokonci denormalizaci
+* pridej napojeni geeny
+* execution automaticky unittesty
+* dokumentovani kodu
 * Information Gain - snizit dimenzionality - or mutual information?
-Najit soouslovi - mutual information; compound detection
-lingv ficury
-podle mnozstvi dat a jake ficury
-embedding - gensym
-zkusit s plaintextem
-try to plot error rate of useful vs not useful and blah blah blah...
-todo Makefile and clean
 
-Drobnost v reportu:
-- Dejte mezi jednotlive casti nejaky oddelovac (pomlcky nebo prazdnou radku)
-- Zaokrouhlite P a R na 3 desetinna mista
-- napiste co je P a co R
-
-
-## PROGRESS of docstring:
+### progress of docstring:
 \*.sh - done
 filter.py - done
 statistics.py - done
@@ -152,73 +132,26 @@ compare_langs.py - useless?
 crop_geneea.py - done
 process_data.py
 
-
-## při hotovém programu
+### při hotovém programu
 zkontrolovat, jestli masinerie nekde nenechava tmp soubory
 30 minut na spusteni vsechno se vsim vsudy
 requirements.txt - python, setup.py
 
-## psaní bakalářky
- - pridat kecy o poctu ruznych review a tak, proc co jsem jak vybiral
- 	-> grafy poctu slov/error rate and stuff
- - taking only business_review_count > 50
- - don't include word error unles you check the language
- - taking only attributes with at least 10 and at least 50 reviews
- - measure if reducing non-restaurants helps (no, doesn't)
- - zmerit ruzne konfigurace (kosinova vzdalenost...)
 
-## zdroje
- - najit bakalarky podobneho zamezeni
- - najit sentiment analysis and classification
- - find state of the art of language modelingz
- - docist gensim, ft
-
-
-
-PCA, SVD
-- redukce dimenze
-- centralizovat - kazdy sloupec - prumer nula + odchylky
-- singularni matice - moc featur - 
-
-
-
-
-* n-gramy
- - pridat 1 slova, 3 slova
-
-korelace featur
-
-
-cross validation?
-learning curves
-
-
-negativni cosin
-
-
-accuracy - train_set
- - po pridani jedno slov z 95 -> 65
- - zkusit udelat jen suuuper frekventovana slova
-
-
- sklearn - pca randomisedPCA
- truncatedSVD
-
-
- svm - scikit
- maximum entropy
-
-
-
-
-
-zeptat:
-- joint probability & distribution
-	Jakej je rozdil oproti conditional?
-	-> generative vs discriminative
-	generative class based on joint prob - distribution that pair X,Y falls into; makes more assumption about data, infers result indirectly; models joint probability and then from Bayes rule - calculates p{y|x] and picks the most probable label y (usual through Bayesan theorem which requires to compute p[x|y])
-vs discriminative based on conditional probability (or none at all) P[X|Y], needs better data, but infers result directly; directly models or directly learns map x to y
-	-> logistic regr vyssi presnost + Andrew Ng
-	
-- n-gram jsou proste Markovovy řetezy -> aplikace ve word2vec
-
+## experimentovani
+* pridat statistiky slov a dalsich
+* try to plot error rate of useful vs not useful and blah blah blah...
+* embedding - gensym
+* fasttext - parameters tuning
+* brat jenom slova delsi nez neco??
+* kouoknout rucne na data
+* feature rozdelit na dve
+* word2vec for classif?
+* Najit soouslovi - mutual information; compound detection
+* PCA, SVD
+	- redukce dimenze
+	- centralizovat - kazdy sloupec - prumer nula + odchylky
+	- singularni matice - moc featur - 
+	- sklearn - pca randomisedPCA
+	- truncatedSVD
+* svm - scikit

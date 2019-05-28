@@ -464,7 +464,7 @@ TODO
 
         # TODO linguistics features
         # sentiment
-        # entities
+        # entities - it's prepared up there
 
         return features
 
