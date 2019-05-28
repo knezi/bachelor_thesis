@@ -83,10 +83,6 @@ class Preprocessor(PreprocessorBase):
         # convert to tuple to preserve the order
         self.all_fs = sorted(tuple(reduce(lambda a, b: a.union(b), all_keys)))
 
-    def get_fs(self) -> Tuple:
-        """Return an order tuple of all features as their in the matrix"""
-        return self.all_fs
-
 
 class Matrix(unittest.TestCase):
     def test(self):
@@ -94,7 +90,7 @@ class Matrix(unittest.TestCase):
         prc.process([({'a': 1, 'b': 2}, 'useful'),
                      ({'a': 1, 'c': 2}, 'useful'),
                      ], SampleTypeEnum.TRAIN)
-        self.assertEqual(sorted(prc.get_fs()), sorted(('a', 'b', 'c')))
+        self.assertEqual(sorted(prc.all_fs), sorted(('a', 'b', 'c')))
 
         for r1, r2 in zip(
             prc.process([({'a': 1, 'b': 2}, 'useful'),
