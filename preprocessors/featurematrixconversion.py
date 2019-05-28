@@ -14,6 +14,7 @@ from utils import Incrementer
 
 
 class Preprocessor(PreprocessorBase):
+    """TODO"""
     def __init__(self, parameters: Dict) -> None:
         super().__init__(parameters)
         self.feature_convert_table: Dict[str, Dict]
@@ -49,6 +50,7 @@ class Preprocessor(PreprocessorBase):
                  header being tuple of string
                  matrix in the format specified above"""
         # each instance is tuple ({feature dict}, 'classification')
+        super().process(dataset, dataset_purpose)
 
         if dataset_purpose == SampleTypeEnum.TRAIN:
             self.generate_keys(dataset)

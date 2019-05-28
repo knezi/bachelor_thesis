@@ -7,6 +7,7 @@ from preprocessors.preprocessingbase import PreprocessorBase
 
 
 class Preprocessor(PreprocessorBase):
+    """TODO"""
     def __init__(self, parameters: Dict) -> None:
         super().__init__(parameters)
         self.path_prefix = parameters['path_prefix']
