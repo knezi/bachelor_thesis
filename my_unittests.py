@@ -108,10 +108,6 @@ class TestLoadData(unittest.TestCase):
 
         # test insufficient data exception
         data.generate_sample(load_data.LikeTypeEnum.USEFUL)
-        self.assertRaises(exceptions.InsufficientDataException,
-                          lambda: data.get_feature_dict(load_data.SampleTypeEnum.TRAIN,
-                                                        {load_data.FeatureSetEnum.UNIGRAMS}))
-        data.used_gram_words = set()
         self.assertEqual(data.generate_sample(load_data.LikeTypeEnum.USEFUL),
                          14)
 

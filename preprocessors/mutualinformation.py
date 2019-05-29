@@ -2,7 +2,7 @@
 """todo comment"""
 from scipy import sparse
 from sklearn.feature_selection import chi2, mutual_info_classif
-from twisted.trial import unittest
+import unittest
 from typing import Dict, Tuple, List, Any, Set
 import abc
 

@@ -107,6 +107,8 @@ def main(config: argparse.Namespace) -> None:
 
     # TODO this cannot exceed, but doesn't use up all data
     for train_size in map(lambda x: 2 ** x, range(1, ceil(log2(train_size)))):
+        data.max_tfidf = 10
+        data.max_ngrams = 10
         data.limit_train_size(train_size)
 
         print(f'SIZE {train_size}')
@@ -120,6 +122,8 @@ def main(config: argparse.Namespace) -> None:
             test_set = data.get_feature_dict(SampleTypeEnum.TEST, features,
                                              ex['extra_data'])
 
+            print(train_set)
+            break
             # preprocess data
             for pp in ex['preprocessing']:
                 prep: PreprocessorBase \

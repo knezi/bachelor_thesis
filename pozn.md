@@ -60,7 +60,21 @@ uzivatelska doc??
 
 ## psani
 ### TODO
-* dopsat todo haha
+* classificaiton
+* classifiers
+* freature engineering
+* fasttext
+* Chi-2, mi
+* my arch
+* abstract
+* diagrams
+* typography
+* details, credentials, my data
+* fix citations
+* experiments conducted
+* summary
+* appendix - data
+
 - zminit jupyter a nastroje pouzite
  - pridat kecy o poctu ruznych review a tak, proc co jsem jak vybiral
  	-> grafy poctu slov/error rate and stuff
@@ -103,18 +117,22 @@ graphs : [
 ]
 
 ## programovani
-* TODO fasttext - check files exist
-* add n-gramy - config manipulace s Data clas - dle entropie, vyskytu...
+* fasttext - train and get vectors
 * add entities
 * pridej klasifikovanou tridu do configu yamlu??
 * pridej multiple testing, cross_val mean, av...
-* TODOB learning curves
+* add switch to do graphs and statisics (on one random dataset)
 * vytvor make nebo neco podobneho
 * dokonci denormalizaci
 * pridej napojeni geeny
 * execution automaticky unittesty
 * dokumentovani kodu
 * Information Gain - snizit dimenzionality - or mutual information?
+* replace types manual withi FeatureDict type
+
+### possible todos
+* fasttext - check files exist
+* TODOB learning curves
 
 ### progress of docstring:
 \*.sh - done
@@ -138,20 +156,3 @@ zkontrolovat, jestli masinerie nekde nenechava tmp soubory
 requirements.txt - python, setup.py
 
 
-## experimentovani
-* pridat statistiky slov a dalsich
-* try to plot error rate of useful vs not useful and blah blah blah...
-* embedding - gensym
-* fasttext - parameters tuning
-* brat jenom slova delsi nez neco??
-* kouoknout rucne na data
-* feature rozdelit na dve
-* word2vec for classif?
-* Najit soouslovi - mutual information; compound detection
-* PCA, SVD
-	- redukce dimenze
-	- centralizovat - kazdy sloupec - prumer nula + odchylky
-	- singularni matice - moc featur - 
-	- sklearn - pca randomisedPCA
-	- truncatedSVD
-* svm - scikit

@@ -5,7 +5,12 @@ SampleTypeEnum - distinguishing between TRAIN, TEST, CROSSVALIDATION
 Sample - container holding separately train,test,cv data
 Data - class for loading, generating inferred and storing (in Sample) data
 """
+from collections import defaultdict, Counter
+
 from enum import Enum, unique, auto
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
+from matplotlib import pyplot
+from sklearn.feature_selection import mutual_info_classif
 
 from typing import List, Tuple, Dict, Set
 
@@ -23,6 +28,10 @@ from pandas import DataFrame, Series
 import exceptions
 from geneea.analyzer.model import f2converter
 from statistics import DataLine, Statistics, DataGraph
+from utils import top_n_indexes
+
+FeatureDict = List[Tuple[Dict[str, any], str]]
+"""Default format for storing dataset"""
 
 
 @unique
@@ -103,6 +112,7 @@ class FeatureSetEnum(Enum):
     REVIEWLEN = auto()
     SPELLCHECK = auto()
     COSINESIM = auto()
+    TFIDF = auto()
 
 
 @unique
@@ -116,13 +126,15 @@ class LikeTypeEnum(Enum):
 class Data:
     """Load data from specified files to memory and make it accessible.
 
+    You need to set max_tfidf and max_ngrams
+
     __init__ - take paths and load data to memory
     generate_sample - create a sample stored internally
 TODO
     """
     # only words contained in this set will be used
     # when generating n-gram features
-    used_gram_words: Set[str]
+    used_ngrams: Set[str]
     # only these entities will be used when generating entity features
     used_entities: Set[str]
     _statistics: Statistics
@@ -150,8 +162,11 @@ TODO
         self.path: str = path_to_data
 
         # set variables controlling feature creation
-        self.used_gram_words = None
+        self.used_ngrams = None
         self.used_entities = None
+        self.tfidf: TfidfVectorizer = None
+        self.max_tfidf = None
+        self.max_ngrams = None
 
         # self.path contain text, desired classification and some other features
         # Instances correspond line-by-line with file path_to_geneea_data
@@ -233,6 +248,8 @@ TODO
         self._sample.set_data(SampleTypeEnum.TRAIN, sample[:train_size])
         self._sample.set_data(SampleTypeEnum.TEST, sample[train_size:])
 
+        self._regenerate_dictionaries()
+
         return train_size
 
     def get_feature_dict(self, dataset: SampleTypeEnum,
@@ -273,22 +290,23 @@ TODO
         """
         return tuple(row[arg] for arg in args)
 
-    # def get_raw_data(self, dataset: SampleTypeEnum, *attributes: str) \
-    #         -> List[Tuple]:
-    #     """Return raw data from specified dataset in a list of tuples.
-    #
-    #     This method is used only for the purpose of observing data.
-    #
-    #     Each instance is a tuple of attributes specified in the argument in
-    #     that order.
-    #
-    #     :param dataset: returned dataset
-    #     :param attributes: tuple of attributes as named in JSON
-    #     :return: list of instances in the dataset
-    #     """
-    #     return list(map(lambda row: row[1:],
-    #                     self._sample.get_data(dataset, *attributes)))
-    #
+    def get_raw_data(self, dataset: SampleTypeEnum, *attributes: str) \
+            -> List[Tuple]:
+        """Return raw data from specified dataset in a list of tuples.
+
+        Each instance is a tuple of attributes specified in the argument in
+        that order.
+
+        :param dataset: returned dataset
+        :param attributes: tuple of attributes as named in JSON
+        :return: list of instances in the dataset
+        """
+        sample: List[Series] = self._sample.get_data(dataset)
+
+        res: List[tuple] \
+            = [(*self._filter_row(row, attributes),) for row in sample]
+
+        return res
 
     def _get_raw_sample(self, like_type: LikeTypeEnum) -> pd.DataFrame:
         """Return all usable raw data of the given like type in PandaSeries.
@@ -399,34 +417,42 @@ TODO
         # N-GRAMS
         # TODO squeze this into a funciton call for all at once
         if FeatureSetEnum.UNIGRAMS in fs_selection:
-            if self.used_gram_words is None:
+            if self.used_ngrams is None:
                 raise exceptions.InsufficientDataException('Word set not defined.')
             for w in txt_words:
-                if w in self.used_gram_words:
+                if w in self.used_ngrams:
                     features[f'contains({w})'] = 'Yes'
 
         if FeatureSetEnum.BIGRAMS in fs_selection:
-            if self.used_gram_words is None:
+            if self.used_ngrams is None:
                 raise exceptions.InsufficientDataException('Word set not defined.')
             for w, w2 in zip(txt_words, txt_words[1:]):
-                if w in self.used_gram_words and w2 in self.used_gram_words:
+                if w in self.used_ngrams and w2 in self.used_ngrams:
                     features[f'contains({w}&{w2})'] = 'Yes'
 
         if FeatureSetEnum.TRIGRAMS in fs_selection:
-            if self.used_gram_words is None:
+            if self.used_ngrams is None:
                 raise exceptions.InsufficientDataException('Word set not defined.')
             for w, w2, w3 in zip(txt_words, txt_words[1:], txt_words[2:]):
-                if w in self.used_gram_words and w2 in self.used_gram_words \
-                        and w3 in self.used_gram_words:
+                if w in self.used_ngrams and w2 in self.used_ngrams \
+                        and w3 in self.used_ngrams:
                     features[f'contains({w}&{w2}&{w3})'] = 'Yes'
 
         if FeatureSetEnum.FOURGRAMS in fs_selection:
-            if self.used_gram_words is None:
+            if self.used_ngrams is None:
                 raise exceptions.InsufficientDataException('Word set not defined.')
             for w, w2, w3, w4 in zip(txt_words, txt_words[1:], txt_words[2:], txt_words[3:]):
-                if w in self.used_gram_words and w2 in self.used_gram_words \
-                        and w3 in self.used_gram_words and w4 in self.used_gram_words:
+                if w in self.used_ngrams and w2 in self.used_ngrams \
+                        and w3 in self.used_ngrams and w4 in self.used_ngrams:
                     features[f'contains({w}&{w2}&{w3}&{w4})'] = 'Yes'
+
+        # TF-IDF
+        if FeatureSetEnum.TFIDF in fs_selection:
+            if self.tfidf is None:
+                raise exceptions.InsufficientDataException('TF-IDF not initialized.')
+            tfidf_vector = self.tfidf.transform([row.text]).toarray()[0]
+            for fs, val in zip(self.tfidf.get_feature_names(), tfidf_vector):
+                features[f'tf_idf({fs})'] = int(bool(val))
 
         # MISC
         if FeatureSetEnum.REVIEWLEN in fs_selection:
@@ -474,9 +500,44 @@ TODO
         :param size: size of train data
         """
         self._sample.limit_train_size(size)
+        self._regenerate_dictionaries()
 
     def plot(self, data: DataGraph) -> None:
         """Plot given DataGraph.
 
         :param data: instance of DataGraph to be plotted"""
         self._statistics.plot(data)
+
+    def _regenerate_dictionaries(self) -> None:
+        """Regenerates used n-grams, tfidf everytime data change.
+
+        This can occur either when the training size is changed or a new
+        training set is obtained."""
+        tknz = nltk.TweetTokenizer()
+        self.tfidf \
+            = TfidfVectorizer(tokenizer=tknz.tokenize,
+                              max_features=self.max_tfidf)
+        # get_raw_data returns tuple of asked attributes (that is (text,))
+        self.tfidf.fit(list(map(lambda a: a[0],
+                                self.get_raw_data(SampleTypeEnum.TRAIN, 'text'))))
+
+        # n-grams mutual information
+        vectorizer: CountVectorizer = CountVectorizer(tokenizer=tknz.tokenize)
+        # get_raw_data returns tuple of asked attributes (that is (text,))
+        word_matrix \
+            = vectorizer.fit_transform(list(map(lambda i: i[0],
+                                                self.get_raw_data(SampleTypeEnum.TRAIN, 'text'))))
+        labels: List[str] \
+            = list(map(lambda a: a[0],
+                       self.get_raw_data(SampleTypeEnum.TRAIN, 'classification')))
+
+        mi = mutual_info_classif(word_matrix, labels)
+        top_mi = top_n_indexes(mi, self.max_ngrams)
+        ngrams = vectorizer.get_feature_names()
+        self.used_ngrams = set(map(lambda i: ngrams[i], top_mi))
+
+
+        # TODO statistics
+        # print(self.used_ngrams)
+        # pyplot.hist(mi)
+        # pyplot.savefig('graphs/ngrams_histogram')

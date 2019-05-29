@@ -4,6 +4,8 @@ experiments:
     features:
       - REVIEWLEN
       - STARS
+      - TFIDF
+      - UNIGRAMS
     preprocessing:
       - 'mutualinformation'
       - 'featurematrixconversion'

@@ -1,7 +1,7 @@
 #!/bin/env python3
 """todo comment"""
 from sklearn.feature_selection import chi2
-from twisted.trial import unittest
+import unittest
 from typing import Dict, Tuple, List, Any, Set
 
 from preprocessors import featureselectionbase, featurematrixconversion
