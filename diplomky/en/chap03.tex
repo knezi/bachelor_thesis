@@ -7,45 +7,12 @@ DATA MINING
 Huan Liu
 Hiroshi Motoda}
 
-\bf Words \rm
 
- \todoA{- TD*IDF - with given threshholds}
-
- \todoB{try TD*IDF not with a~given threshold, but rather find te optimal threshold for cuts}
-
- \todoB{- choose words with highest information gain; as in McCallum Event models}
-
- \todoA{Fasttext}
-
-\bf Groups of words: \rm
-
-\bf entities extracted from geneea \rm
-
- \todoB{- filter them based on the~geneea value of importance}
-
- \todoA{- occurrences - pick only the~most frequent}
-
-\bf simple Bigrams, moregrams\rm
-
-\todoA{- same approach as for unigrams}
-
-\subsection{Later try adding more features (mainly linguistics):}
-
-\todoB{Cosine sim}
-
-\todoA{Spell check}
-
-\todoA{Review length}
-
-\todoB{Stars as non-linguistic feature}
-
-\todoC{Go your imagination wild}
-
-\todoA{What is a feature?? - ref from previous part}
-
-\todoA{do these two paragraphs need citation too?}
-
-\todoB{PCA/SVD reduction}
+As we said we cannot straightforwardly use the raw data form training our classifier.
+Instead, we will represent each instance with a set of features, each feature expressing a certain property about the instance.
+An example of a feature can be number of words in the review,\
+a feature expressing whether word {\it food} is present in the review
+or a feature extracting some metadata, like how many stars the user gave.
 
 Features are divided by their values into three categories~---~nominal, ordinal and continuous. Nominal features are discrete and their values do~not convey any relationship. When a~feature is ordinal, it means it is discrete and also convey ordering of the values. Continuous feature is then any real-valued variable.
 
@@ -53,10 +20,29 @@ In this text we will deal with nominal and ordinal only. The simplest way to tre
 
 \section{Extraction}
 
-tokenization
-BOW....
+When we come up with feature we want to use, we often have to do some preprocessing and then computing the value of a feature for each particular instance.
+This process is called {\bf feature extraction}.
+We will use features like number of words and therefore we need to split the reviews into words first.
+This is called {\bf tokenization}, because we are splitting the text into tokens (words in this context).
+We will use Tweet tokenizer from the library nltk.
+The reason we use it is that it does not only split words by spaces,
+but also punctuation and considers punctuation signs to be tokens as well.
+This allows the features to carry some potentially useful information.
+An example is indication that a word as at the end of a sentence if it is followed by a full stop.
+
+Subsequently, it is often needed to convert words into lower case and {\it lemmatise} them.
+Both these techniques are used to group words that express the same meaning together.
+The case of lower case is clear.
+{\bf Lemmatisation} means replacing a word with its lemma, which is a kind of {\it base form} of the word.
+The reason of doing this is to group inflected words together.
+An example in English is {\it car} and {\it cars}.
+Both words clearly express the same property and we may want to group them together.
+Of course, the exact meaning is different, but often for purposes of classification known that there is a car
+suffices. It is not necessary to known whether one or more.
+Because English is not highly inflectional language, we will omit this process and use only lower case conversion.
 
 
+\todoA{ref to nltk.}
 
 
 \section{Selection}
@@ -84,22 +70,44 @@ Filters work with individual features independently of any supervised classifica
 
 \subsubsection{Mutual Information}
 
-As CITA defines it, {\bf mutual information} of~$X$~w.r.t.~$Y$~is the amount of uncerntainty in X with respect to knowledge if Y.
-In other words, it is the decrease of entropy in~$X$~when~$Y$~is known.
-We can define mutual information of~$X$~and~$Y$~as:
+As \citet{Hoq14} defines it, {\bf mutual information}~$I(X, Y)$~is the amount of uncertainty in X due to the knowledge of Y. It is defined as:
 
-$$I(X, Y) = H(X) - H(X|Y)$$
+$$sum p(x,y) log(p(x,my)/op(x)/p(y)$$
+
+It can be also expressed as
+
+$$I(X, Y) = H(X) - H(X|Y),$$
+
+where~$H(x)$~is entropy of random variable~$X$~and~$H(X|Y)$~the conditional entropy.
+This way~$H(X)$~expresses the of uncertainty of~$X$~and~$H(X|Y)$~what~$Y$~does not say about~$X$.
+This supports the intuitive idea that information gain expresses how much information one variable carries about the other one.
+
+The basic approach is to compute mutual information of each feature and the class label.
+Only feature exceeding some given threshold are then used for traning.
+\citet{Hoq14} proposes improved algorithm.
+Instead of choosing all feature in one step, they choose one feature at a time and repeat this process until again a given threshold is exceeded.
+Two values are calculated for each not selected feature.
+First, feature-class as in the basic approach.
+Second, the average of mutual information between the feature all already used features.
+Then they choose such a feature that has the highest feature-class and also lowest average of feature-feature.
+This prevents including highly correlated features into training set.
+We have not used this approach due to the lack of time and used the basic approach.
+
+todo polish this, add sources and wrap it up
 
 
+\subsubsection{CHI-square~---~$\chi^2$}
 
+CHI-square measures the lack of independence between two variables (CITA).
 
-CITA: MIFS-ND: A mutual information-based feature selection method
+We consider two variables and for each combination of their vales,
+we compute the expected number of instances if these variables were independent.
+We will do so, but calculation the distribution of the variables individually.
+Then~$\chi^2$~is the following sum for each value combination.
 
+$$\left(O - E\right)^2 \over E),$$
 
-\subsubsection{$\chi^2$}
-
-
-
+where E is the expected value, and O observed.
 
 \subsection{Wrappers}
 
@@ -140,8 +148,9 @@ Embedded methods are part of a classification algorithm itself. An example can b
 \todoA{The last sentence should be removed if there are no such algos in this doc.}
 
 
-
 \section{Commonly Used Features}
+
+In this section we will use some commonly used features and briefly discuss their pros and cons.
 
 \subsection{Bag-Of-Words}
 
@@ -175,6 +184,9 @@ Let us explore how the value changes with different variable values. For such wo
 
 \todoA{Is this really the way we're going to use it? We have very short texts}
 
+\todoA{- TD*IDF - with given threshholds - how to find it?}
+
+\todoB{try TD*IDF not with a~given threshold, but rather find te optimal threshold for cuts}
 
 \subsection{N-grams}
 
@@ -184,6 +196,8 @@ To find a balance between these two issues, {\bf N-grams} try to convey the orde
 {\bf N-gram} is simply a sequence of items, in our case words. The~$N$~refers to the length of the sequence.
 The longer a sequence is to more order is preserved at higher computational cost.
 Bigrams and trigrams (pairs and triples) are most commonly used.
+
+\todoB{- choose words with highest information gain; as in McCallum Event models}
 
 \subsection{Word Embeddings}
 
@@ -207,10 +221,27 @@ FastText
 \subsubsection{GloVe}
 
 
+\subsection{Geneea entities}
+
+\bf entities extracted from geneea \rm
+
+ \todoB{- filter them based on the~geneea value of importance}
+
+ \todoA{- occurrences - pick only the~most frequent}
+
+\subsection{\todoB{Cosine sim}}
+
+\subsection{\todoA{Spell check}}
+
+\subsection{\todoA{Review length}}
+
+
+
 \subsection{Singular Value Decomposition (SVD/PCA)}
 
 \subsection{hand crafted features}
 
 \subsection{non-textual features --- metadata}
 
+\todoB{Stars as non-linguistic feature}
 
