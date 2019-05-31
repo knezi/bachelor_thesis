@@ -83,7 +83,7 @@ This way~$H(X)$~expresses the of uncertainty of~$X$~and~$H(X|Y)$~what~$Y$~does n
 This supports the intuitive idea that information gain expresses how much information one variable carries about the other one.
 
 The basic approach is to compute mutual information of each feature and the class label.
-Only feature exceeding some given threshold are then used for traning.
+Only feature exceeding some given threshold are then used for training.
 \citet{Hoq14} proposes improved algorithm.
 Instead of choosing all feature in one step, they choose one feature at a time and repeat this process until again a given threshold is exceeded.
 Two values are calculated for each not selected feature.
@@ -93,21 +93,45 @@ Then they choose such a feature that has the highest feature-class and also lowe
 This prevents including highly correlated features into training set.
 We have not used this approach due to the lack of time and used the basic approach.
 
-todo polish this, add sources and wrap it up
 
 
 \subsubsection{CHI-square~---~$\chi^2$}
 
-CHI-square measures the lack of independence between two variables (CITA).
+CHI-square test of independence can be thought of as a measure  of the lack of independence between two variables.
+As in mutual information, we will compute a special value for each pair feature-class and based on some threshold we will choose the most informative features.
+Let us demonstrate this with an example.
+We have two random variables;
+Useful which is simply our classification label and credit card denoting whether the instance contains credit card as a word.
+Table 1 summaries this. The bottom most row and right most column express marginal probability distribution calculated by the number of samples.
+If the variables very truly independent, we would expect the cells to be 15 and 35 in the first and second row respectively.
+We will introduce a cost function to reflect this and~$\chi^2$~of the two variables will then be sum of the cost function over all cells.
 
-We consider two variables and for each combination of their vales,
-we compute the expected number of instances if these variables were independent.
-We will do so, but calculation the distribution of the variables individually.
-Then~$\chi^2$~is the following sum for each value combination.
+\todoA{table}
+\todoA{somehow separate marginal distributions from the table, so it's clear that sum of cost funcions is over four cells}
+\begin{code}
+                 useful    not useful    both
+credit card in     25          5          0.30   
+credit c not it    45         25          0.70  
+both               0.50         0.50          1
 
-$$\left(O - E\right)^2 \over E),$$
+\end{code}
 
-where E is the expected value, and O observed.
+The exact definition can be found in \citet{Hugh13}.
+Let us define~$O_{x,y}$ and~$E_{x,y}$~and the number of observed, resp. expected instances for~$X=x$~and~$Y=y$.
+The value of observed is simply the number of instances.
+The expected value can be computed as $M_r \times M_c \times n$, where~$M_r$~and~$M_c$~are the marginal probabilities and~$n$~number of all instances.
+$\chi^2$~of two random variables~$X$~and~$Y$~is then:
+
+$$\sum_{x \in X, y \in Y}{\chi^2_{y,x}},$$
+
+where~${\chi^2_{y,x}}$ is $\left(O - E \right) ^ 2 \over E$.
+
+This corresponds to our intuition as the farther observed value from expected is, the higher penalization with square.
+Also, it is normalized by dividing it in E.
+
+In our example the value of~$\chi$~is~$(25-15)^2......$~ \todoA{add the computations}.
+
+\todoB{advantages/dis... a bit of discussion}
 
 \subsection{Wrappers}
 
@@ -147,6 +171,10 @@ Embedded methods are part of a classification algorithm itself. An example can b
 
 \todoA{The last sentence should be removed if there are no such algos in this doc.}
 
+\section{Singular Value Decomposition (SVD/PCA)}
+
+ - not feature selection, nor extraction
+ - as an intermediate process between training and extracting/selecting
 
 \section{Commonly Used Features}
 
@@ -214,12 +242,6 @@ Than then showed that $x_{apple}-x_{apples} \sim x_{car}-x_{cars}$.
 Even more complicated relations like $x_{king} - x_{man} + x_{woman} \sim x_{queen}$ where shown.
 They use this property to solve word analogies in form {\it a is to b as c is to \_\_\_}.
 
-\subsubsection{Word2Vec}
-
-FastText
-
-\subsubsection{GloVe}
-
 
 \subsection{Geneea entities}
 
@@ -231,15 +253,12 @@ FastText
 
 \subsection{\todoB{Cosine sim}}
 
-\subsection{\todoA{Spell check}}
-
-\subsection{\todoA{Review length}}
-
-
-
-\subsection{Singular Value Decomposition (SVD/PCA)}
 
 \subsection{hand crafted features}
+
+\subsubsection{\todoA{Spell check}}
+
+\subsubsection{\todoA{Review length}}
 
 \subsection{non-textual features --- metadata}
 
