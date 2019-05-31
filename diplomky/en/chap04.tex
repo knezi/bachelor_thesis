@@ -80,20 +80,24 @@ labels fit the actual labels.
 For doing this we will introduce several {\bf evaluation metrics}.
 
 Let us have a binary classification problem and a classificator we want to evaluate.
-For evaluation we always have to decide which label we will evaluate it on.
+For evaluation\jh{, - pouzivejte konzistentne carku za predstazenym adjunktem. Bud tam neni, nebo tam je, ale melo by to byt stejne v celem dokumentu} we always have to decide which label we will evaluate it on.
 In our case we will choose ``useful''.
 All instances that our classifier predicted as this label are then {\bf positive} and the rest is {\bf negative}.
 Both categories are further divided into true and false.
 True being instances that our classifier predicted correctly and false incorrectly.
-Together we have four categories;
+Together we have four categories; \jh{:}
 true positive, false postive, true negative and false negative.
 For clarity we can arange these four categories into the so-called {\bf confusion matrix}.
 Each cell represents the number of instances from one of the categories.
 First and second columns correspond to positive and negative instances, respectivelly.
 Rows to true and false.
 %then matrix~$A$~of the dimensions 2x2 is a {\bf confusion matrix} if and only if~$A_{1,1}$~and~$A_{1,2}$~are the numbers of correctly and incorrectly classified positive instances, respectively. $A_{2,1}$ and~$A_{2,2}$~are then analogically correctly and incorrectly classified negative instances.
-In the example below, 2 not-useful instances have been classified as useful - these are false positives.
 
+\jh{sem dejte tabulku bez cisel jen s TF, ..., okomentujte co znamena diagonala}
+
+In the example below, 2 not-useful instances have been classified as useful - \jh{-- (pouzivejte pomlcky (dash), kde maji byt a ne rozdelovnik (hyphen))} these are false positives.
+
+\jh{sem dejte tabulku s cisly. Okomentujte VSECHNY bunky. Udelejte to jako skutecnou tabulku.}
 \todoA{example}
 \begin{code}
         classified    useful       not
@@ -106,6 +110,33 @@ not                   FP  2        TN  11
 The most straightforward metrics are accuracy and error rate.
 {\bf Accuracy} is the ratio of correctly classified instances and {\bf error rate} incorrectly.
 In the confusion matrix it is then:
+
+\jh{Pouzivejte standardni cislovani rovnic}
+\newcommand\TP{\mathit{TP}}  % ty makra nejsou nutna, ale setri praci; mathit je treba, aby to melo spravne mezery
+\newcommand\TN{\mathit{TN}}
+\newcommand\FP{\mathit{FP}}
+\newcommand\FN{\mathit{FN}}
+\newcommand\ALL{\mathit{All}}
+\begin{equation}
+\mathit{accuracy} = \frac{\TP + \TN}{\TP + \TN + \FP + \FN}
+\end{equation}
+Nebo:
+\begin{equation}
+\mathit{accuracy} = \frac{\TP + \TN}{\ALL}
+\end{equation}
+where $\ALL$ is the sum of .....
+\begin{equation}
+\ALL = \TP + \TN + \FP + \FN
+\end{equation}
+
+A complementary measure to accuracy is 
+\begin{equation}
+\mathit{error~rate} = 1 - \mathit{accuracy}
+\end{equation}
+or equivalently
+\begin{equation}
+\mathit{error~rate} = \frac{\FP + \FN}{\ALL}
+\end{equation}
 
 
 \todoA{formula}
