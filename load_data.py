@@ -6,13 +6,14 @@ Sample - container holding separately train,test,cv data
 Data - class for loading, generating inferred and storing (in Sample) data
 """
 from collections import defaultdict, Counter
+from functools import reduce
 
 from enum import Enum, unique, auto
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from matplotlib import pyplot
 from sklearn.feature_selection import mutual_info_classif
 
-from typing import List, Tuple, Dict, Set
+from typing import List, Tuple, Dict, Set, Generator
 
 import datetime as dt
 import json
@@ -113,6 +114,7 @@ class FeatureSetEnum(Enum):
     SPELLCHECK = auto()
     COSINESIM = auto()
     TFIDF = auto()
+    ENTITIES = auto()
 
 
 @unique
@@ -184,7 +186,7 @@ TODO
                     raise exceptions.DataMismatchException(
                         f'ids {dj["review_id"]} and {gx3.docId} do not match.')
 
-                dj['sentiment'] = gx3.sentiment.label
+                dj['sentiment'] = gx3.sentiment.label if gx3.sentiment else 'n/a'
                 dj['entities'] = [ent.stdForm for ent in gx3.entities]
 
                 lines.append(pd.DataFrame([dj]))
@@ -327,7 +329,7 @@ TODO
         # chooses only a subset of features for memory reasons
         sample = sample[['text', like_type.value, 'classification', 'stars',
                          'business_id', 'words', 'incorrect_words',
-                         'sentiment']] \
+                         'sentiment', 'entities']] \
             .reset_index(drop=True)
 
         sample.rename(columns={like_type.value: 'likes'})
@@ -390,6 +392,31 @@ TODO
         """
         print(*line, file=self.stats)
 
+    def add_ngram(self, features: dict, tokens: List[str], n: int) -> None:
+        """Add n-gram (specified in arg) into the given feature_dict.
+
+        It counts only word appearing in self.used_ngrams
+
+        :param features: already finished review
+        :param tokens: tokens of the review
+        :param n: `n`-grams
+        """
+        if self.used_ngrams is None:
+            raise exceptions.InsufficientDataException('Word set not defined.')
+        for i in range(len(tokens) + 1 - n):
+            feature: str = 'contains('
+            valid: bool = True
+            for j in range(n):
+                if tokens[i + j] in self.used_ngrams:
+                    feature += tokens[i + j] + '&'
+                else:
+                    valid = False
+                    break
+
+            if valid:
+                feature += ')'
+                features[feature] = 'Yes'
+
     def generate_features(self, row: pd.Series,
                           fs_selection: Set[FeatureSetEnum]) \
             -> Dict[str, any]:
@@ -402,7 +429,7 @@ TODO
         :return: Feature dict name_of_feature -> value
         """
         text = row.text
-        txt_words = self._tokenize(text)
+        tokens = self._tokenize(text)
         features = {}
 
         # GENERAL NON-TEXTUAL FEATURES
@@ -417,34 +444,13 @@ TODO
         # N-GRAMS
         # TODO squeze this into a funciton call for all at once
         if FeatureSetEnum.UNIGRAMS in fs_selection:
-            if self.used_ngrams is None:
-                raise exceptions.InsufficientDataException('Word set not defined.')
-            for w in txt_words:
-                if w in self.used_ngrams:
-                    features[f'contains({w})'] = 'Yes'
-
+            self.add_ngram(features, tokens, 1)
         if FeatureSetEnum.BIGRAMS in fs_selection:
-            if self.used_ngrams is None:
-                raise exceptions.InsufficientDataException('Word set not defined.')
-            for w, w2 in zip(txt_words, txt_words[1:]):
-                if w in self.used_ngrams and w2 in self.used_ngrams:
-                    features[f'contains({w}&{w2})'] = 'Yes'
-
+            self.add_ngram(features, tokens, 2)
         if FeatureSetEnum.TRIGRAMS in fs_selection:
-            if self.used_ngrams is None:
-                raise exceptions.InsufficientDataException('Word set not defined.')
-            for w, w2, w3 in zip(txt_words, txt_words[1:], txt_words[2:]):
-                if w in self.used_ngrams and w2 in self.used_ngrams \
-                        and w3 in self.used_ngrams:
-                    features[f'contains({w}&{w2}&{w3})'] = 'Yes'
-
+            self.add_ngram(features, tokens, 3)
         if FeatureSetEnum.FOURGRAMS in fs_selection:
-            if self.used_ngrams is None:
-                raise exceptions.InsufficientDataException('Word set not defined.')
-            for w, w2, w3, w4 in zip(txt_words, txt_words[1:], txt_words[2:], txt_words[3:]):
-                if w in self.used_ngrams and w2 in self.used_ngrams \
-                        and w3 in self.used_ngrams and w4 in self.used_ngrams:
-                    features[f'contains({w}&{w2}&{w3}&{w4})'] = 'Yes'
+            self.add_ngram(features, tokens, 4)
 
         # TF-IDF
         if FeatureSetEnum.TFIDF in fs_selection:
@@ -453,6 +459,20 @@ TODO
             tfidf_vector = self.tfidf.transform([row.text]).toarray()[0]
             for fs, val in zip(self.tfidf.get_feature_names(), tfidf_vector):
                 features[f'tf_idf({fs})'] = int(bool(val))
+
+        # ENTITIES
+        if FeatureSetEnum.ENTITIES in fs_selection:
+            # we take all 1,2,3-grams and check if they're entities
+            candidates: List \
+                = list(map(lambda a: (a,), tokens)) \
+                       + list(zip(tokens, tokens[1:])) \
+                       + list(zip(tokens, tokens[1:], tokens[2:]))
+            # entities are separated by space in standard form
+            candidates_str: Generator[str] = map(" ".join, candidates)
+
+            for ent in candidates_str:
+                if ent in self.used_entities:
+                    features[f'entity({ent})'] = 'Yes'
 
         # MISC
         if FeatureSetEnum.REVIEWLEN in fs_selection:
@@ -490,7 +510,6 @@ TODO
 
         # TODO linguistics features
         # sentiment
-        # entities - it's prepared up there
 
         return features
 
@@ -513,20 +532,23 @@ TODO
 
         This can occur either when the training size is changed or a new
         training set is obtained."""
+        # TF-IDF
         tknz = nltk.TweetTokenizer()
         self.tfidf \
             = TfidfVectorizer(tokenizer=tknz.tokenize,
                               max_features=self.max_tfidf)
         # get_raw_data returns tuple of asked attributes (that is (text,))
         self.tfidf.fit(list(map(lambda a: a[0],
-                                self.get_raw_data(SampleTypeEnum.TRAIN, 'text'))))
+                                self.get_raw_data(SampleTypeEnum.TRAIN,
+                                                  'text'))))
 
-        # n-grams mutual information
+        # n-grams - mutual information
         vectorizer: CountVectorizer = CountVectorizer(tokenizer=tknz.tokenize)
         # get_raw_data returns tuple of asked attributes (that is (text,))
         word_matrix \
             = vectorizer.fit_transform(list(map(lambda i: i[0],
-                                                self.get_raw_data(SampleTypeEnum.TRAIN, 'text'))))
+                                                self.get_raw_data(SampleTypeEnum.TRAIN,
+                                                                  'text'))))
         labels: List[str] \
             = list(map(lambda a: a[0],
                        self.get_raw_data(SampleTypeEnum.TRAIN, 'classification')))
@@ -536,7 +558,15 @@ TODO
         ngrams = vectorizer.get_feature_names()
         self.used_ngrams = set(map(lambda i: ngrams[i], top_mi))
 
+        # geneea entities
+        # convert lists of entities into set and then join them into one set
+        self.used_entities \
+            = reduce(lambda a, b: a.union(b),
+                     map(lambda i: set(i[0]),
+                         self.get_raw_data(SampleTypeEnum.TRAIN,
+                                           'entities')))
 
+        # TODO restrict used entities
         # TODO statistics
         # print(self.used_ngrams)
         # pyplot.hist(mi)

@@ -75,8 +75,10 @@ def main(config: argparse.Namespace) -> None:
     with open(config.config_file, 'r') as cfg:
         experiments: dict = yaml.load(cfg)
 
+    print('loading data')
     data = Data(config.yelp_file, config.geneea_file)
 
+    print('generating samples')
     train_size = data.generate_sample(LikeTypeEnum.USEFUL)
 
     stats = DataGraph('', 'number of instances', 'percentage')
@@ -107,11 +109,12 @@ def main(config: argparse.Namespace) -> None:
 
     # TODO this cannot exceed, but doesn't use up all data
     for train_size in map(lambda x: 2 ** x, range(1, ceil(log2(train_size)))):
+        print(f'SIZE {train_size}')
+
         data.max_tfidf = 10
         data.max_ngrams = 10
         data.limit_train_size(train_size)
 
-        print(f'SIZE {train_size}')
 
         for ex in experiments['experiments']:
             # convert features to set:
@@ -122,8 +125,6 @@ def main(config: argparse.Namespace) -> None:
             test_set = data.get_feature_dict(SampleTypeEnum.TEST, features,
                                              ex['extra_data'])
 
-            print(train_set)
-            break
             # preprocess data
             for pp in ex['preprocessing']:
                 prep: PreprocessorBase \
@@ -156,7 +157,15 @@ if __name__ == '__main__':
     argparser.add_argument('geneea_file', type=str,
                            help='Geneea data file.')
 
+
+    import cProfile
+    pr = cProfile.Profile()
+    pr.enable()
+
     main(argparser.parse_args(sys.argv[1:]))
+
+    pr.disable()
+    pr.print_stats(sort="calls")
 
 
 

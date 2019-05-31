@@ -59,7 +59,6 @@ uzivatelska doc??
 	- lze i prednasku
 
 ## psani
-### TODO
 * classificaiton
 * classifiers
 * freature engineering
@@ -117,22 +116,26 @@ graphs : [
 ]
 
 ## programovani
-* fasttext - train and get vectors
-* add entities
+* prozkoumat zero instances
 * pridej klasifikovanou tridu do configu yamlu??
 * pridej multiple testing, cross_val mean, av...
 * add switch to do graphs and statisics (on one random dataset)
 * vytvor make nebo neco podobneho
 * dokonci denormalizaci
 * pridej napojeni geeny
-* execution automaticky unittesty
 * dokumentovani kodu
 * Information Gain - snizit dimenzionality - or mutual information?
-* replace types manual withi FeatureDict type
+* restrict used entities or all?
+
+make - clean
+	 - test
+	 - prepare_data
+	 - run dep on prep [default]
 
 ### possible todos
 * fasttext - check files exist
 * TODOB learning curves
+* replace types manually withi FeatureDict type
 
 ### progress of docstring:
 \*.sh - done

@@ -5,7 +5,9 @@ experiments:
       - REVIEWLEN
       - STARS
       - TFIDF
-      - UNIGRAMS
+      #- UNIGRAMS
+      #- BIGRAMS
+      #- ENTITIES
     preprocessing:
       - 'mutualinformation'
       - 'featurematrixconversion'

@@ -7,3 +7,4 @@ gt / gT switch files
 ^+Shift+N open file
 git ranger
 ^+J - this will show live templates
+^+space ^+space - special completion with files not imported

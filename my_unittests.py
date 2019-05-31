@@ -111,6 +111,14 @@ class TestLoadData(unittest.TestCase):
         self.assertEqual(data.generate_sample(load_data.LikeTypeEnum.USEFUL),
                          14)
 
+        # test add n-grams
+        data.used_ngrams = {'a', 'b'}
+        fs = {'c':2}
+        data.add_ngram(fs, ['b', 'b', 'c', 'a'], 2)
+        self.assertEqual(fs,
+                        {'c':2,
+                         'contains(b&b&)': 'Yes',
+                         })
 
 class TestStatistics(unittest.TestCase):
     def test_data_graph(self):
