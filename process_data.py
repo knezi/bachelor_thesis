@@ -79,9 +79,10 @@ def main(config: argparse.Namespace) -> None:
     data = Data(config.yelp_file, config.geneea_file)
 
     print('generating samples')
-    train_size = data.generate_sample(LikeTypeEnum.USEFUL)
+    datasize: int = data.generate_sample(experiments['config']['chunks'],
+                                         LikeTypeEnum.USEFUL)
 
-    stats = DataGraph('', 'number of instances', 'percentage')
+    stats: DataGraph = DataGraph('', 'number of instances', 'percentage')
 
     # texts_tokenized = (self._tokenize(row.text) for index, row
     #                    in self.data.iterrows())
@@ -106,40 +107,49 @@ def main(config: argparse.Namespace) -> None:
     #         del self.gram_words[w]
     #
     # self.gram_words = frozenset(self.gram_words.keys())
+    while True:
+        train_size: int \
+            = int(datasize - datasize / experiments['config']['chunks'])
+        train_size_log: int = int(ceil(log2(train_size)) + 1)
+        for t_size in map(lambda x: min(2 ** x, train_size),
+                          range(1, train_size_log)):
+            print(f'SIZE {t_size}')
 
-    # TODO this cannot exceed, but doesn't use up all data
-    for train_size in map(lambda x: 2 ** x, range(1, ceil(log2(train_size)))):
-        print(f'SIZE {train_size}')
+            data.max_tfidf = 10
+            data.max_ngrams = 10
+            data.limit_train_size(t_size)
 
-        data.max_tfidf = 10
-        data.max_ngrams = 10
-        data.limit_train_size(train_size)
+            for ex in experiments['experiments']:
+                # convert features to set:
+                features: Set[FeatureSetEnum] \
+                    = {FeatureSetEnum[f] for f in ex['features']}
+                train_set = data.get_feature_dict(SampleTypeEnum.TRAIN, features,
+                                                  ex['extra_data'])
+                test_set = data.get_feature_dict(SampleTypeEnum.TEST, features,
+                                                 ex['extra_data'])
 
+                # preprocess data
+                for pp in ex['preprocessing']:
+                    prep: PreprocessorBase \
+                        = getattr(preprocessors, pp).Preprocessor(ex['config'])
+                    train_set = prep.process(train_set, SampleTypeEnum.TRAIN)
+                    test_set = prep.process(test_set, SampleTypeEnum.TEST)
 
-        for ex in experiments['experiments']:
-            # convert features to set:
-            features: Set[FeatureSetEnum] \
-                = {FeatureSetEnum[f] for f in ex['features']}
-            train_set = data.get_feature_dict(SampleTypeEnum.TRAIN, features,
-                                              ex['extra_data'])
-            test_set = data.get_feature_dict(SampleTypeEnum.TEST, features,
-                                             ex['extra_data'])
+                cls: ClassifierBase \
+                    = getattr(classifiers, ex['classificator']).Classifier(ex['config'])
+                cls.train(train_set)
 
-            # preprocess data
-            for pp in ex['preprocessing']:
-                prep: PreprocessorBase \
-                    = getattr(preprocessors, pp).Preprocessor(ex['config'])
-                train_set = prep.process(train_set, SampleTypeEnum.TRAIN)
-                test_set = prep.process(test_set, SampleTypeEnum.TEST)
+                evaluation: dict \
+                    = compute_evaluation_scores(cls, test_set, LikeTypeEnum.USEFUL)
 
-            cls: ClassifierBase \
-                = getattr(classifiers, ex['classificator']).Classifier(ex['config'])
-            cls.train(train_set)
+                stats.add_points(train_size, ex['name'], evaluation)
 
-            evaluation: dict \
-                = compute_evaluation_scores(cls, test_set, LikeTypeEnum.USEFUL)
+                # here needs to be done average agregation
 
-            stats.add_points(train_size, ex['name'], evaluation)
+        if not data.prepare_next_dataset():
+            break
+
+    # aggregate results here
 
     for g in experiments['graphs']:
         stats.name = g['name']
@@ -157,19 +167,14 @@ if __name__ == '__main__':
     argparser.add_argument('geneea_file', type=str,
                            help='Geneea data file.')
 
-
-    import cProfile
-    pr = cProfile.Profile()
-    pr.enable()
+    # import cProfile
+    # pr = cProfile.Profile()
+    # pr.enable()
 
     main(argparser.parse_args(sys.argv[1:]))
 
-    pr.disable()
-    pr.print_stats(sort="calls")
-
-
-
-
+    # pr.disable()
+    # pr.print_stats(sort="calls")
 
     # pridani jednotlivych slov tady snizi presnost jen na 65, je to ocekavane?
 

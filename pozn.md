@@ -96,6 +96,8 @@ last preproces musi vratit tuple (whatever, label) for testing data - training g
 YAML speci:
 if you have extra_data, you need to get rid of them in preprocessing - classifier gets first element of the tuple
 	- for training also label
+config:
+chunks: 1
 experiments [
 	{name,
 	classificator,
@@ -118,7 +120,7 @@ graphs : [
 ## programovani
 * prozkoumat zero instances
 * pridej klasifikovanou tridu do configu yamlu??
-* pridej multiple testing, cross_val mean, av...
+* prodej pocitani a agregovani statistik
 * add switch to do graphs and statisics (on one random dataset)
 * vytvor make nebo neco podobneho
 * dokonci denormalizaci
@@ -127,12 +129,13 @@ graphs : [
 * Information Gain - snizit dimenzionality - or mutual information?
 * restrict used entities or all?
 
-make - clean
-	 - test
-	 - prepare_data
-	 - run dep on prep [default]
+* make - clean
+	   - test
+  	 - prepare_data
+  	 - run dep on prep [default]
 
 ### possible todos
+* vytvor podslozky, at je to vice prehledne
 * fasttext - check files exist
 * TODOB learning curves
 * replace types manually withi FeatureDict type

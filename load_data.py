@@ -6,6 +6,8 @@ Sample - container holding separately train,test,cv data
 Data - class for loading, generating inferred and storing (in Sample) data
 """
 from collections import defaultdict, Counter
+from math import ceil, floor
+
 from functools import reduce
 
 from enum import Enum, unique, auto
@@ -44,60 +46,107 @@ class SampleTypeEnum(Enum):
 
 
 class Sample:
-    """Store data for different usage and allow access to them.
+    """Store data in chunks for performing cross validation.
+
+    We iterate through different testing and training sets.
+    Everytime one chunk is testing data, the rest is training.
+
 
     __init__ - construct empty objects
-    set_data - set data to one of SampleTypeEnum
-    get_data_basic - return data of SampleTypeEnum with text&classification
+    add_chunk - add new chunk to the data
     get_data - return data of SampleTypeEnum with text and specified columns
-    limit_train_size - set only [:n] rows accessible"""
+        - for TEST, it returns the current chunk considered testing
+        - for TRAIN, it returns the remaining joined into one list
+    start_iter - initializes the iteration over sets
+    next_iter - sets the pair of training and testing set as current
+    limit_train_size - set only [:n] rows accessible
+        - the entire training data is taken and then first n rows taken"""
 
     def __init__(self) -> None:
         """Construct empty objects."""
-        self._samples: Dict[SampleTypeEnum, List[Series]] = dict()
-        for x in SampleTypeEnum:
-            self._samples[x] = []
-        self._train_size = None
+        self._samples: List[List[Series]] = list()
+        self._train_size: int = None
+        self._curr_chunk: int = None
 
-    def set_data(self,
-                 dataset: SampleTypeEnum,
-                 sample: List[Series]) \
+    def add_chunk(self,
+                  sample: List[Series]) \
             -> None:
         """Set data to the given set
 
         Data must be list of instances. Each element being panda Series
 
+        Adding a new chunk will reset current chunk and the iteration has to
+        be done again.
+
         :param dataset: given type - SampleTypeEnum
         :param sample:  the actual sample being set
         :return: None
         """
-        self._samples[dataset] = sample
+        self._curr_chunk = None
+        self._samples.append(sample)
 
-        # TODO REMOVE adding classified feature
-        def add_f(row):
-            row[0]['classification'] = row[1]['classification']
-            return row
-        # self._samples[dataset] = [add_f(x) for x in self._samples[dataset]]
+    def start_iter(self) -> bool:
+        """Reset iteration over testing chunks.
+
+        Every call resets train_size
+
+        :return: True if iteration can be started; False otherwise"""
+        self.train_size = None
+        if self._curr_chunk is None and len(self._samples) > 0:
+            self._curr_chunk = 0
+            return True
+        return False
+
+    def next_iter(self) -> bool:
+        """The current testing chunk is moved on further.
+
+        Every call resets train_size
+
+        :returns: True if next chunk is available
+                  False otherwise"""
+        self.train_size = None
+        if self._curr_chunk is None:
+            return False
+
+        if self._curr_chunk + 1 < len(self._samples):
+            self._curr_chunk += 1
+            return True
+
+        self._curr_chunk = None
+        return False
 
     def get_data(self, dataset: SampleTypeEnum) \
             -> List[Series]:
         """Return list of instances represented by panda Series.
 
         :param dataset: wanted type
-        :return: wanted dataset
+        :return: wanted dataset or None if it's not fully initialized
         """
-        size = self._train_size if (
-                dataset == SampleTypeEnum.TRAIN and
-                self._train_size is not None) \
-            else len(self._samples[dataset])
-        return self._samples[dataset][:size]
+        if self._curr_chunk is None or len(self._samples) == 0:
+            return None
+        if dataset == SampleTypeEnum.TRAIN:
+            train_set: list = []
+            for i in range(len(self._samples)):
+                if i == self._curr_chunk:
+                    continue
+                train_set += self._samples[i]
+
+            size: int = self._train_size if self._train_size is not None \
+                else len(train_set)
+            return train_set[:size]
+
+        elif dataset == SampleTypeEnum.TEST:
+            return self._samples[self._curr_chunk]
 
     def limit_train_size(self, size: int) -> None:
         """Limit the accessible part of train data to [:size]
 
         :param size: First `size` elements of train data will be used.
         """
-        if size > len(self._samples[SampleTypeEnum.TRAIN]):
+        size_of_training_set: int \
+            = sum([len(self._samples[i]) for i in range(len(self._samples))
+                   if i != self._curr_chunk])
+        if size > size_of_training_set:
             raise IndexError('Train set is not big enough.')
         self._train_size = size
 
@@ -217,16 +266,17 @@ TODO
         """
         return self.tokenizer.tokenize(text.lower())
 
-    def generate_sample(self, like_type: LikeTypeEnum) -> int:
+    def generate_sample(self, chunks: int, like_type: LikeTypeEnum) -> int:
         """Generate sample from all data available of the particular like type.
 
-        Create train and test set and set them as the current sample used
-        by methods returning instances of data. It doesn't create
-        crossvalidation set as of now.
+        Get all available data and split them into `chunks` chunk.
+        After calling this function, first pair (train, test) will be ready.
+        Subsequently, call self.prepare_next_dataset to iterate over all pairs.
 
         :param like_type: class being classified
                       It is returned by _generate_cosine_similarity_index.
-        :return: int the size of train set
+        :param chunks: how many chunks will be data split into
+        :return: int the size of entire set
         """
         self._sample: Sample = Sample()
 
@@ -244,15 +294,27 @@ TODO
         # creating datastructures for samples to be given further
         sample: List[Series] = [row for _, row in raw_sample.iterrows()]
 
-        # splitting data into sample sets train and test (7:3 ratio)
         random.shuffle(sample)
-        train_size: int = int(len(sample) * 0.7)
-        self._sample.set_data(SampleTypeEnum.TRAIN, sample[:train_size])
-        self._sample.set_data(SampleTypeEnum.TEST, sample[train_size:])
-
+        # some data are left unused to have chunks of the same size
+        chunk_size: int = floor(len(sample) / chunks)
+        for chunk_no in range(chunks):
+            self._sample.add_chunk(
+                sample[chunk_no * chunk_size: (chunk_no + 1) * chunk_size])
+        self._sample.start_iter()
         self._regenerate_dictionaries()
 
-        return train_size
+        return chunk_size * chunks
+
+    def prepare_next_dataset(self) -> bool:
+        """Prepare next pair of (training, testing set) as prepared by
+        generate_sample.
+
+        :returns: True if there is new available
+        """
+        retval: bool = self._sample.next_iter()
+        if retval:
+            self._regenerate_dictionaries()
+        return retval
 
     def get_feature_dict(self, dataset: SampleTypeEnum,
                          fs_selection: Set[FeatureSetEnum],
@@ -465,8 +527,8 @@ TODO
             # we take all 1,2,3-grams and check if they're entities
             candidates: List \
                 = list(map(lambda a: (a,), tokens)) \
-                       + list(zip(tokens, tokens[1:])) \
-                       + list(zip(tokens, tokens[1:], tokens[2:]))
+                  + list(zip(tokens, tokens[1:])) \
+                  + list(zip(tokens, tokens[1:], tokens[2:]))
             # entities are separated by space in standard form
             candidates_str: Generator[str] = map(" ".join, candidates)
 

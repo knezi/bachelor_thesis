@@ -1,11 +1,13 @@
+config:
+  chunks: 10
 experiments:
   - name: 'zero-R'
     classificator: 'baseline'
     features:
-      - REVIEWLEN
-      - STARS
-      - TFIDF
-      #- UNIGRAMS
+#      - REVIEWLEN
+#      - STARS
+#      - TFIDF
+      - UNIGRAMS
       #- BIGRAMS
       #- ENTITIES
     preprocessing:

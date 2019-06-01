@@ -17,32 +17,44 @@ class TestLoadData(unittest.TestCase):
         data = \
             [pd.Series({'a': 'b', 'classification': 'useful'}),
              pd.Series({'a': 'c', 'classification': 'not-useful'})]
-        sample.set_data(load_data.SampleTypeEnum.TRAIN, data)
+        sample.add_chunk([data[0]])
+        sample.add_chunk([data[1]])
+        self.assertEqual(
+            sample.get_data(load_data.SampleTypeEnum.TRAIN),
+            None
+        )
 
         # testing all sets are properly set
-        self.assertTrue(sample.get_data(load_data.SampleTypeEnum.TRAIN)[0]
+        sample.start_iter()
+        self.assertTrue(sample.get_data(load_data.SampleTypeEnum.TEST)[0]
                         .equals(pd.Series({'a': 'b', 'classification': 'useful'})))
-        self.assertEqual(sample.get_data(load_data.SampleTypeEnum.TEST),
-                         [])
-        self.assertEqual(sample.get_data(load_data.SampleTypeEnum.CROSSVALIDATION),
-                         [])
+        self.assertTrue(sample.get_data(load_data.SampleTypeEnum.TRAIN)[0]
+                        .equals(pd.Series({'a': 'c', 'classification': 'not-useful'})))
 
         # more dummy data
-        test_data = \
+        data = \
             [pd.Series({'a': 'd', 'classification': 'funny'}),
              pd.Series({'a': 'e', 'classification': 'not-funny'})]
-        sample.set_data(load_data.SampleTypeEnum.TEST, test_data)
+        sample.add_chunk([data[0]])
+        sample.add_chunk([data[1]])
 
-        # testing test data has been set
-        self.assertTrue(sample.get_data(load_data.SampleTypeEnum.TEST)[1]
-                        .equals(pd.Series({'a': 'e', 'classification': 'not-funny'})))
+        sample.start_iter()
+        self.assertTrue(sample.get_data(load_data.SampleTypeEnum.TEST)[0]
+                        .equals(pd.Series({'a': 'b', 'classification': 'useful'})))
+        self.assertTrue(sample.get_data(load_data.SampleTypeEnum.TRAIN)[0]
+                        .equals(pd.Series({'a': 'c', 'classification': 'not-useful'})))
+        self.assertEqual(
+            len(sample.get_data(load_data.SampleTypeEnum.TRAIN)),
+            3)
 
-        # Crossvalidation has been set
-        sample.set_data(load_data.SampleTypeEnum.CROSSVALIDATION, test_data)
-        self.assertTrue(sample.get_data(load_data.SampleTypeEnum.CROSSVALIDATION)[0]
-                        .equals(pd.Series({'a': 'd', 'classification': 'funny'})))
+        sample.next_iter()
+        self.assertTrue(sample.get_data(load_data.SampleTypeEnum.TEST)[0]
+                        .equals(pd.Series({'a': 'c', 'classification': 'not-useful'})))
         self.assertTrue(sample.get_data(load_data.SampleTypeEnum.TRAIN)[0]
                         .equals(pd.Series({'a': 'b', 'classification': 'useful'})))
+        self.assertEqual(
+            len(sample.get_data(load_data.SampleTypeEnum.TRAIN)),
+            3)
 
         # test if data are not changed by sideeffects
         identical = True
@@ -55,9 +67,11 @@ class TestLoadData(unittest.TestCase):
 
         self.assertRaises(IndexError, lambda: sample.limit_train_size(4))
         sample.limit_train_size(1)
-        self.assertTrue(sample.get_data(load_data.SampleTypeEnum.TRAIN)[0]
-                        .equals(pd.Series({'a': 'b', 'classification': 'useful'})))
         self.assertTrue(len(sample.get_data(load_data.SampleTypeEnum.TRAIN)) == 1)
+
+        self.assertEqual(sample.next_iter(), True)
+        self.assertEqual(sample.next_iter(), True)
+        self.assertEqual(sample.next_iter(), False)
 
     def test_load_data(self):
         # warning data has been tampered for testing purposes
@@ -113,12 +127,13 @@ class TestLoadData(unittest.TestCase):
 
         # test add n-grams
         data.used_ngrams = {'a', 'b'}
-        fs = {'c':2}
+        fs = {'c': 2}
         data.add_ngram(fs, ['b', 'b', 'c', 'a'], 2)
         self.assertEqual(fs,
-                        {'c':2,
-                         'contains(b&b&)': 'Yes',
-                         })
+                         {'c': 2,
+                          'contains(b&b&)': 'Yes',
+                          })
+
 
 class TestStatistics(unittest.TestCase):
     def test_data_graph(self):
