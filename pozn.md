@@ -118,6 +118,7 @@ graphs : [
 ]
 
 ## programovani
+NOW: * finish testing
 * prozkoumat zero instances
 * pridej klasifikovanou tridu do configu yamlu??
 * prodej pocitani a agregovani statistik

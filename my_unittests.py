@@ -6,6 +6,7 @@ import unittest
 import classifiers
 import exceptions
 import load_data
+from exceptions import InsufficientDataException
 from process_data import compute_evaluation_scores
 from statistics import DataGraph, Point, DataLine
 
@@ -82,19 +83,18 @@ class TestLoadData(unittest.TestCase):
         # warning data has been tampered for testing purposes
         data = load_data.Data('unittests/data_unit.json', 'unittests/geneea_unit.json')
         # returns size of training set
-        self.assertEqual(data.generate_sample(load_data.LikeTypeEnum.USEFUL),
-                         14)
+        self.assertEqual(data.generate_sample(10, load_data.LikeTypeEnum.USEFUL),
+                         20)
 
         # test returned samples
-        # empty features
         self.assertEqual(data.get_feature_dict(load_data.SampleTypeEnum.TRAIN, set())[0][0],
                          {})
 
         # only review len features
-        self.assertEqual(data.generate_sample(load_data.LikeTypeEnum.USEFUL),
-                         14)
+        self.assertEqual(data.generate_sample(10, load_data.LikeTypeEnum.USEFUL),
+                         20)
         self.assertEqual(len(data.get_feature_dict(load_data.SampleTypeEnum.TRAIN, set())),
-                         14)
+                         18)
         # it's 6 + 7th is classification
         # header
         # TODO this is gone
@@ -115,15 +115,13 @@ class TestLoadData(unittest.TestCase):
 
         # number of instances
         self.assertEqual(len(data.get_feature_dict(load_data.SampleTypeEnum.TRAIN, set())),
-                         14)
+                         18)
         data.limit_train_size(10)
         self.assertEqual(len(data.get_feature_dict(load_data.SampleTypeEnum.TRAIN, set())),
                          10)
 
         # test insufficient data exception
-        data.generate_sample(load_data.LikeTypeEnum.USEFUL)
-        self.assertEqual(data.generate_sample(load_data.LikeTypeEnum.USEFUL),
-                         14)
+        self.assertRaises(IndexError, lambda: data.limit_train_size(1000))
 
         # test add n-grams
         data.used_ngrams = {'a', 'b'}
