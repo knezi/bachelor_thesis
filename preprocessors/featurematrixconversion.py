@@ -1,5 +1,5 @@
 #!/bin/env python3
-"""TODO comment"""
+"""Define preprocessor that turns feature_dict into matrix."""
 from collections import defaultdict
 
 import unittest
@@ -14,7 +14,14 @@ from utils import Incrementer
 
 
 class Preprocessor(PreprocessorBase):
-    """TODO"""
+    """Turn feature_dict into matrix.
+
+    For training data header of the matrix is created for all features.
+    This is kept until new training data is supplied.
+    Testing data use the header generated in the processing of training data.
+    Any features not seen in testing will be dropped.
+
+    It is necessary to process training data first."""
     def __init__(self, parameters: Dict) -> None:
         super().__init__(parameters)
         self.feature_convert_table: Dict[str, Dict]

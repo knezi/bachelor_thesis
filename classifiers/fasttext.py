@@ -1,13 +1,23 @@
 #!/bin/env python3
-"""TODO comment"""
+"""Define fasttext classifier."""
 from subprocess import CompletedProcess
-from typing import List, Tuple, Dict
+from typing import Dict
 import subprocess as sp
 
 from classifiers.classifierbase import ClassifierBase
 
 
 class Classifier(ClassifierBase):
+    """Define FastText.
+
+    It expects data to be written in files as defined by config. For training
+    it simply reads file path_prefix_train and creates path_prefix_model
+    For testing then uses the instances given to the output passing
+    them automatically to stdin of fasttext.
+
+    It expects three parameters:
+        path_prefix - the prefix to path to all needed files
+        """
 
     def __init__(self, parameters: Dict) -> None:
         super().__init__(parameters)

@@ -1,10 +1,11 @@
 #!/bin/env python3
-"""todo comment"""
+"""Define preprocessor for chi-2 - it selects only features
+with highest mutual information with the class"""
 from sklearn.feature_selection import chi2
 import unittest
-from typing import Dict, Tuple, List, Any, Set
+from typing import Any
 
-from preprocessors import featureselectionbase, featurematrixconversion
+from preprocessors import featureselectionbase
 
 
 class Preprocessor(featureselectionbase.Preprocessor):

@@ -1,5 +1,14 @@
 #!/bin/env python3
-"""todo comment"""
+"""Define a base class for all feature selection algorithms.
+
+It automatically converts data into a matrix and keeps track of features used.
+It utilizies evaluate_fs (which is to be defined in a child) and keeps
+only top parameters['features_to_select'] features.
+
+It works with wrappers too, simply evaluate all features you want to keep
+as 1 and 0 otherwise. But be careful about the number of selected features,
+for changing this behaviour you may modify self.select_fs to the desired number.
+"""
 from pandas._libs import sparse
 from scipy import sparse
 import unittest
@@ -65,7 +74,7 @@ class Preprocessor(PreprocessorBase):
 
         # we enumerate it
         # sort by eval values
-        # drop vales
+        # drop values
         # to have a generator of top indexes
         self._used_fs = set()
         fs_indexes: Generator[int] \

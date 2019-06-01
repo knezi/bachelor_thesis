@@ -1,12 +1,23 @@
 #!/bin/env python3
-"""todo comment"""
-from typing import Dict, Tuple, List
+"""Define a base class for classifiers."""
+from typing import Dict
 import abc
 
 from exceptions import NotTrainedException
 
 
 class ClassifierBase(metaclass=abc.ABCMeta):
+    """Base class for classifiers.
+    It automatically stores parameters and checks that the classifiers
+    has been first trained and then tested.
+    There are two methods to be overwritten:
+    train
+    classify
+
+    The classifier can choose what data it wants (feature_dict, matrix,...), but
+    it's up to user use the appropriate preprocessing (as defined in the
+    yaml config file).
+    """
 
     def __init__(self, parameters: Dict) -> None:
         """Set parameters of the classifier as defined in YAML file."""

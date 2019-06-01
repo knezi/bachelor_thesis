@@ -1,5 +1,6 @@
 #!/bin/env python3
-"""todo comment"""
+"""File defining preprocessing base which provides abstract class for all
+preprocessing done on data before passed to classifier."""
 from typing import Dict, Tuple, List, Any
 import abc
 
@@ -7,6 +8,15 @@ from load_data import SampleTypeEnum
 
 
 class PreprocessorBase(metaclass=abc.ABCMeta):
+    """Base class for all preprocessors.
+
+    It defines methods process which acts as a UNIX filter. It gets data
+    and processed returns them.
+
+    It is also given the purpose of data (training vs testing), it is expected
+    the class may differentiate behaviour on this
+    (e.g. for training fit_transform, for testing only transform).
+    """
 
     def __init__(self, parameters: Dict) -> None:
         """Set parameters of the classifier as defined in YAML file."""

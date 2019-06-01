@@ -1,18 +1,20 @@
 #!/bin/env python3
-"""TODO comment"""
+"""Define a baseline classifier."""
 from scipy import sparse
-from subprocess import CompletedProcess
-from typing import List, Tuple, Dict
-import numpy as np
+from typing import Dict
 from sklearn.dummy import DummyClassifier
 from sklearn.tree import DecisionTreeClassifier
-
 
 from classifiers.classifierbase import ClassifierBase
 
 
 class Classifier(ClassifierBase):
-    """This classifier requires matrix, not a dict."""
+    """Baseline classifier - the type must be passed in config 'algorithm'
+    possible values are:
+    'one-R'
+    'zero-R'
+
+    This classifier requires matrix, not a dict."""
 
     def __init__(self, parameters: Dict) -> None:
         super().__init__(parameters)
@@ -27,9 +29,9 @@ class Classifier(ClassifierBase):
         """Train Baseline Classifier."""
         super().train(train_set)
         # split into data and target
-        Xlist, y = zip(*train_set)
-        X = sparse.vstack(Xlist)
-        self._classifier.fit(X, y)
+        xlist, y = zip(*train_set)
+        x = sparse.vstack(xlist)
+        self._classifier.fit(x, y)
 
     def classify(self, instance) -> str:
         super().classify(instance)

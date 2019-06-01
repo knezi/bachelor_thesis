@@ -118,12 +118,11 @@ graphs : [
 ]
 
 ## programovani
-NOW: * finish testing
 * prozkoumat zero instances
 * pridej klasifikovanou tridu do configu yamlu??
 * prodej pocitani a agregovani statistik
 * add switch to do graphs and statisics (on one random dataset)
-* vytvor make nebo neco podobneho
+* dokonci make
 * dokonci denormalizaci
 * pridej napojeni geeny
 * dokumentovani kodu
@@ -152,7 +151,7 @@ extract_ids.py - done
 get_data_for_ids.py - waiting - on geneea server
 reduce_user.py - necessary??
 reduce_bus.py - necessary??
-my_unittests.py - zbalit hezky a dodelat
+my_unittests.py - done
 compare_langs.py - useless?
 crop_geneea.py - done
 process_data.py

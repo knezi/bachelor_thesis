@@ -504,7 +504,6 @@ TODO
 
         # TEXTUAL FEATURES
         # N-GRAMS
-        # TODO squeze this into a funciton call for all at once
         if FeatureSetEnum.UNIGRAMS in fs_selection:
             self.add_ngram(features, tokens, 1)
         if FeatureSetEnum.BIGRAMS in fs_selection:

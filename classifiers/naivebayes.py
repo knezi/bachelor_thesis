@@ -1,14 +1,16 @@
 #!/bin/env python3
-"""TODO comment"""
-# classified = classifier.classify(fs)
-import abc
+"""Define Naive Bayes."""
 import nltk
-from typing import List, Tuple, Dict
+from typing import Dict
 
 from classifiers.classifierbase import ClassifierBase
 
 
 class Classifier(ClassifierBase):
+    """Define Naive Bayes. No further parameters required.
+
+    It expexct feature_dict."""
+
 
     def __init__(self, parameters: Dict) -> None:
         super().__init__(parameters)

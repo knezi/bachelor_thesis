@@ -1,10 +1,9 @@
 #!/bin/env python3
-# TODO
-from functools import reduce
+"""Define basic utils.
 
-import nltk
-from sklearn.feature_extraction.text import TfidfVectorizer
-from typing import Set, List
+Incrementer - callable class returning last number + 1 when called
+top_n_indexes - returns indexes of n highest/lowest elements.
+"""
 
 
 class Incrementer:

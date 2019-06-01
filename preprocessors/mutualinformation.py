@@ -1,18 +1,15 @@
 #!/bin/env python3
-"""todo comment"""
-from scipy import sparse
+"""Define preprocessor for mutual information - it selects only features
+with highest mutual information with the class"""
 from sklearn.feature_selection import chi2, mutual_info_classif
 import unittest
 from typing import Dict, Tuple, List, Any, Set
-import abc
 
-from load_data import SampleTypeEnum
 from preprocessors import featureselectionbase, featurematrixconversion
-from preprocessors.preprocessingbase import PreprocessorBase
 
 
 class Preprocessor(featureselectionbase.Preprocessor):
-    """Select most informative features with chi-square.
+    """Select most informative features with mutual information.
     """
 
     def evaluate_fs(self, matrix, labels) -> Any:
