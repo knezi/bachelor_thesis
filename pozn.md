@@ -1,4 +1,5 @@
 # bakalářka
+LOOP - fasttext
 
 /data/students/knizek
 
@@ -59,20 +60,22 @@ uzivatelska doc??
 	- lze i prednasku
 
 ## psani
+* fasttext
+
+* include comments
 * classificaiton
 * classifiers
-* freature engineering
-* fasttext
-* Chi-2, mi
+
+### later
+* summary
 * my arch
-* abstract
 * diagrams
 * typography
 * details, credentials, my data
-* fix citations
 * experiments conducted
-* summary
 * appendix - data
+* freature engineering
+* fix citations
 
 - zminit jupyter a nastroje pouzite
  - pridat kecy o poctu ruznych review a tak, proc co jsem jak vybiral
@@ -118,9 +121,11 @@ graphs : [
 ]
 
 ## programovani
-* prozkoumat zero instances
-* pridej klasifikovanou tridu do configu yamlu??
 * prodej pocitani a agregovani statistik
+
+### later
+* test Make denormalization
+* pridej klasifikovanou tridu do configu yamlu??
 * add switch to do graphs and statisics (on one random dataset)
 * dokonci make
 * dokonci denormalizaci
@@ -129,12 +134,8 @@ graphs : [
 * Information Gain - snizit dimenzionality - or mutual information?
 * restrict used entities or all?
 
-* make - clean
-	   - test
-  	 - prepare_data
-  	 - run dep on prep [default]
-
 ### possible todos
+* prozkoumat zero instances
 * vytvor podslozky, at je to vice prehledne
 * fasttext - check files exist
 * TODOB learning curves

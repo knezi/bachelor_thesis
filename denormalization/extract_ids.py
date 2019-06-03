@@ -7,7 +7,6 @@ import sys
 
 
 def extract_ids(args: argparse.ArgumentParser) -> None:
-    print(args)
     """Take a JSON-line file and write out values of the key 'review_id'.
 
     :param args: namespace which must contain:

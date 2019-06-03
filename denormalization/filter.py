@@ -13,6 +13,7 @@ import sys
 import subprocess as sp
 import argparse
 from subprocess import PIPE
+import utils
 
 
 def spell_check(text: str) -> Tuple[int, int]:
@@ -25,12 +26,13 @@ def spell_check(text: str) -> Tuple[int, int]:
 
     :param text: input string to the script
     :return: tuple of exactly two numbers returned by spell_check.sh"""
-    p:sp.Popen = sp.Popen(['./spell_check.sh'], stdout=PIPE, stdin=PIPE,
-                          stderr=sys.stderr)
+    p: sp.Popen \
+        = sp.Popen([utils.get_abs_path('denormalization/spell_check.sh')],
+                   stdout=PIPE, stdin=PIPE, stderr=sys.stderr)
 
-    stdout_data:List[str] = p.communicate(input=text.encode('utf-8'))[0]\
-        .decode('utf-8')\
-        .strip()\
+    stdout_data: List[str] = p.communicate(input=text.encode('utf-8'))[0] \
+        .decode('utf-8') \
+        .strip() \
         .split('\n')
 
     return (int(stdout_data[0]), int(stdout_data[1]))

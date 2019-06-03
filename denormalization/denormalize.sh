@@ -1,4 +1,5 @@
 #!/bin/sh
+echo $PWD
 # Denormalises data from the original Yelp files such
 # that each line of the output file contains review & business info
 
@@ -10,56 +11,43 @@ sort_wrapper() {
 }
 
 
-[ \( "$1" = "-h" \) -o \( "$#" -ne 2 \) ] &&
+[ \( "$1" = "-h" \) -o \( "$#" -ne 3 \) ] &&
 	printf "Usage: denormalise.sh in_dir out_file
 in_dir		path to a directory with original Yelp files
-out_file	output file\n" &&
+out_file	output file\n
+ids_file	file of sorted business ids (id per line)\n" &&
 	exit 0
 
+filter_exec='./denormalization/filter.py'
+join_exec='./denormalization/join.py'
+extract_ids_exec='./denormalization/extract_ids.py'
 
-# sort businesses & users
+
+# sort businesses
 business="$1/business_sorted.json"
-# user="$1/user_sorted.json" TODO
-
 sort_wrapper "$1/business.json" 4 "$business"
-# sort_wrapper "$1/user.json" 4 "$user" TODO
-
-
-# tmp=`mktemp -p .` TODO ??
-# cat "$user" | ./reduce_user.py > "$tmp"
-# mv "$tmp" "$user"
 
 
 # filter only a particular time period and filter out german&french
 tmp=`mktemp -p .`
 tmp2=`mktemp -p .`
-cat "$1/review.json" | ./filter.py -l 2012-05-01 2012-12-01 > "$tmp"
+cat "$1/review.json" | PYTHONPATH=. $filter_exec -l 2012-05-01 2012-12-01 > "$tmp"
 
 # join with businesses
 sort_wrapper "$tmp" 10 "$tmp2"
 mv "$tmp2" "$tmp"
-./join.py "$tmp" "$business" "$tmp2" "business_id"
+PYTHONPATH=. $join_exec "$tmp" "$business" "$tmp2" "business_id"
 mv "$tmp2" "$tmp"
 
-# join with users
-# echo joining users TODO ??
-# sort_inplace "$tmp" 8
-# ./join.py "$tmp" "$user" "$tmp2" "user_id"
-# mv "$tmp2" "$tmp"
-
-
-# TODO inplace
-# TODO test if this works
 # getting linguistics data - GENEEA
 # extracting ids - used for subsequent data extraction
 sort_wrapper "$tmp" 4 "$tmp2"
 mv "$tmp2" "$tmp"
-./extract_ids.py "$tmp" "ids"
+PYTHONPATH=. $extract_ids_exec "$tmp" "$3"
 
 # the final data are sorted alphabetically with respect to review_id
 # OUTPUT FILE
 mv "$tmp" "$2"
 
-
 # remove tmp files
-rm -f "$business" "$user"
+rm -f "$business"

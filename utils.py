@@ -3,7 +3,10 @@
 
 Incrementer - callable class returning last number + 1 when called
 top_n_indexes - returns indexes of n highest/lowest elements.
+get_abs_path - receives relative path to the root of the project
+               and returns absolute path to it
 """
+import os
 
 
 class Incrementer:
@@ -32,6 +35,10 @@ def top_n_indexes(data: list, n: int = None, reverse: bool = True) -> set:
 
     top: list = sort_list if n is None else sort_list[:n]
     return set(map(lambda a: a[0], top))
+
+
+def get_abs_path(path: str) -> str:
+    return os.path.join(os.path.dirname(__file__), path)
 
 
 if __name__ == '__main__':

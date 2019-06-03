@@ -5,14 +5,12 @@ SampleTypeEnum - distinguishing between TRAIN, TEST, CROSSVALIDATION
 Sample - container holding separately train,test,cv data
 Data - class for loading, generating inferred and storing (in Sample) data
 """
-from collections import defaultdict, Counter
-from math import ceil, floor
+from math import floor
 
 from functools import reduce
 
 from enum import Enum, unique, auto
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
-from matplotlib import pyplot
 from sklearn.feature_selection import mutual_info_classif
 
 from typing import List, Tuple, Dict, Set, Generator
@@ -30,7 +28,7 @@ from pandas import DataFrame, Series
 
 import exceptions
 from geneea.analyzer.model import f2converter
-from statistics import DataLine, Statistics, DataGraph
+from statistics import Statistics, DataGraph
 from utils import top_n_indexes
 
 FeatureDict = List[Tuple[Dict[str, any], str]]
