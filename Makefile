@@ -26,9 +26,7 @@ fastText/fasttext:
 	wget https://github.com/facebookresearch/fastText/archive/v0.2.0.zip
 	unzip v0.2.0.zip
 	mv fastText-0.2.0 fastText
-	cd fastText
-	make
-	cd ..
+	cd fastText && make
 	rm -f v0.2.0.zip
 
 test:
