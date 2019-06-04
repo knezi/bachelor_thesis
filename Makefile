@@ -11,9 +11,11 @@ data/geneea.json: data/ids $(DATA_GEN_DEP)
 	echo 'Copy geneea.json data into `data/`, source ids are in `data/ids`'
 
 run: data/data.json data/geneea.json $(RUN_DEP)
+	mkdir -p graphs
 	./process_data.py experiments.yaml data/data.json data/geneea.json
 	
 run_sample: data/data_sample.json data/geneea_sample.json $(RUN_DEP)
+	mkdir -p graphs
 	./process_data.py experiments.yaml data/data_sample.json data/geneea_sample.json
 
 clean:
