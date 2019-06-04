@@ -1,54 +1,61 @@
 # NPRG045
 
-## Závislosti:
+## Dependencies:
 
-aspell neni potreba, kdyz mate denormalizovana data
+Install the following packages:
 
-Já používám python 3.7.2 - vsechny skripty automaticky volaji /bin/env python3
+TODO add repositories and aspell install (packages on debian?)
+* wget
+* git
+* shell
+* python>=3.6 (tested on python3.7.2)
+* pip
+* aspell with english, german and french dictionary
 
-Na sandboxu je potřeba použít 3.6, funguje toto:
 
-`virtualenv v --python=python3.6`
-
-`cd v`
-
-`source ./bin/activate`
-
-Naklonujte repozitar (nebo klonujte rovnou fantastic-spoon):
-
-`git clone https://github.com/knezi/NPRG045`
-
-`cd NPRG045`
-
-Zkompilujte fasttext:
+Optinally, it is possible to run everything in a virtual environment.
+python3 can be replaced with the installed version. Must be at least 3.6.
 
 ```
-git clone https://github.com/facebookresearch/fastText.git
-cd fastText
-make
-cd ..
+virtualenv venv --python=python3
+cd venv
+source ./bin/activate
 ```
 
-pro nainstalovani zavislosti v pipu:
+Clone the repository and change working directory to the root:
+
+```
+git clone https://github.com/knezi/NPRG045
+cd NPRG045
+```
+
+Install python dependencies from pip:
 
 ```
 pip install `cat pip_deps`
 ```
 
+Fasttext will be installed automatically by make.
+
+TODO
 Dale predpoklada nainstalovane geneea.analyzer a geneea.utils (utils se museji instalovat prvni).
 
+## Execution:
 
-## spousteni
+Everything can be operated by make.
 
-Dale k koreni repa vytvorte:
+For running it with sample data execute the following. Note this does not need aspell and geneea as a dependency, because the data is already preprocessed.
 
-`mkdir graphs`
+```
+make run_sample
+```
 
-Pro data staci nakopirovat slozku /data/students/knizek/data/ do korenu. Nakonec staci 500MB. To jsou rovnou denormalizovane pouzite soubory.
+For a full run:
 
-`./process_data.py experiments.yaml data/data.json data/geneea.json | tee dump`
+```
+make run
+```
 
-Po dobehnuti je graf v `graphs/Psummary.png` a ta sama data v csv dumpu:
-`graphs/Psummary.csv`
+It will first preprocess and denormalize data and then process them. Repeated run will only rerun the second part. `make run` runs the experiment stored in `experiments.yaml`
 
-Na stdout mame (nebo v `dump`) precision a recall jednotlivych velikosti bayesa.
+Resulting data can be found in `graphs/current_timestamp`
