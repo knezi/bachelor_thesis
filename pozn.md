@@ -61,8 +61,6 @@ uzivatelska doc??
 
 ## psani
 * fasttext
-
-* include comments
 * classificaiton
 * classifiers
 
@@ -121,15 +119,18 @@ graphs : [
 ]
 
 ## programovani
+* make nefunguje
+* data jsou pripravena jako data.json a ids
+* zkontroluj process a jestli to matchuje
 * prodej pocitani a agregovani statistik
+* predelej geneea public API
 
 ### later
-* test Make denormalization
+* make - expects data in ../data/datset
+* pridej napojeni geeny
+* README finish installation process
 * pridej klasifikovanou tridu do configu yamlu??
 * add switch to do graphs and statisics (on one random dataset)
-* dokonci make
-* dokonci denormalizaci
-* pridej napojeni geeny
 * dokumentovani kodu
 * Information Gain - snizit dimenzionality - or mutual information?
 * restrict used entities or all?

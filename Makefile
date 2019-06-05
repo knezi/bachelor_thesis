@@ -4,7 +4,7 @@ DATA_GEN_DEP = ./denormalization/extract_ids.py ./denormalization/filter.py ./de
 
 data/data.json data/ids: $(DATA_GEN_DEP)
 	# run denormalize
-	./denormalization/denormalize.sh ../data/datset data/data.json data/ids
+	./denormalization/denormalize.sh ../data/dataset data/data.json data/ids
 
 data/geneea.json: data/ids $(DATA_GEN_DEP)
 	# run geenea
@@ -35,7 +35,10 @@ fastText/fasttext:
 test:
 	./run_unittests.sh
 
-all: run
+thesis.pdf:
+	cd diplomky/en && make
+
+all: run thesis.pdf
 
 .DEFAULT: all
 .PHONY: all run run_sample clean

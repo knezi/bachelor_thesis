@@ -1,32 +1,33 @@
 \chapter{Evaluation}
-
-
 \label{chap:eval}
 
-Until now we showed various possibilities of constructing a model.
-In this chapter we will describe how to compare the performance of models.
+Until now we showed various possibilities of constructing a classification model.
+In this chapter, we will describe how to compare their performance.
 We cannot mathematically prove that a model is a correct estimation of what we are trying to classify.
-This is because we do not know the actual model. \jh{Tohle je trochu tezko pochopitelne - vy myslite ten idenalni model. (1) asi bych pridal slovo "real" (the actual real) a 
-(2) misto model bych pouzil slovo "distribution"}
+This is because we do not know the actual real distribution of data and we are only estimating it.
 Therefore, we will use statistical methods on a testing set.
 
-We cannot validate a model based on how well it fits our training data, because that would yield over-optimistic results.
-Also, it wouldn't give us any idea how well the classifier performs on data it has not seen during the training phase.
-Hence, we will create a special testing set, which has not been seen by the algorithm during the training phase.
-We will also introduce different metrics for expressing properties of the model. \jh{tady je matouci to dvoji "will", kazde se vyjadruje k necemu jinemu - jedno k tomu jak funguje evaluace a druhe jak je ji popisujete v teto kapitole, proto bych misto prvniho will bych dal "need" a misto "create" bych dal "choose" or "select": Hence, we need to choose a special ...}
+We cannot validate a model based on how well it fits our training data.
+Doing that would yield over-optimistic results, because our model is optimized for them.
+Also, it would not give us any idea how well the classifier performs on data it has not seen during the training phase.
+Hence, we need to have a special testing set used only for evaluating.
+Finally, we will introduce different metrics for expressing properties of a model.
 
 \section{Overfitting}
 
-In \jh{the (anglictinu vam tam ale urcite zkontroluje nekdo povolanejsi)} previous chapter \todoA{ref} we discussed that a model has to generalise well. This means it has to be able to predict even
-instances it has not seen during the training phase. When a model fits well training data, but does not generalise well, it is called
-{\bf overfitting} (sometimes referred to as {\bf bias}).
+The described problem of over-optimistic results is called overfitting.
+{\bf Overfitting} (sometimes referred to as {\bf bias}) means that our model is able to predict instances it has been trained on a lot better than new not yet seen.
+We say that model does not generalise well over data.
 This happens when an algorithm learns to recognise idiosyncrasies of the training set, rather than to understand the underlying logic.
 These idiosyncrasies can appear by incomplete data or noise introduced during obtaining the data.
 
-One way of thinking about it describes a phenomena \jh{phenomenon} known as {\it occam's \jh{Occam's} razor}. \todoA{citation}
-It basically advice\jh{s} us to prefer \jh{a} less complicated solution over the \jh{a} more complicated \jh{one} as it is less likely to suffer from overfitting.
+Instead of having a simple and robust rules to describe data, we have many random rules working for only small subsets of data.
+Our objective describes a  phenomenon known as {\it Occam's razor}. \todoA{citation}
+It basically advices us to prefer a less complicated solution over a more complicated one.
+The less complicated solution is less likely to suffer from overfitting, because there is simply not enough space to include all various idiosyncrasies.
 An example of such a process can be a {\bf Decision Tree}.
-If we have two trees with comparable performance, the one with less nodes is less likely to suffer from overfitting. \citet{TanBachKum08} describe this in chapter 4.
+If we have two trees with comparable performance, the one with less nodes is more likely to generalise better and not suffer from overfitting.
+\citet{TanBachKum08} describe this in more details in chapter 4.
 
 {source: kumar 188}
 
@@ -36,22 +37,29 @@ If we have two trees with comparable performance, the one with less nodes is les
 
 Usually, we do not get data divided into training and testing sets.
 Even though it gives us more flexibility, it also introduces a new challenge how to obtain the two sets.
-\j{Tady neco schazi. Reknete, ze jsou dva hlavni pristupy, jak to delat - ...., Below we describe them in more detail.}
+We will present two methods of diving data into these sets.
+First, very simple holdout method.
+Second, k-fold cross validation which builds on top of holdout.
 
 \subsection{Holdout Method}
 
 The simplest approach is to randomly divide data into two sets, such that their size will be of a given ratio.
 This approach is called {\bf Holdout}.
-The exact ratio is at the discretion of further analysis and usually ranges between 50 and 70~\% for the training set. \todoA{citation}. \jh{Je to dulezity? Spis bych rekl, ze je treba vybalancovat dva protichudne pozadavky - mit co nejvice dat na trenovani, aby byl model co nejlepsi, a zaroven mit dostatek testovacich dat, aby byla evaluace spolehliva. }
+The exact ratio is at the discretion of further analysis and it needs to balance two crucial requirements.
 
-As \citet{TanBachKum08} note there are three issues with this approach.
-First, having fewer training examples can lead to lower performance.
-Also, the model can be depended on the actual subset chosen for training.
-Second, If \jh{if} we use too much data for training, the performance estimation \jh{pouzijte slovo evaluation, ktere jste pouzival doted} will be less reliable.
+First, not enough data may lead to lower performance, so we want to train the model on as much data as we possibly can.
+Second, if we use too much data for training, the performance evaluation will be less reliable.
 Statistically speaking, it will have wider confidence interval.
-Finally, the training and testing sets are not independent of each other anymore.
-An example of this dependency is when a class is overrepresented in one subset, it must be underrepresented in the other one.
-\jh{POslednimu budu nerozumim presne}
+
+As \citet{TanBachKum08} note, another problem is with obtaining an independent set.
+The training model can be chosen in such a way that contains biased data.
+We also should be aware of the fact that training and testing sets are no longer independent,
+because the entire dataset is split between the two.
+Because of this reason, particular choice of one set directly influences the properties of the other one.
+\todoA{rephrase it}
+An example of this dependency is when there are more instances of one label percentage-wise in the entire dataset,
+there will be less instances in the other set.
+
 
 \subsection{Cross-Validation}
 
@@ -61,13 +69,11 @@ We split the dataset into~$k$~equally-sized subsets.
 For each subsets, we train our algorithm on all subsets but the one chosen and the one will be used as a testing set.
 This approach is called {\bf k-fold cross-validation} for~$k$~subsets. The variable~$k$~is chosen arbitrarily.
 
-Special case for~$k=N$, \jh{myslim, ze bez carky - je to tesny privlastek} where~$N$~is the number of instances is called {\bf leave-one-out} and has the advantage of 
+Special case for~$k=N$ where~$N$~is the number of instances is called {\bf leave-one-out} and has the advantage of 
 utilizing as much data for training as we can.
-However, it is computationally expensive and we therefore generally choose lower~$k$~for practical uses. \jh{uses $>$ reasons?}
+However, it is computationally expensive and we therefore generally choose lower~$k$~for practical reasons.
 
-For evaluation we compute evaluation metrics for each pair \jh{of} training and testing set\jh{s} separately and report their average along with minimal and maximal value and standard deviation. \jh{tady to vypada, ze tak se to dela vzdycky, a pritom rikate, ze tak to delate v teto praci. Reknete to: In this thesis, we compute evaluation ...}
-
-\todoA{should I elaborate more on this statistics?}
+In this thesis, we compute evaluation metrics for each pair of training and testing sets separately and report their average along with minimal and maximal value and standard deviation.
 
 
 \section{Evaluation Metrics}
@@ -79,39 +85,73 @@ To say how well the classifier performs, we need to express how well the predict
 labels fit the actual labels.
 For doing this we will introduce several {\bf evaluation metrics}.
 
-Let us have a binary classification problem and a classificator we want to evaluate.
-For evaluation\jh{, - pouzivejte konzistentne carku za predstazenym adjunktem. Bud tam neni, nebo tam je, ale melo by to byt stejne v celem dokumentu} we always have to decide which label we will evaluate it on.
+Let us have a binary classification problem and a classifier we want to evaluate.
+For evaluation, we always have to decide which label we will evaluate it on.
 In our case we will choose ``useful''.
 All instances that our classifier predicted as this label are then {\bf positive} and the rest is {\bf negative}.
 Both categories are further divided into true and false.
 True being instances that our classifier predicted correctly and false incorrectly.
-Together we have four categories; \jh{:}
-true positive, false postive, true negative and false negative.
-For clarity we can arange these four categories into the so-called {\bf confusion matrix}.
+Together we have four categories:
+true positive, false positive, true negative and false negative.
+For clarity we can arrange these four categories into the so-called {\bf confusion matrix} as shown in the table~\ref{tab:confmatrix}.
 Each cell represents the number of instances from one of the categories.
-First and second columns correspond to positive and negative instances, respectivelly.
-Rows to true and false.
+The columns correspond to instances where the predicted label is the chosen one (\textit{yes}) and the rest (\textit{no}).
+Analogically, rows correspond to instances with the chosen label (\textit{yes}) and the rest (\textit{no}).
+Diagonal {\it TP} and {\it TN} represents all instances that have been classified correctly.
+The other diagonal represents all misclassified instances.
+
+
+
 %then matrix~$A$~of the dimensions 2x2 is a {\bf confusion matrix} if and only if~$A_{1,1}$~and~$A_{1,2}$~are the numbers of correctly and incorrectly classified positive instances, respectively. $A_{2,1}$ and~$A_{2,2}$~are then analogically correctly and incorrectly classified negative instances.
 
-\jh{sem dejte tabulku bez cisel jen s TF, ..., okomentujte co znamena diagonala}
+\begin{table}[h!]
+\center
+\begin{tabular}{ll|c|c|}
+\cline{3-4}
+& & \multicolumn{2}{l|}{predicted label} \\
+\cline{3-4}
+& & yes & no \\
+\hline
+\multicolumn{1}{|l|}{actual}& yes & TP & FN\\
+\cline{2-4}
+\multicolumn{1}{|l|}{label}						   & no & FP & TN \\
 
-In the example below, 2 not-useful instances have been classified as useful - \jh{-- (pouzivejte pomlcky (dash), kde maji byt a ne rozdelovnik (hyphen))} these are false positives.
+\hline
 
-\jh{sem dejte tabulku s cisly. Okomentujte VSECHNY bunky. Udelejte to jako skutecnou tabulku.}
-\todoA{example}
-\begin{code}
-        classified    useful       not
-actual
-useful                TP 10        FN  5
-not                   FP  2        TN  11
-\end{code}
+\end{tabular}
+	\caption{Confusion Matrix}\label{tab:confmatrix}
+\end{table}
+\todoA{table is ugly}
+
+In the example below, we have 10 and 11 instances classified correctly. 
+They are true positives and true negatives respectively.
+There are 5 instances classified as not-useful, but actually being useful.
+These are false negatives.
+The last cell represents 2 not-useful instances classified as useful --- these are false positives.
+
+\begin{table}[h!]
+\center
+\begin{tabular}{ll|c|c|}
+\cline{3-4}
+& & \multicolumn{2}{l|}{predicted label} \\
+\cline{3-4}
+& & useful & not \\
+\hline
+\multicolumn{1}{|l|}{actual}& useful & 10 & 5\\
+\cline{2-4}
+\multicolumn{1}{|l|}{label}						   & not & 2 & 11 \\
+
+\hline
+
+\end{tabular}
+	\caption{An Example of Confusion Matrix}\label{tab:confmatrix_ex}
+\end{table}
 
 
 The most straightforward metrics are accuracy and error rate.
 {\bf Accuracy} is the ratio of correctly classified instances and {\bf error rate} incorrectly.
-In the confusion matrix it is then:
+In the confusion matrix it is:
 
-\jh{Pouzivejte standardni cislovani rovnic}
 \newcommand\TP{\mathit{TP}}  % ty makra nejsou nutna, ale setri praci; mathit je treba, aby to melo spravne mezery
 \newcommand\TN{\mathit{TN}}
 \newcommand\FP{\mathit{FP}}
@@ -120,14 +160,6 @@ In the confusion matrix it is then:
 \begin{equation}
 \mathit{accuracy} = \frac{\TP + \TN}{\TP + \TN + \FP + \FN}
 \end{equation}
-Nebo:
-\begin{equation}
-\mathit{accuracy} = \frac{\TP + \TN}{\ALL}
-\end{equation}
-where $\ALL$ is the sum of .....
-\begin{equation}
-\ALL = \TP + \TN + \FP + \FN
-\end{equation}
 
 A complementary measure to accuracy is error rate:
 \begin{equation}
@@ -135,15 +167,8 @@ A complementary measure to accuracy is error rate:
 \end{equation}
 or equivalently
 \begin{equation}
-\mathit{error~rate} = \frac{\FP + \FN}{\ALL}
+\mathit{error~rate} = \frac{\FP + \FN}{\TP + \TN + \FP + \FN}
 \end{equation}
-
-
-\todoA{formula}
-
-accura = TP + TN / sum
-
-error\_rate = FP + FN / sum
 
 In our toy example accuracy is~$21/28$ and error rate~$7/28$.
 
@@ -153,24 +178,30 @@ More commonly used metrics for their better properties are precision, recall and
 {\bf Precision} is the ratio of correctly classified instances out of those classified as positive.
 It expresses our confidence on how likely an instance is positive when we classify it so.
 
-precision = Tp / tp + fp
+\begin{equation}
+\mathit{precision} = \frac{\TP}{\TP + \FP}
+\end{equation}
 
 {\bf Recall} is the ratio how many instances we classified as positive out of those that are truly positive.
 It expresses our confidence on how many instances we revealed out of the positive cluster.
 
-recall = tp / tp+ fn
+\begin{equation}
+\mathit{recall} = \frac{\TP}{\TP + \FN}
+\end{equation}
 
-In our toy example precision and recall are 10/15 and 10/12 respectively.
+In our toy example precision and recall are~$10/12$~and~$10/15$~respectively.
 
 To combine recall and precision {\bf f-measure} is commonly used.
 It is harmonic average of the two and expresses combination of both properties.
 
-\todoA{formula}
+\begin{equation}
+	\mathit{F-measure} = 2 \times \frac{\mathit{precision}\times \mathit{recall}}{\mathit{precision} + \mathit{recall}}
+\end{equation}
 
 
-{source: KUMAR - 150, 550}
+More thorough description of evaluation can be found in~\ref{TanBachKum08}.
 
-
+\todoA{Kumar has only accuracy and error rate - find prec, f-0measure, recall somewhere else}
 
 
 \subsection{\todoC{guyon - kniha -a pendix A hezky prehled null hypothesis}}

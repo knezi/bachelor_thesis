@@ -124,7 +124,7 @@ $\chi^2$~of two random variables~$X$~and~$Y$~is then:
 
 $$\sum_{x \in X, y \in Y}{\chi^2_{y,x}},$$
 
-where~${\chi^2_{y,x}}$ is $\left(O - E \right) ^ 2 \over E$.
+where~${\chi^2_{y,x}}$ is $\frac{\left(O - E \right)^ 2}{E}$.
 
 This corresponds to our intuition as the farther observed value from expected is, the higher penalization with square.
 Also, it is normalized by dividing it in E.
@@ -139,14 +139,14 @@ Unlike filters, wrappers work with subsets of features and use a classifier to d
 Every subset is classified by a classificator used as a black box and then evaluated by some common evaluation metrics.
 The optimal subset is than chosen. Thanks to this, wrappers are universal and robust.
 
-Furthermore, wrappers can perform a lot better than filters on certain datasets. Such a~case is documented by \citet{GuyEli03} in~\ref{guyeli03-figure3}. The bottom left graph shows the original data and the~top left shows projection onto only one axis. It is clear that one variable cannot be sufficient for separating the clusters. However, if we project the data onto a combination of the two axis, the clusters can be at least partially separated as can be seen in the right part of the figure.
+Furthermore, wrappers can perform a lot better than filters on certain datasets. Such a~case is documented by \citet{GuyEli03} in~\ref{fig:guyeli03-figure3}. The bottom left graph shows the original data and the~top left shows projection onto only one axis. It is clear that one variable cannot be sufficient for separating the clusters. However, if we project the data onto a combination of the two axis, the clusters can be at least partially separated as can be seen in the right part of the figure.
  
  \todoA{citation and vector}
 
 \begin{figure}[ht]\centering
 \includegraphics[width=100mm]{../img/guyeli_figure3.png}
 \caption{Example of correlated features from the article}
-\label{guyeli03-figure3}
+\label{fig:guyeli03-figure3}
 \end{figure}
 
 Unfortunately, wrappers tend to be computationally expensive, because every subset must by classified separately. In fact, it has been shown it is NP-hard to find optimal solution. To achieve computational feasibility various approximation methods has been developed. These methods allow us to classify only a fraction of subsets at the cost of losing the guarantee of the optimal solution. We will describe two variants of greedy search.
@@ -181,6 +181,7 @@ Embedded methods are part of a classification algorithm itself. An example can b
 In this section we will use some commonly used features and briefly discuss their pros and cons.
 
 \subsection{Bag-Of-Words}
+\label{subsec:bow}
 
 Since the information a sentence carries is not contained only in the words, but also in their positions in the sentence, an ideal algorithm would take into account both the words and their positions.
 However, working with sentences as a whole is somewhat difficult. Hence, the order of words is often omitted and only the number of word occurrences matters.
@@ -203,10 +204,10 @@ There are many implementations of this general idea. We will explore the impleme
 we can calculate TF-IDF as
 
 \[
-	w_d = TF \times IDF = f_{w, d} \times \log \left( {\abs{D}\over f_{w,D}}  \right),
+	w_d = TF \times IDF = f_{w, d} \times \log \left( \frac{\abs{D}}{f_{w,D}}  \right),
 \]
 
-where $TF = f_{w, d}$ is the number of times~$w$~occured~$d$ and IDF corresponds to $\log \left( {\abs{D}\over f_{w,D}}  \right)$ for $\abs{D}$ being the total number of documents and $f_{w, D}$ the number of documents containing~$w$.
+where $TF = f_{w, d}$ is the number of times~$w$~occured~$d$ and IDF corresponds to $\log \left( \frac{\abs{D}}{f_{w,D}}  \right)$ for $\abs{D}$ being the total number of documents and $f_{w, D}$ the number of documents containing~$w$.
 
 Let us explore how the value changes with different variable values. For such words that $\abs{D} \sim f_{w, D}$ will the value of logarithm very low. This will decrease the importance of the word. This is desired behaviour because such words occur in virtually every document and, as argued above, are not very useful. On the other hand, words having $f_{w,d}$ large and $f_{w,D}$ will be given much higher importance, which is again desired, because these words occur relatively often in the given document and not so often in the document set overall.
 
@@ -228,6 +229,7 @@ Bigrams and trigrams (pairs and triples) are most commonly used.
 \todoB{- choose words with highest information gain; as in McCallum Event models}
 
 \subsection{Word Embeddings}
+\label{subsec:wordembed}
 
 Word Embeddings is another way to convert words into features.
 \citet{LeGo14} describe {\bf word embedding} as a mapping of every word to a vector in~$R^d$.
