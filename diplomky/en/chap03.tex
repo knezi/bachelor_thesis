@@ -225,6 +225,8 @@ Embedded methods are part of a classification algorithm itself. An example can b
 
 \section{Singular Value Decomposition (SVD/PCA)}
 
+- jolliffe - principal component analysis
+
  - not feature selection, nor extraction
  - as an intermediate process between training and extracting/selecting
 
@@ -297,7 +299,7 @@ Even more complicated relations like $x_{king} - x_{man} + x_{woman} \sim x_{que
 They use this property to solve word analogies in form {\it a is to b as c is to \_\_\_}.
 
 
-\subsection{Geneea entities}
+\subsection{Geneea entities}http://aspell.net/
 
 \bf entities extracted from geneea \rm
 
@@ -308,13 +310,36 @@ They use this property to solve word analogies in form {\it a is to b as c is to
 \subsection{\todoB{Cosine sim}}
 
 
-\subsection{hand crafted features}
+\subsection{Hand Crafted Features}
 
-\subsubsection{\todoA{Spell check}}
+\subsubsection{Spell check}
 
-\subsubsection{\todoA{Review length}}
+We also tried to measure typos in the review.
+The hypothesis was that reviews with many typos may be less likely useful,
+because the reviewer apparently did not spend much time writing it.
+We used open source package aspell \footnote{\url{http://aspell.net/}}
+to compute the ratio of incorrect words out of all words.
+Subsequently, we clustered it into two groups; with and without typos.
+We allowed instances with up to a few typos to be in the latter group.
+
+\subsubsection{Review length}
+
+Another hand crafted feature was a review length.
+It is simply the number of words as returned by the already described twitter tokenizer.
+Again, we clustered values into groups to get binary or ternary features.
+
 
 \subsection{non-textual features --- metadata}
 
-\todoB{Stars as non-linguistic feature}
+Sometimes it may be necessary to use metadata
+if the text itself does not contain enough information.
+The exact usage depends on the exact task.
+We used metadata mostly for filtering out restaraunts without enough data.
+The only feature we tried extract from metadata was the number of stars the review gives.
+We tested two approaches.
+First, a feature how many stars were given.
+Second, we tried to have a feature \textit{extreme stars}.
+This feature expresses if the user gave 1 or 5 stars. 
+We were hoping that reviews with 1 or 5 stars may express very strong opinion
+and as such be more likely useful.
 
