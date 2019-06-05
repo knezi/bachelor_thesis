@@ -95,41 +95,93 @@ We have not used this approach due to the lack of time and used the basic approa
 
 
 
-\subsubsection{CHI-square~---~$\chi^2$}
+\subsubsection{Chi-square~---~$\chi^2$}
 
-CHI-square test of independence can be thought of as a measure  of the lack of independence between two variables.
-As in mutual information, we will compute a special value for each pair feature-class and based on some threshold we will choose the most informative features.
+Chi-square test of independence can be thought of
+as a measure of the lack of independence between two variables.
+As in mutual information,
+we will compute a special value for each pair feature-class
+and based on some threshold we will choose the most informative features.
 Let us demonstrate this with an example.
-We have two random variables;
-Useful which is simply our classification label and credit card denoting whether the instance contains credit card as a word.
-Table 1 summaries this. The bottom most row and right most column express marginal probability distribution calculated by the number of samples.
-If the variables very truly independent, we would expect the cells to be 15 and 35 in the first and second row respectively.
-We will introduce a cost function to reflect this and~$\chi^2$~of the two variables will then be sum of the cost function over all cells.
+We have instances of our reviews and we want to test how well
+a feature \textit{contains the phrase ``credit card''} describes
+labels \textit{useful} and \textit{not-useful}.
+To asses this, we want to compute~$\chi^2$ of the variables~$X$~and~$Y$.
+First, representing the feature \textit{contain ``credit card''}.
+Second, the true label.
 
-\todoA{table}
-\todoA{somehow separate marginal distributions from the table, so it's clear that sum of cost funcions is over four cells}
-\begin{code}
-                 useful    not useful    both
-credit card in     25          5          0.30   
-credit c not it    45         25          0.70  
-both               0.50         0.50          1
+Table~\ref{tab:chi_ex} summaries this.
+The inner cells express how many instances there are with the given variable values.
+The bottom most row and right most column express marginal probability distribution 
+calculated by the number of samples.
+If the variables very truly independent,
+we would expect the cells to be 15 and 35 in the first and second row respectively.
+We will introduce a cost function to reflect this
+and~$\chi^2$~of the two variables will then be sum of the cost function over all cells.
 
-\end{code}
+
+\todoA{aligning and crop excess vertical lines}
+\begin{table}[h!]
+ \center
+ \begin{tabular}{|l|l|c|c|c}
+ \cline{3-4}
+        &       & \multicolumn{2}{c|}{label} & \\
+        \cline{3-4}
+        &       & yes        & no            & $P_Y$ \\
+        \cline{1-4}
+ credit & yes   & 25         & 5             & 0.30 \\
+        \cline{2-4}
+ card   & no    & 45         & 25            & 0.70 \\
+        \cline{1-4}
+        & $P_X$ & 0.50       & 0.50          & 1
+ 
+ \end{tabular}
+ \caption{$\chi^2$~Example}
+ \label{tab:chi_ex}
+\end{table}
 
 The exact definition can be found in \citet{Hugh13}.
-Let us define~$O_{x,y}$ and~$E_{x,y}$~and the number of observed, resp. expected instances for~$X=x$~and~$Y=y$.
-The value of observed is simply the number of instances.
-The expected value can be computed as $M_r \times M_c \times n$, where~$M_r$~and~$M_c$~are the marginal probabilities and~$n$~number of all instances.
-$\chi^2$~of two random variables~$X$~and~$Y$~is then:
+Let us have two random variables~$X$~and~$Y$.
+Let us define~$O_{x,y}$ and~$E_{x,y}$~as the number of observed,
+resp. expected instances for~$X=x$~and~$Y=y$.
+The value of~$O_{x,y}$~is simply the number of instances.
+The value of~$E_{x,y}$ is computed from marginal probabilities.
+Namely:
+
+\begin{equation}
+E_{x,y} = P_X\left(X=x\right) P_Y\left(Y=y\right) \times n,
+\end{equation}
+
+where~$P_X$~and~$P_Y$~are the marginal probabilities of the variables~$X$~and~$Y$
+and~$n$~number of all instances.
+
+We define $\chi^2$~of two random variables~$X$~and~$Y$~as:
 
 $$\sum_{x \in X, y \in Y}{\chi^2_{y,x}},$$
 
-where~${\chi^2_{y,x}}$ is $\frac{\left(O - E \right)^ 2}{E}$.
+where~${\chi^2_{y,x}}$ is $\left(O_{x,y} - E_{x,y} \right)^ 2 / E_{x,y}$.
 
-This corresponds to our intuition as the farther observed value from expected is, the higher penalization with square.
+This corresponds to our intuition.
+If the variables are correlated,
+the observed values will differ from expected and~$\chi^2$ will by non-zero.
+The farther observed value from the expected is, the higher penalization with square.
 Also, it is normalized by dividing it in E.
 
-In our example the value of~$\chi$~is~$(25-15)^2......$~ \todoA{add the computations}.
+The value of $\chi$ in our example in the table~\ref{tab:chi_ex}
+~is:
+
+\begin{equation}
+\chi^2 = 
+\frac{\left(25-15\right)^2}{15} +
+\frac{\left(5-15\right)^2}{15} +
+\frac{\left(45-35\right)^2}{35} +
+\frac{\left(25-35\right)^2}{35}
+\end{equation}
+
+\begin{equation}
+\chi^2 \approx 11
+\end{equation}
+
 
 \todoB{advantages/dis... a bit of discussion}
 
