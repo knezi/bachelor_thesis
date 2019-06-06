@@ -68,7 +68,7 @@ We will discuss both feature creation and selection in \autoref{chap:fea}.
 %When we have features ready, we can start training our classifiers. We will describe a general classifier in~\ref{chap:clsgen} and
 %individual classifiers in \autoref{chap:clscon}.
 
-Finally, we want to be able to compare different classifiers and feature sets. Common evaluations will be discussed in \ref{chap:eval}.
+Finally, we want to be able to compare different classifiers and feature sets. Common evaluations will be discussed in \autoref{chap:eval}.
 
 Last three chapters are then left for the architecture of the software developed (\autoref{chap:arch}), demonstration of conducted experiments (\autoref{chap:exp}) and final discussion (\autoref{chap:concl}).
 
@@ -102,7 +102,7 @@ what is it?
 As we mentioned, classification is a process of building a classification model which maps
 instances onto labels.
 In this section we will describe what a classifier looks like.
-We will demonstrate them on mock data shown in the table~\ref{tab:custsatis}.
+We will demonstrate them on mock data shown in \autoref{tab:custsatis}.
 We have a fictional dataset about customers being satisfied with their mobile carrier and
 we are trying to predict whether customers are satisfied.
 The rows are instances and columns features.
@@ -115,7 +115,7 @@ Please note we discuss text classification in this thesis, but
 we will use non-textual features in this example for easier understanding.
 Classifiers (except for fastText which is tailored specifically for text) take any set of features,
 so we can use them in the same way with feature extracted directly from text.
-We will learn how to do that in the chapter~\ref{chap:fea}.
+We will learn how to do that in \autoref{chap:fea}.
 
 \begin{table}[h!]
 
@@ -165,7 +165,7 @@ Hence all customers getting a discount are according to one-R satisfied.
 Three customers that did not get discount are dissatisfied and one is satisfied.
 Hence one-R will predict all customers without a discount as dissatisfied.
 
-The problem is how to choose the most informative feature which we will tackle in the subsection~\ref{subsec:decisiontree}.
+The problem is how to choose the most informative feature which we will tackle in \autoref{subsec:decisiontree}.
 For now we can think of it as finding such a feature, that will produce the best classifier.
 
 \subsection{Na\"{i}ve Bayes}

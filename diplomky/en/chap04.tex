@@ -4,30 +4,35 @@
 Until now we showed various possibilities of constructing a classification model.
 In this chapter, we will describe how to compare their performance.
 We cannot mathematically prove that a model is a correct estimation of what we are trying to classify.
-This is because we do not know the actual real distribution of data and we are only estimating it.
+This is because we do not know the actual real distribution of data and can only estimate it.
 Therefore, we will use statistical methods on a testing set.
 
 We cannot validate a model based on how well it fits our training data.
 Doing that would yield over-optimistic results, because our model is optimized for them.
 Also, it would not give us any idea how well the classifier performs on data it has not seen during the training phase.
 Hence, we need to have a special testing set used only for evaluating.
-Finally, we will introduce different metrics for expressing properties of a model.
+Finally, we will introduce different metrics for expressing various properties of a model.
 
 \section{Overfitting}
 
 The described problem of over-optimistic results is called overfitting.
-{\bf Overfitting} (sometimes referred to as {\bf bias}) means that our model is able to predict instances it has been trained on a lot better than new not yet seen.
-We say that model does not generalise well over data.
-This happens when an algorithm learns to recognise idiosyncrasies of the training set, rather than to understand the underlying logic.
+{\bf Overfitting} (sometimes referred to as {\bf bias}) means
+that our model is able to predict instances it has been trained on a lot better than new instances. 
+We say that a model does not generalise well.
+This happens when an algorithm learns to recognise idiosyncrasies of the training set,
+rather than to understand the underlying logic.
 These idiosyncrasies can appear by incomplete data or noise introduced during obtaining the data.
 
-Instead of having a simple and robust rules to describe data, we have many random rules working for only small subsets of data.
-Our objective describes a  phenomenon known as {\it Occam's razor}. \todoA{citation}
-It basically advices us to prefer a less complicated solution over a more complicated one.
-The less complicated solution is less likely to suffer from overfitting, because there is simply not enough space to include all various idiosyncrasies.
+Instead of having simple and robust rules to describe data,
+we have many random rules that work for only small subsets of data.
+Our objective describes a phenomenon known as {\it Occam's razor}. \todoA{citation}
+It basically advises us to prefer a less complicated solution over a more complicated one.
+The less complicated solution is less likely to suffer from overfitting,
+because there is simply not enough space to include all various idiosyncrasies.
 An example of such a process can be a {\bf Decision Tree}.
-If we have two trees with comparable performance, the one with less nodes is more likely to generalise better and not suffer from overfitting.
-\citet{TanBachKum08} describe this in more details in chapter 4.
+If we have two trees with comparable performance,
+the one with less nodes is more likely to generalise better and not suffer from overfitting.
+\citet{TanBachKum08} describe this in more detail in chapter 4.
 
 {source: kumar 188}
 
@@ -38,42 +43,49 @@ If we have two trees with comparable performance, the one with less nodes is mor
 Usually, we do not get data divided into training and testing sets.
 Even though it gives us more flexibility, it also introduces a new challenge how to obtain the two sets.
 We will present two methods of diving data into these sets.
-First, very simple holdout method.
+First, a very simple holdout method.
 Second, k-fold cross validation which builds on top of holdout.
 
 \subsection{Holdout Method}
 
-The simplest approach is to randomly divide data into two sets, such that their size will be of a given ratio.
-This approach is called {\bf Holdout}.
+The simplest approach, called \textbf{holdout}, is to randomly divide data into two sets,
+such that their sizes will be in a specific ratio.
 The exact ratio is at the discretion of further analysis and it needs to balance two crucial requirements.
 
 First, not enough data may lead to lower performance, so we want to train the model on as much data as we possibly can.
 Second, if we use too much data for training, the performance evaluation will be less reliable.
-Statistically speaking, it will have wider confidence interval.
+Statistically speaking, it will have a wider confidence interval.
 
 As \citet{TanBachKum08} note, another problem is with obtaining an independent set.
-The training model can be chosen in such a way that contains biased data.
+The training set can be chosen in such a way that it contains biased data.
 We also should be aware of the fact that training and testing sets are no longer independent,
 because the entire dataset is split between the two.
-Because of this reason, particular choice of one set directly influences the properties of the other one.
+Because of this reason, particular choice of one set directly influences the properties of the other.
 \todoA{rephrase it}
-An example of this dependency is when there are more instances of one label percentage-wise in the entire dataset,
+An example of this dependency is
+when there are more instances of one label in one subset,
 there will be less instances in the other set.
 
 
 \subsection{Cross-Validation}
 
 To address some of the issues listed above, {\bf Cross-Validation} has been introduced.
-The underlying idea is that each instance is used the same number of times for training and exactly once for testing.
+The underlying idea is that each instance is used the same number of times for training 
+and exactly once for testing.
 We split the dataset into~$k$~equally-sized subsets.
-For each subsets, we train our algorithm on all subsets but the one chosen and the one will be used as a testing set.
-This approach is called {\bf k-fold cross-validation} for~$k$~subsets. The variable~$k$~is chosen arbitrarily.
+For each subset, we train our algorithm on all subsets but the one chosen 
+and the one will be used as a testing set.
+This approach is called {\bf k-fold cross-validation} for~$k$~subsets.
+The variable~$k$~is chosen arbitrarily.
 
-Special case for~$k=N$ where~$N$~is the number of instances is called {\bf leave-one-out} and has the advantage of 
+Special case for~$k=N$ where~$N$~is the number of instances is called {\bf leave-one-out}
+and has the advantage of 
 utilizing as much data for training as we can.
-However, it is computationally expensive and we therefore generally choose lower~$k$~for practical reasons.
+However, it is computationally expensive and
+we therefore generally choose a lower value of~$k$~for practical reasons.
 
-In this thesis, we compute evaluation metrics for each pair of training and testing sets separately and report their average along with minimal and maximal value and standard deviation.
+In this thesis, we compute evaluation metrics for each pair of training and testing sets separately
+and report their average along with minimal and maximal value and standard deviation.
 
 
 \section{Evaluation Metrics}
@@ -88,15 +100,17 @@ For doing this we will introduce several {\bf evaluation metrics}.
 Let us have a binary classification problem and a classifier we want to evaluate.
 For evaluation, we always have to decide which label we will evaluate it on.
 In our case we will choose ``useful''.
-All instances that our classifier predicted as this label are then {\bf positive} and the rest is {\bf negative}.
-Both categories are further divided into true and false.
-True being instances that our classifier predicted correctly and false incorrectly.
+All instances that our classifier predicted as this label are then {\bf positive} 
+and the rest are {\bf negative}.
+Both categories are further divided into true and false;
+true being instances that our classifier predicted correctly and false, incorrectly.
 Together we have four categories:
 true positive, false positive, true negative and false negative.
-For clarity we can arrange these four categories into the so-called {\bf confusion matrix} as shown in the table~\ref{tab:confmatrix}.
+For clarity we can arrange these four categories into the so-called {\bf confusion matrix} 
+as shown in \autoref{tab:confmatrix}.
 Each cell represents the number of instances from one of the categories.
 The columns correspond to instances where the predicted label is the chosen one (\textit{yes}) and the rest (\textit{no}).
-Analogically, rows correspond to instances with the chosen label (\textit{yes}) and the rest (\textit{no}).
+Analogously, rows correspond to instances with the chosen label (\textit{yes}) and the rest (\textit{no}).
 Diagonal {\it TP} and {\it TN} represents all instances that have been classified correctly.
 The other diagonal represents all misclassified instances.
 
@@ -170,7 +184,7 @@ or equivalently
 \mathit{error~rate} = \frac{\FP + \FN}{\TP + \TN + \FP + \FN}
 \end{equation}
 
-In our toy example accuracy is~$21/28$ and error rate~$7/28$.
+In our mock example accuracy is~$21/28$ and error rate~$7/28$.
 
 \todoB{problems with accuracy}.
 
@@ -182,8 +196,9 @@ It expresses our confidence on how likely an instance is positive when we classi
 \mathit{precision} = \frac{\TP}{\TP + \FP}
 \end{equation}
 
-{\bf Recall} is the ratio how many instances we classified as positive out of those that are truly positive.
-It expresses our confidence on how many instances we revealed out of the positive cluster.
+{\bf Recall} is the ratio of how many instances were classified as positive
+outside of those that are truly positive.
+It expresses our confidence on how many truly positive instances we can correctly identify.
 
 \begin{equation}
 \mathit{recall} = \frac{\TP}{\TP + \FN}
@@ -191,15 +206,15 @@ It expresses our confidence on how many instances we revealed out of the positiv
 
 In our toy example precision and recall are~$10/12$~and~$10/15$~respectively.
 
-To combine recall and precision {\bf f-measure} is commonly used.
-It is harmonic average of the two and expresses combination of both properties.
+To combine recall and precision, {\bf f-measure} is commonly used.
+It is the harmonic average of the two and expresses the combination of both properties.
 
 \begin{equation}
 	\mathit{F-measure} = 2 \times \frac{\mathit{precision}\times \mathit{recall}}{\mathit{precision} + \mathit{recall}}
 \end{equation}
 
 
-More thorough description of evaluation can be found in~\ref{TanBachKum08}.
+More thorough description of evaluation can be found in \autoref{TanBachKum08}.
 
 \todoA{Kumar has only accuracy and error rate - find prec, f-0measure, recall somewhere else}
 

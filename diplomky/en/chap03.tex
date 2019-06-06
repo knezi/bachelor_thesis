@@ -8,34 +8,44 @@ Huan Liu
 Hiroshi Motoda}
 
 
-As we said we cannot straightforwardly use the raw data form training our classifier.
-Instead, we will represent each instance with a set of features, each feature expressing a certain property about the instance.
-An example of a feature can be number of words in the review,\
-a feature expressing whether word {\it food} is present in the review
-or a feature extracting some metadata, like how many stars the user gave.
+We cannot straightforwardly use the raw data form training our classifier.
+Instead, we will represent each instance by a set of features;
+each feature expressing a certain property about the instance.
+An example of a feature can be number of words in the review,
+a feature expressing whether the~word {\it food} is present in the review
+or a feature conveying some metadata, like how many stars the user gave.
 
-Features are divided by their values into three categories~---~nominal, ordinal and continuous. Nominal features are discrete and their values do~not convey any relationship. When a~feature is ordinal, it means it is discrete and also convey ordering of the values. Continuous feature is then any real-valued variable.
+Features are divided by their values into three categories~---~nominal, ordinal and continuous.
+Nominal features are discrete and their values do~not have any relationship.
+When a~feature is ordinal, it means it is discrete and also defines an ordering of the values.
+Continuous feature is any real-valued variable.
 
-In this text we will deal with nominal and ordinal only. The simplest way to treat ordinal features is to omit the order. This of course loses information conveyed in this ordering, but will allow us easier feature manipulation.
+In this text we will deal with nominal and ordinal only.
+The simplest way to treat ordinal features is to omit the order.
+This of course looses information conveyed in this ordering,
+but allows us easier feature manipulation.
 
 \section{Extraction}
 
-When we come up with feature we want to use, we often have to do some preprocessing and then computing the value of a feature for each particular instance.
+When we come up with a feature we want to use,
+we often have to do some preprocessing and computing the feature value for each particular instance.
 This process is called {\bf feature extraction}.
-We will use features like number of words and therefore we need to split the reviews into words first.
+We will use features needing individual words 
+and therefore we need to split the reviews into words first.
 This is called {\bf tokenization}, because we are splitting the text into tokens (words in this context).
 We will use Tweet tokenizer from the library nltk.
-The reason we use it is that it does not only split words by spaces,
-but also punctuation and considers punctuation signs to be tokens as well.
+The advantage of this library is that it does not only split words by spaces,
+but also punctuation and considers punctuation marks to be tokens as well.
 This allows the features to carry some potentially useful information.
-An example is indication that a word as at the end of a sentence if it is followed by a full stop.
+An example is the indication that a word is at the end of a sentence if it is followed by a full stop.
 
 Subsequently, it is often needed to convert words into lower case and {\it lemmatise} them.
 Both these techniques are used to group words that express the same meaning together.
 The case of lower case is clear.
-{\bf Lemmatisation} means replacing a word with its lemma, which is a kind of {\it base form} of the word.
+{\bf Lemmatisation} means replacing a word with its lemma, which is a {\it base form} of the word.
 The reason of doing this is to group inflected words together.
-An example in English is {\it car} and {\it cars}.
+TODO rephrase here
+The word \tin English is {\it car} and {\it cars}.
 Both words clearly express the same property and we may want to group them together.
 Of course, the exact meaning is different, but often for purposes of classification known that there is a car
 suffices. It is not necessary to known whether one or more.
@@ -110,7 +120,7 @@ To asses this, we want to compute~$\chi^2$ of the variables~$X$~and~$Y$.
 First, representing the feature \textit{contain ``credit card''}.
 Second, the true label.
 
-Table~\ref{tab:chi_ex} summaries this.
+\autoref{tab:chi_ex} summaries this.
 The inner cells express how many instances there are with the given variable values.
 The bottom most row and right most column express marginal probability distribution 
 calculated by the number of samples.
@@ -167,7 +177,7 @@ the observed values will differ from expected and~$\chi^2$ will by non-zero.
 The farther observed value from the expected is, the higher penalization with square.
 Also, it is normalized by dividing it in E.
 
-The value of $\chi$ in our example in the table~\ref{tab:chi_ex}
+The value of $\chi$ in our example in \autoref{tab:chi_ex}
 ~is:
 
 \begin{equation}
@@ -187,11 +197,19 @@ The value of $\chi$ in our example in the table~\ref{tab:chi_ex}
 
 \subsection{Wrappers}
 
-Unlike filters, wrappers work with subsets of features and use a classifier to directly asses informativness.
-Every subset is classified by a classificator used as a black box and then evaluated by some common evaluation metrics.
-The optimal subset is than chosen. Thanks to this, wrappers are universal and robust.
+Unlike filters, wrappers work with subsets of features
+and use a classifier to directly asses informativness.
+Every subset is classified by a classificator used as a black box
+and evaluated by some common evaluation metrics.
+The optimal subset is than chosen.
+Thanks to this, wrappers are universal and robust.
 
-Furthermore, wrappers can perform a lot better than filters on certain datasets. Such a~case is documented by \citet{GuyEli03} in~\ref{fig:guyeli03-figure3}. The bottom left graph shows the original data and the~top left shows projection onto only one axis. It is clear that one variable cannot be sufficient for separating the clusters. However, if we project the data onto a combination of the two axis, the clusters can be at least partially separated as can be seen in the right part of the figure.
+Furthermore, wrappers can perform a lot better than filters on certain datasets.
+Such a~case is documented by \citet{GuyEli03} in \autoref{fig:guyeli03-figure3}.
+The bottom left graph shows the original data and the~top left shows projection onto only one axis.
+It is clear that one variable cannot be sufficient for separating the clusters.
+However, if we project the data onto a combination of the two axis,
+the clusters can be at least partially separated as can be seen in the right part of the figure.
  
  \todoA{citation and vector}
 
@@ -201,7 +219,13 @@ Furthermore, wrappers can perform a lot better than filters on certain datasets.
 \label{fig:guyeli03-figure3}
 \end{figure}
 
-Unfortunately, wrappers tend to be computationally expensive, because every subset must by classified separately. In fact, it has been shown it is NP-hard to find optimal solution. To achieve computational feasibility various approximation methods has been developed. These methods allow us to classify only a fraction of subsets at the cost of losing the guarantee of the optimal solution. We will describe two variants of greedy search.
+Unfortunately, wrappers tend to be computationally expensive,
+because every subset must by classified separately.
+In fact, it has been shown it is NP-hard to find optimal solution.
+To achieve computational feasibility various approximation methods has been developed.
+These methods allow us to classify only a fraction of subsets
+at the cost of losing the guarantee of the optimal solution.
+We will describe two variants of greedy search.
 
 \todoB{On the approximability of minimizing nonzero variables
 or unsatisfied relations in linear systems --- citation of the NP-hard, otherwise delete} 
@@ -223,12 +247,24 @@ Embedded methods are part of a classification algorithm itself. An example can b
 
 \todoA{The last sentence should be removed if there are no such algos in this doc.}
 
-\section{Singular Value Decomposition (SVD/PCA)}
+\section{Principal Component Analysis}
 
-- jolliffe - principal component analysis
+Principal component analysis is not feature extraction nor selection.
+It is rather an intermediate process between feature engineering and training a classifier
+to improve the performance.
 
- - not feature selection, nor extraction
- - as an intermediate process between training and extracting/selecting
+\textbf{Principal component analysis} (PCA) is another way of reducing the number of features used.
+Instead of selecting a feature subset, it treats instances as feature vectors.
+\textbf{Feature vector} is such a vector that each element has a value of one feature.
+The order of features is fixed.
+This way we can represent an instance with all its features by a vector.
+The idea of PCA is to transform feature vectors into a space of lower dimensionality.
+The objective is to retain as much information contained in the vector, while
+having lower dimensionality.
+Mathematically speaking, the objective is to retain as much variation of variables
+as possible and reduce any variable correlation.
+The exact description is way beyond the scope of this text.
+Curious reader can find more in~\citet{Jolliffe02}.
 
 \section{Commonly Used Features}
 
