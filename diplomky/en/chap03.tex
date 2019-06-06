@@ -33,7 +33,7 @@ This process is called {\bf feature extraction}.
 We will use features needing individual words 
 and therefore we need to split the reviews into words first.
 This is called {\bf tokenization}, because we are splitting the text into tokens (words in this context).
-We will use Tweet tokenizer from the library nltk.
+We will use Tweet tokenizer from library nltk \footnote{\url{https://www.nltk.org}}.
 The advantage of this library is that it does not only split words by spaces,
 but also punctuation and considers punctuation marks to be tokens as well.
 This allows the features to carry some potentially useful information.
@@ -44,87 +44,133 @@ Both these techniques are used to group words that express the same meaning toge
 The case of lower case is clear.
 {\bf Lemmatisation} means replacing a word with its lemma, which is a {\it base form} of the word.
 The reason of doing this is to group inflected words together.
-TODO rephrase here
-The word \tin English is {\it car} and {\it cars}.
+The word \textit{cars} will be replaced by and therefore treated in the same way as \textit{car}.
 Both words clearly express the same property and we may want to group them together.
-Of course, the exact meaning is different, but often for purposes of classification known that there is a car
-suffices. It is not necessary to known whether one or more.
-Because English is not highly inflectional language, we will omit this process and use only lower case conversion.
-
-
-\todoA{ref to nltk.}
-
+Of course, the exact meaning is different,
+but often for purposes of classification knowing that there is a car suffices.
+It is not necessary to known whether one or more.
+We will omit lemmatisation and use only lower case conversion.
+Lemmatisation does not make such a big difference in English,
+becase it is not a highly inflectional language.
 
 \section{Selection}
 
 Machine learning is used in contexts where the true natural and inner logic of~data is~not known.
-Therefore it is difficult to intuitively select only useful features and we often extract as many features as we can hoping some of them will be useful.
-Having too many features can lead to undesirable effects and only those features that are in some respect useful are passed to the training phase.
+Therefore it is difficult to intuitively select only useful features
+and we often extract as many features as we can hoping some of them will be useful.
+Because having too many features can lead to undesirable effects,
+several techniques to reduce the number of features are used.
+The objective is to use features that are in some respect useful.
 
 Having fewer features which are informative enough leads to three direct benefits.
-Trained model is far less complex and as~such easier to~interpret.
+The resulting model is far less complex and as~such easier to~interpret.
 The~model also generalises better, because the~risk of overfitting is lower.
-Overfitting happens when the~model recognises irregularities in training data and classifies individual already seen instances, whereas it should approximate the~original model to~be able to~classify unseen instances.
+Overfitting happens when the~model recognises irregularities in training data
+and learns to recognised individual instances.
+It should instead approximate the~general concept of the classification rules
+to~be able to~classify new instances.
 Lastly, fewer features result in shorter training time.
 
-Three methods of feature selection are generally recognised.
-
+Three methods of feature selection are generally recognised; filters, wrappers and embedded methods.
 
 \subsection{Filters}
 
-The main objective of filters is to filter out not so much informative features. It evaluates {\it informativness} of each feature individually and ...
+Filters work with individual features independently of any supervised classification algorithm.
+The main objective of filters is to filter out features that are not informative on their own.
+They evaluate {\it informativness} of each feature individually
+and drop all bellow a certain threshold.
 
-Filters are popular, because their time complexity is linear in the~number of~features. However, the feature selection may~not be optimal, because neither the~used classificator nor feature correlation is taken into account. When there are highly correlated features, it is unnecessary to choose all of them, because the information conveyed in some may be inferred from others. However, any filter will choose all of them, because filters consider features independently of each other.
+Filters are popular, because their time complexity is linear in the~number of~features.
+However, the feature selection may~not be optimal,
+because neither the~used classifier nor feature correlation is taken into account.
+Suppose there are highly correlated features,
+each individually begin very informative.
+Because they are correlated,
+the information conveyed in some may be inferred from others.
+As a result, it is unnecessary to choose all of them.
+However, any filter will choose all of them,
+because filters consider features independently of each other.
 
-Filters work with individual features independently of any supervised classification algorithm. Each feature is used or omitted based on the filter condition. There are number of filters differing in the filter condition.
+There are number of filters differing in the filter condition.
 
 \subsubsection{Mutual Information}
 
-As \citet{Hoq14} defines it, {\bf mutual information}~$I(X, Y)$~is the amount of uncertainty in X due to the knowledge of Y. It is defined as:
+As \citet{Hoq14} defines it,
+{\bf mutual information}~$I(X, Y)$~is the amount of uncertainty in X due to the knowledge of Y.
+{\bf Mutual information} of variables $X$ and $Y$ is defined as:
 
-$$sum p(x,y) log(p(x,my)/op(x)/p(y)$$
+\begin{equation}
+I(X,Y) = \sum_{x,y} p\left(x,y\right)
+\log
+\frac{p\left(x,y\right)}{p\left(x\right)p\left(y\right)},
+\end{equation}
 
-It can be also expressed as
+where $p\left(x, y\right)$ is the joint probability of~$X$ and $Y$ and~$p(x)$~and~$p(y)$~
+are marginal probability distributions of the individual variables.
+
+Mutual information can be also expressed as
 
 $$I(X, Y) = H(X) - H(X|Y),$$
+
+\todoB{explain entropy}
 
 where~$H(x)$~is entropy of random variable~$X$~and~$H(X|Y)$~the conditional entropy.
 This way~$H(X)$~expresses the of uncertainty of~$X$~and~$H(X|Y)$~what~$Y$~does not say about~$X$.
 This supports the intuitive idea that information gain expresses how much information one variable carries about the other one.
 
-The basic approach is to compute mutual information of each feature and the class label.
-Only feature exceeding some given threshold are then used for training.
-\citet{Hoq14} proposes improved algorithm.
-Instead of choosing all feature in one step, they choose one feature at a time and repeat this process until again a given threshold is exceeded.
-Two values are calculated for each not selected feature.
+The basic approach for selecting features is
+to compute mutual information of each feature and the class label.
+Only feature exceeding some given threshold are used for training.
+
+There is also an improved algorithm proposed by \citet{Hoq14}.
+Instead of choosing all features in one step,
+features are chosen one by one.
+We have two sets; selected ($S$) and candidates features ($C$).
+In the beginning, all features are in $C$.
+
+Every step, we choose one feature from~$C$ and move it to~$S$.
+Two values are calculated for each feature from~$C$.
 First, feature-class as in the basic approach.
-Second, the average of mutual information between the feature all already used features.
-Then they choose such a feature that has the highest feature-class and also lowest average of feature-feature.
-This prevents including highly correlated features into training set.
+Second, the average of mutual information between the feature and all features from $S$.
+We choose such a feature that has the highest feature-class and also lowest average of feature-feature.
+This prevents including highly correlated features in~$S$.
+
+Let us say there are two correlated features~$A$~and~$B$.
+Adding~$A$ into~$S$ results in~$B$ having higher average of mutual information with features from $S$.
+As such, $B$ is less likely selected.
+
+We stop, once the mutual information of the feature chosen from $C$ and the class drops bellow a certain
+threshold.
+We use features from~$S$ for classification.
 We have not used this approach due to the lack of time and used the basic approach.
 
 
+\todoB{example}
 
 \subsubsection{Chi-square~---~$\chi^2$}
 
 Chi-square test of independence can be thought of
-as a measure of the lack of independence between two variables.
+as a measure of lack of the independence between two variables.
 As in mutual information,
 we will compute a special value for each pair feature-class
 and based on some threshold we will choose the most informative features.
+We will briefly discuss the idea and present an example.
+More detailed description can be found in~\citet{Hugh13}.
+
+
 Let us demonstrate this with an example.
 We have instances of our reviews and we want to test how well
-a feature \textit{contains the phrase ``credit card''} describes
+a feature \textit{text contains the phrase ``credit card''} describes
 labels \textit{useful} and \textit{not-useful}.
 To asses this, we want to compute~$\chi^2$ of the variables~$X$~and~$Y$.
 First, representing the feature \textit{contain ``credit card''}.
 Second, the true label.
 
-\autoref{tab:chi_ex} summaries this.
-The inner cells express how many instances there are with the given variable values.
-The bottom most row and right most column express marginal probability distribution 
+\autoref{tab:chi_ex} shows example data.
+The inner cells express how many instances there are with the given combination of variable values.
+The bottom most row and right most column express marginal probability distributions
 calculated by the number of samples.
-If the variables very truly independent,
+If the variables were truly independent,
 we would expect the cells to be 15 and 35 in the first and second row respectively.
 We will introduce a cost function to reflect this
 and~$\chi^2$~of the two variables will then be sum of the cost function over all cells.
@@ -150,16 +196,15 @@ and~$\chi^2$~of the two variables will then be sum of the cost function over all
  \label{tab:chi_ex}
 \end{table}
 
-The exact definition can be found in \citet{Hugh13}.
 Let us have two random variables~$X$~and~$Y$.
-Let us define~$O_{x,y}$ and~$E_{x,y}$~as the number of observed,
-resp. expected instances for~$X=x$~and~$Y=y$.
+Let us define~$O_{x,y}$ and~$E_{x,y}$
+as respectively the number of observed and expected instances for~$X=x$~and~$Y=y$.
 The value of~$O_{x,y}$~is simply the number of instances.
 The value of~$E_{x,y}$ is computed from marginal probabilities.
 Namely:
 
 \begin{equation}
-E_{x,y} = P_X\left(X=x\right) P_Y\left(Y=y\right) \times n,
+E_{x,y} = P_X(X=x) \times P_Y(Y=y) \times n,
 \end{equation}
 
 where~$P_X$~and~$P_Y$~are the marginal probabilities of the variables~$X$~and~$Y$

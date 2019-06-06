@@ -3,6 +3,16 @@ LOOP - fasttext
 
 /data/students/knizek
 
+## styl psani
+ - we believe -> I believe
+ - consistent past vs rpesent
+ 	- past for experiments
+	- present for general stuff
+- like vs as
+- remove connections you don't need as many of them
+- don't give summaries without thinking
+- use respectivelly carefully
+https://tex.stackexchange.com/questions/34155/autoref-does-not-capitalize-initial-character-in-sentence-when-referencing-lae
 ## clanky
 tohle vypadata vazne dobre:
 	Short text classification in twitter to improve information filtering
@@ -60,11 +70,14 @@ uzivatelska doc??
 	- lze i prednasku
 
 ## psani
+- znimint knihovny?
+
+### later
+* read again:
+	mutual information
 * fasttext
 * classificaiton
 * classifiers
-
-### later
 * summary
 * my arch
 * diagrams
