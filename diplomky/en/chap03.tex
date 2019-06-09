@@ -8,30 +8,31 @@ Huan Liu
 Hiroshi Motoda}
 
 
-We cannot straightforwardly use the raw data form training our classifier.
-Instead, we will represent each instance by a set of features;
-each feature expressing a certain property about the instance.
-An example of a feature can be number of words in the review,
-a feature expressing whether the~word {\it food} is present in the review
-or a feature conveying some metadata, like how many stars the user gave.
+We cannot use the raw data as it is for training our classifier.
+Instead, we represent each instance by a set of features;
+each feature expressing a certain property of the instance.
+An example of a feature can be a number of words in the review,
+whether the~word {\it food} is present in the review
+or a piece of metadata, like how many stars the user gave.
 
-Features are divided by their values into three categories~---~nominal, ordinal and continuous.
-Nominal features are discrete and their values do~not have any relationship.
+Features are divided according to their values into three categories~---~nominal, ordinal and continuous.
+Nominal features are discrete and there is no relationship between their values.
 When a~feature is ordinal, it means it is discrete and also defines an ordering of the values.
-Continuous feature is any real-valued variable.
+Continuous feature are any real-valued variable.
 
-In this text we will deal with nominal and ordinal only.
-The simplest way to treat ordinal features is to omit the order.
-This of course looses information conveyed in this ordering,
+In this thesis, we will utilize nominal and ordinal only.
+We will omit the order in ordinal features and work with them the same way as nominal.
+This of course loses information conveyed in this ordering,
 but allows us easier feature manipulation.
+
 
 \section{Extraction}
 
 When we come up with a feature we want to use,
 we often have to do some preprocessing and computing the feature value for each particular instance.
 This process is called {\bf feature extraction}.
-We will use features needing individual words 
-and therefore we need to split the reviews into words first.
+We will use features that require the words to be individual
+and therefore we need to split the reviews into separate words first.
 This is called {\bf tokenization}, because we are splitting the text into tokens (words in this context).
 We will use Tweet tokenizer from library nltk \footnote{\url{https://www.nltk.org}}.
 The advantage of this library is that it does not only split words by spaces,
@@ -39,34 +40,33 @@ but also punctuation and considers punctuation marks to be tokens as well.
 This allows the features to carry some potentially useful information.
 An example is the indication that a word is at the end of a sentence if it is followed by a full stop.
 
-Subsequently, it is often needed to convert words into lower case and {\it lemmatise} them.
-Both these techniques are used to group words that express the same meaning together.
-The case of lower case is clear.
+Subsequently, it is often needed to convert words into lower case, and then {\it lemmatise} them.
+Both these techniques help to group words that express the same meaning together.
 {\bf Lemmatisation} means replacing a word with its lemma, which is a {\it base form} of the word.
-The reason of doing this is to group inflected words together.
-The word \textit{cars} will be replaced by and therefore treated in the same way as \textit{car}.
+The reason for doing this is to group inflected words together.
+The word \textit{cars} will be therefore be treated in the same way as \textit{car}.
 Both words clearly express the same property and we may want to group them together.
 Of course, the exact meaning is different,
 but often for purposes of classification knowing that there is a car suffices.
-It is not necessary to known whether one or more.
-We will omit lemmatisation and use only lower case conversion.
-Lemmatisation does not make such a big difference in English,
+It is not always necessary to known whether one or more.
+Howeever for this analysis, we will omit lemmatisation and use only lower case conversion.
+Lemmatisation is not always required in English,
 becase it is not a highly inflectional language.
 
 \section{Selection}
 
-Machine learning is used in contexts where the true natural and inner logic of~data is~not known.
+Machine learning is used in contexts where the inner logic of~data is~not known.
 Therefore it is difficult to intuitively select only useful features
 and we often extract as many features as we can hoping some of them will be useful.
 Because having too many features can lead to undesirable effects,
-several techniques to reduce the number of features are used.
+several techniques to reduce the number of features can be used.
 The objective is to use features that are in some respect useful.
 
 Having fewer features which are informative enough leads to three direct benefits.
 The resulting model is far less complex and as~such easier to~interpret.
 The~model also generalises better, because the~risk of overfitting is lower.
 Overfitting happens when the~model recognises irregularities in training data
-and learns to recognised individual instances.
+and learns to recognise individual instances.
 It should instead approximate the~general concept of the classification rules
 to~be able to~classify new instances.
 Lastly, fewer features result in shorter training time.
@@ -74,29 +74,58 @@ Lastly, fewer features result in shorter training time.
 Three methods of feature selection are generally recognised; filters, wrappers and embedded methods.
 
 \subsection{Filters}
+\label{subsec:filters}
 
 Filters work with individual features independently of any supervised classification algorithm.
 The main objective of filters is to filter out features that are not informative on their own.
-They evaluate {\it informativness} of each feature individually
+They evaluate the \textit{informativness} of each feature individually
 and drop all bellow a certain threshold.
 
 Filters are popular, because their time complexity is linear in the~number of~features.
 However, the feature selection may~not be optimal,
 because neither the~used classifier nor feature correlation is taken into account.
-Suppose there are highly correlated features,
-each individually begin very informative.
-Because they are correlated,
-the information conveyed in some may be inferred from others.
-As a result, it is unnecessary to choose all of them.
-However, any filter will choose all of them,
-because filters consider features independently of each other.
+
+Such a~case is documented by \citet{GuyEli03} in \autoref{fig:guyeli03-figure3}.
+The bottom left graph shows the original data and the~top left shows projection onto only one axis.
+It is clear that one variable cannot be sufficient for separating the clusters.
+However, if we project the data onto a combination of the two axes,
+the clusters can be at least partially separated as can be seen in the right part of the figure.
+Even though the solution to partially separate the two clusters exist,
+no filter will choose either feature, because individually they are useless.
+
+Another example of non-optimality is
+when there are features such that any single feature is individually sufficient to separate the data.
+Optimal solution is  to choose just one of them.
+However, any filter will choose all of them, because separately they are all useful.
+This problem can be partially solved by the advanced method described in \autoref{subsubsec:mi}.
+However, it increases the time complexity, which is the biggest advantage of filters.
+
+
+
+%reverse example
+%Suppose there are highly correlated features,
+%each individually begin very informative.
+%Because they are correlated,
+%the information conveyed in some may be inferred from others.
+%As a result, it is unnecessary to choose all of them.
+%However, any filter will choose all of them,
+%because filters consider features independently of each other.
+ 
+ \todoA{citation and vector}
+
+\begin{figure}[ht]\centering
+\includegraphics[width=100mm]{../img/guyeli_figure3.png}
+\caption{Example of correlated features from the article}
+\label{fig:guyeli03-figure3}
+\end{figure}
 
 There are number of filters differing in the filter condition.
+We will discuss mutual information and Chi-square.
 
 \subsubsection{Mutual Information}
-
+\label{subsubsec:mi}
 As \citet{Hoq14} defines it,
-{\bf mutual information}~$I(X, Y)$~is the amount of uncertainty in X due to the knowledge of Y.
+{\bf mutual information}~$I(X, Y)$~is the amount of uncertainty in X due to the amount of knowledge of Y.
 {\bf Mutual information} of variables $X$ and $Y$ is defined as:
 
 \begin{equation}
@@ -114,35 +143,35 @@ $$I(X, Y) = H(X) - H(X|Y),$$
 
 \todoB{explain entropy}
 
-where~$H(x)$~is entropy of random variable~$X$~and~$H(X|Y)$~the conditional entropy.
-This way~$H(X)$~expresses the of uncertainty of~$X$~and~$H(X|Y)$~what~$Y$~does not say about~$X$.
+where~$H(X)$~is the entropy of~$X$~and~$H(X|Y)$~the conditional entropy.
+This way~$H(X)$~expresses the amount of uncertainty of~$X$~and~$H(X|Y)$~what~$Y$~does not say about~$X$.
 This supports the intuitive idea that information gain expresses how much information one variable carries about the other one.
 
 The basic approach for selecting features is
 to compute mutual information of each feature and the class label.
-Only feature exceeding some given threshold are used for training.
+Only features exceeding some given threshold are used for training.
 
 There is also an improved algorithm proposed by \citet{Hoq14}.
 Instead of choosing all features in one step,
-features are chosen one by one.
-We have two sets; selected ($S$) and candidates features ($C$).
+only one feature is chosen is chosen any time.
+We have two sets; selected ($S$) and candidates ($C$) features.
 In the beginning, all features are in $C$.
 
 Every step, we choose one feature from~$C$ and move it to~$S$.
-Two values are calculated for each feature from~$C$.
+Which feature is chosen depends on two values calculated for each feature from~$C$.
 First, feature-class as in the basic approach.
 Second, the average of mutual information between the feature and all features from $S$.
 We choose such a feature that has the highest feature-class and also lowest average of feature-feature.
 This prevents including highly correlated features in~$S$.
 
-Let us say there are two correlated features~$A$~and~$B$.
+Let us demonstrate it on two correlated features~$A$~and~$B$.
 Adding~$A$ into~$S$ results in~$B$ having higher average of mutual information with features from $S$.
-As such, $B$ is less likely selected.
+As such, $B$ is less likely selected in the next steps.
 
 We stop, once the mutual information of the feature chosen from $C$ and the class drops bellow a certain
 threshold.
-We use features from~$S$ for classification.
-We have not used this approach due to the lack of time and used the basic approach.
+At the end, features from~$S$ are used for classification.
+We have not used this approach due to the lack of time and used the basic approach only.
 
 
 \todoB{example}
@@ -160,10 +189,11 @@ More detailed description can be found in~\citet{Hugh13}.
 
 Let us demonstrate this with an example.
 We have instances of our reviews and we want to test how well
-a feature \textit{text contains the phrase ``credit card''} describes
+feature \textit{credit card} describes
 labels \textit{useful} and \textit{not-useful}.
+The feature expresses whether the phrase ``credit card'' is present in the text of a review.
 To asses this, we want to compute~$\chi^2$ of the variables~$X$~and~$Y$.
-First, representing the feature \textit{contain ``credit card''}.
+First, representing the feature \textit{credit card}.
 Second, the true label.
 
 \autoref{tab:chi_ex} shows example data.
@@ -171,7 +201,7 @@ The inner cells express how many instances there are with the given combination 
 The bottom most row and right most column express marginal probability distributions
 calculated by the number of samples.
 If the variables were truly independent,
-we would expect the cells to be 15 and 35 in the first and second row respectively.
+we would expect the cells to be 15 and 35 in the first and second row, respectively.
 We will introduce a cost function to reflect this
 and~$\chi^2$~of the two variables will then be sum of the cost function over all cells.
 
@@ -243,31 +273,19 @@ The value of $\chi$ in our example in \autoref{tab:chi_ex}
 \subsection{Wrappers}
 
 Unlike filters, wrappers work with subsets of features
-and use a classifier to directly asses informativness.
-Every subset is classified by a classificator used as a black box
+and use a classifier to directly asses informativness of the subset as a whole.
+Every subset is classified by the classifier used as a black box
 and evaluated by some common evaluation metrics.
 The optimal subset is than chosen.
 Thanks to this, wrappers are universal and robust.
 
 Furthermore, wrappers can perform a lot better than filters on certain datasets.
-Such a~case is documented by \citet{GuyEli03} in \autoref{fig:guyeli03-figure3}.
-The bottom left graph shows the original data and the~top left shows projection onto only one axis.
-It is clear that one variable cannot be sufficient for separating the clusters.
-However, if we project the data onto a combination of the two axis,
-the clusters can be at least partially separated as can be seen in the right part of the figure.
- 
- \todoA{citation and vector}
-
-\begin{figure}[ht]\centering
-\includegraphics[width=100mm]{../img/guyeli_figure3.png}
-\caption{Example of correlated features from the article}
-\label{fig:guyeli03-figure3}
-\end{figure}
+Such an example was shown in \autoref{subsec:filters}.
 
 Unfortunately, wrappers tend to be computationally expensive,
 because every subset must by classified separately.
 In fact, it has been shown it is NP-hard to find optimal solution.
-To achieve computational feasibility various approximation methods has been developed.
+To achieve computational feasibility, various approximation methods has been developed.
 These methods allow us to classify only a fraction of subsets
 at the cost of losing the guarantee of the optimal solution.
 We will describe two variants of greedy search.
@@ -277,39 +295,45 @@ or unsatisfied relations in linear systems --- citation of the NP-hard, otherwis
 
 \subsubsection{Greedy Search --- Forward Selection}
 
-{\it Forward selection} starts with an empty set and in every step adds a feature which brings the highest gain in the evaluation metrics. The feature is selected by adding all of them to the current  subset and evaluating it. The step is repeated until the increase in performance is less than a certain threshold. 
+{\it Forward selection} starts with an empty set and in every step adds a feature which brings the highest increase of performance in the evaluation metrics.
+As we said, we use a classifier and some common evaluation metrics to asses the performance.
+The score of a candidate feature is then difference between the performance of the classifier trained on the current feature set with this feature and without it.
+The feature with highest score is added and the process repeated until the increase in performance is less than a certain threshold. 
 
 \subsubsection{Greedy Search --- Backward Elimination}
 
-{\it Backward elimination} starts with the set of all features. In one step every feature is removed from the subset and this new subset is than evaluated. The feature which decreased the evaluation the least will be removed. This step is repeated until the evaluation drops by more than a given threshold. This approach may be infeasible for really big data sets, but includes all useful features of which some may be omitted by forward selection.
-
-
-
+{\it Backward elimination} works analogously to forward selection.
+We start with the set of all features.
+In one step a feature with lowest decrease in score is removed.
+This step is repeated until the evaluation drops by more than a given threshold.
+This approach may be infeasible for really big data sets, but guarantees to include all useful features of which some may be omitted by forward selection.
 
 \subsection{Embedded Methods}
 
-Embedded methods are part of a classification algorithm itself. An example can be a decision tree, which takes features that lower the entropy the most first. More on this in particular algorithms.
+Embedded methods are part of a classification algorithm itself.
+An example can be a decision tree, which takes features that lower the entropy the most first.
+More on this in descriptions of particular algorithms.
 
 \todoA{The last sentence should be removed if there are no such algos in this doc.}
 
 \section{Principal Component Analysis}
 
 Principal component analysis is not feature extraction nor selection.
-It is rather an intermediate process between feature engineering and training a classifier
-to improve the performance.
+It is rather an intermediate process between feature engineering and training a classifier.
 
 \textbf{Principal component analysis} (PCA) is another way of reducing the number of features used.
 Instead of selecting a feature subset, it treats instances as feature vectors.
-\textbf{Feature vector} is such a vector that each element has a value of one feature.
+A \textbf{Feature vector} is a vector wherein each element corresponds to a value of one feature.
 The order of features is fixed.
 This way we can represent an instance with all its features by a vector.
+
 The idea of PCA is to transform feature vectors into a space of lower dimensionality.
 The objective is to retain as much information contained in the vector, while
 having lower dimensionality.
 Mathematically speaking, the objective is to retain as much variation of variables
 as possible and reduce any variable correlation.
 The exact description is way beyond the scope of this text.
-Curious reader can find more in~\citet{Jolliffe02}.
+More detauled explanations can be found in~\citet{Jolliffe02}.
 
 \section{Commonly Used Features}
 
@@ -319,32 +343,42 @@ In this section we will use some commonly used features and briefly discuss thei
 \label{subsec:bow}
 
 Since the information a sentence carries is not contained only in the words, but also in their positions in the sentence, an ideal algorithm would take into account both the words and their positions.
-However, working with sentences as a whole is somewhat difficult. Hence, the order of words is often omitted and only the number of word occurrences matters.
-This approach is called {\bf Bag-Of-Words} (BOW). Bag-Of-Words for an instance is simply a mapping of every word onto the number of occurrences in the given text.
+However, working with sentences as a whole is somewhat difficult. Hence, the order of words is often omitted and only the word occurrences matters.
+\textbf{Bag-Of-Words} (BOW) encodes this information by mapping every word onto the number of occurrences in the given text.
 
 \subsubsection{TF-IDF}
 
 In a general document there are many words that are not directly useful.
-{\it TF--IDF} is a way to evaluate which words are the most important for individual documents.  
+{\it TF--IDF} is a way to evaluate which words are the most important for individual documents and
+choose reduce the number of words used in BOW.
 \citet{SalBuc88} describe the motivation for introducing this.
-The goal is to select such words that it will be define the document well enough, yet leaves enough room for describing all relevant documents.
+The goal is to select such words for a document
+that they will define it well enough, yet leave enough room for describing all relevant documents by the same words.
 We will introduce two metrics to convey these two requirements and then use a combination of those two to gain the best results.
 
-First, we will simply use only words occurring enough times in a document. This is referred to as {\it term-frequency}.
-We will introduce {\it inverse-document frequency} (IDF) to skip words such as {\it an}, {\it the} which appear in virtually every sentence and carry very little information.
+First, we will simply use only words occurring frequently enough in a document.
+The number of occurrences of a word in a document is referred to as {\it term-frequency}.
+Second, we will use {\it inverse-document frequency} (IDF) to skip words such as {\it an}, {\it the} which appear in virtually every sentence and carry very little information.
 IDF is indirectly proportional to the number of documents which contain a given word.
 Thanks to this, words like articles will be given very little weight.
 
-There are many implementations of this general idea. We will explore the implementation described in \citet{Ramos03}. Given a set of documents~$D$, word~$w$ and an individual document~$d$,
-we can calculate TF-IDF as
+There are many implementations of this general idea.
+We will explore the implementation described in \citet{Ramos03}.
+Given a set of documents~$D$
+we can calculate TF-IDF for word~$w$ in an individual document~$d$ as:
 
 \[
 	w_d = TF \times IDF = f_{w, d} \times \log \left( \frac{\abs{D}}{f_{w,D}}  \right),
 \]
 
-where $TF = f_{w, d}$ is the number of times~$w$~occured~$d$ and IDF corresponds to $\log \left( \frac{\abs{D}}{f_{w,D}}  \right)$ for $\abs{D}$ being the total number of documents and $f_{w, D}$ the number of documents containing~$w$.
+where $TF = f_{w, d}$ is the number of times~$w$~occured~$d$ and
+IDF corresponds to $\log \left( \frac{\abs{D}}{f_{w,D}}  \right)$ for $\abs{D}$ being the total number of documents and $f_{w, D}$ the number of documents containing~$w$.
 
-Let us explore how the value changes with different variable values. For such words that $\abs{D} \sim f_{w, D}$ will the value of logarithm very low. This will decrease the importance of the word. This is desired behaviour because such words occur in virtually every document and, as argued above, are not very useful. On the other hand, words having $f_{w,d}$ large and $f_{w,D}$ will be given much higher importance, which is again desired, because these words occur relatively often in the given document and not so often in the document set overall.
+Let us explore how the value changes with different variable values.
+For such words that $\abs{D} \sim f_{w, D}$ the value of logarithm is very low and so is the importance of the words.
+This is desired behaviour because words that occur in virtually every document  are not very useful.
+On the other hand, words having $f_{w,d}$ large and $f_{w,D}$ small are given much higher importance.
+This is again desired, because these words occur relatively often in the given document and not so often in the document set overall.
 
 \todoA{Is this really the way we're going to use it? We have very short texts}
 
@@ -356,9 +390,9 @@ Let us explore how the value changes with different variable values. For such wo
 
 When using BOW, we can potentially loose useful information conveyed in the word order.
 Unfortunately, it is often computationally infeasible to retain the complete order.
-To find a balance between these two issues, {\bf N-grams} try to convey the order only partially.
-{\bf N-gram} is simply a sequence of items, in our case words. The~$N$~refers to the length of the sequence.
-The longer a sequence is to more order is preserved at higher computational cost.
+To find a balance, N-grams try to convey the order only partially.
+\textbf{N-gram} is simply a sequence of items, in our case words. The~$N$~refers to the length of the sequence.
+The longer a sequence is the more order is preserved at higher computational cost.
 Bigrams and trigrams (pairs and triples) are most commonly used.
 
 \todoB{- choose words with highest information gain; as in McCallum Event models}
@@ -366,18 +400,19 @@ Bigrams and trigrams (pairs and triples) are most commonly used.
 \subsection{Word Embeddings}
 \label{subsec:wordembed}
 
-Word Embeddings is another way to convert words into features.
+Word embeddings is another way to convert words into features.
 \citet{LeGo14} describe {\bf word embedding} as a mapping of every word to a vector in~$R^d$.
-This is also sometimes referred to as distributed word representation.
-This mapping is obtained by using a big corpus of data by optimizing some cost function.
+This is also sometimes referred to as \textit{distributed word representation}.
+This mapping is obtained by using a big corpus of data and optimizing some cost function on it.
 
 \citet{Mik13} showed that if parameters are set carefully, word embeddings conveys both semantic and sytanctic information.
 First, similar words are mapped to similar vectors. So we can measure a sort of synonymity.
-Not only that, but it also conveys relations between words.
-An example they show is singular vs plural. Let~$x_{w}$ be the vector of the word~$w$.
-Than then showed that $x_{apple}-x_{apples} \sim x_{car}-x_{cars}$.
-Even more complicated relations like $x_{king} - x_{man} + x_{woman} \sim x_{queen}$ where shown.
-They use this property to solve word analogies in form {\it a is to b as c is to \_\_\_}.
+Not only that, but it also conveys relationships between words.
+An example is singular vs plural.
+Let~$x_{w}$ be the vector of the word~$w$.
+They showed that $x_{apple}-x_{apples} \sim x_{car}-x_{cars}$.
+Even more complicated relations like $x_{king} - x_{man} + x_{woman} \sim x_{queen}$ were shown.
+They use this property to solve word analogies in the form {\it a is to b as c is to \_\_\_}.
 
 
 \subsection{Geneea entities}http://aspell.net/
@@ -396,11 +431,11 @@ They use this property to solve word analogies in form {\it a is to b as c is to
 \subsubsection{Spell check}
 
 We also tried to measure typos in the review.
-The hypothesis was that reviews with many typos may be less likely useful,
+The hypothesis was that reviews with many typos may be less useful,
 because the reviewer apparently did not spend much time writing it.
-We used open source package aspell \footnote{\url{http://aspell.net/}}
+We used the open source package aspell \footnote{\url{http://aspell.net/}}
 to compute the ratio of incorrect words out of all words.
-Subsequently, we clustered it into two groups; with and without typos.
+Subsequently, we clustered the values into two groups; with and without typos.
 We allowed instances with up to a few typos to be in the latter group.
 
 \subsubsection{Review length}
@@ -414,13 +449,15 @@ Again, we clustered values into groups to get binary or ternary features.
 
 Sometimes it may be necessary to use metadata
 if the text itself does not contain enough information.
-The exact usage depends on the exact task.
+The exact usage will depend on the task.
 We used metadata mostly for filtering out restaraunts without enough data.
-The only feature we tried extract from metadata was the number of stars the review gives.
+The only feature we tried to extract from metadata was the number of stars the review gives.
 We tested two approaches.
-First, a feature how many stars were given.
+First, a simple feature expressing how many stars were given.
 Second, we tried to have a feature \textit{extreme stars}.
-This feature expresses if the user gave 1 or 5 stars. 
+This feature is binary being one if the user gave 1 or 5 stars;
+zero otherwise.
+
 We were hoping that reviews with 1 or 5 stars may express very strong opinion
-and as such be more likely useful.
+and as such are more likely to be useful.
 
