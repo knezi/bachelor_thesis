@@ -17,27 +17,43 @@ The process of~filtering data we described in the~first chapter is known as {\bf
 We have a~set of~records~$\mathcal{D} = \left\{X_1, \ldots, X_N\right\}$ and each record is labeled with one~of the~class labels indexed by~$\left\{1,\ldots, k\right\}$.
 Every record consists of~attributes which contain some~information about it such as the text of a review or the number of stars given by the user.
 We will refer to a~record as {\bf an~instance} to be consistent with machine learning terminology.
-{\bf Text classification} is then a process of building a model that is able to assign
+{\bf Text classification} is then a process of building a classification model that is able to assign
 an instance its label based solely on its attributes.
+{\bf Classification model} is a~mapping between an~instance and a~class label.
 
-As \citet{TanBachKum08} distingiush it, there are two ways in which classification can be used; {\it descriptive} and {\it predictive}.
+As \citet{TanBachKum08} distinguish it, there are two ways to use classification can be used; {\it descriptive} and {\it predictive}.
 Descriptive is for finding regularities in data.
-An example of descriptive is a task where
+An example of descriptive classification is a task where
 biologists try to figure out what the features distinguishing mammals and birds are.
-In this thesis, we will consider only predictive where the goal is to build a classifier
+In this thesis, we will consider only predictive classification, where the goal is to build a classifier
 that can predict instances with unknown labels.
 
 To be able to asses how well our model predicts instances we have two sets of instances.
-First, thehe~training set is  used for building a~classification model.
-{\bf Classification model} is a~mapping between an~instance and a~class label.
-Second, we have testing set on which we will asses how well the model predicts unknown labels.
-Because our data set has labels for all instances, we can compare our prediction with the actual lables.
+First, training set is  used for building a~classification model.
+Second, testing set is used for assessing how well the model predicts unknown labels.
+Because the testing set is taken from labeled data, we can compare our predictions with the actual labels.
 This approach of fitting a classifier to labelled data is called {\bf supervised learning}.
 In~this document we will take into account only \emph{hard version} of~classification which explicitly maps one and only one label to each record.  
 
 
-
 \section{Text Classification Process}
+
+The entire process of classification is shown in \autoref{fig:cls_process}.
+
+We do not cover obtaining data in this thesis, because we use the freely available
+dataset from the Yelp Data Challenge.
+
+In general, an instance is described by data we obtained from various sources.
+The exact data used depends on the application.
+We always try to obtain sufficient information for each instance to describe the properties (in our case usefulness of a review).
+However, we cannot feed the data directly into our classifier.
+We have to process data into a suitable format.
+This process is called {\bf feature engineering}.
+We will extract the so called {\bf features}, which carry some information about the instance.
+Feature is simply some property of an instance like the number of words in a review.
+As we will see, it is hard to come up with features that would directly lead to successful classification.
+Hence, we will try to generate as many features as we can and then try to select the most useful.
+We will discuss both feature extraction and selection in \autoref{chap:fea}.
 
 \todoA{diagram:}
 \begin{code}
@@ -53,26 +69,14 @@ obtaining dataset
 	\label{fig:cls_process}
 \end{figure}
 
-It is simple for us to obtain the data. We only download already prepared files from the Yelp Data Challenge.
-
-In general, an instance is defined by its attributes.
-However, we cannot feed these attributes directly to our classifier.
-First, we have to process data into a suitable format. This process is called {\bf feature engineering}.
-We will create the so called {\bf features}, which carry some information about the instance.
-As we will see, it is hard to come up with features that would directly lead to successful classification.
-Hence, we will try to generate as many features as we can and then try to select the most useful.
-We will discuss both feature creation and selection in \autoref{chap:fea}.
-
-% todo this is not true anymore
-%When we have features ready, we can start training our classifiers. We will describe a general classifier in~\ref{chap:clsgen} and
-%individual classifiers in \autoref{chap:clscon}.
-
 Finally, we want to be able to compare different classifiers and feature sets. Common evaluations will be discussed in \autoref{chap:eval}.
 
 Last three chapters are then left for the architecture of the software developed (\autoref{chap:arch}), demonstration of conducted experiments (\autoref{chap:exp}) and final discussion (\autoref{chap:concl}).
 
 
 \section{Specification of Data with Terminology}
+
+\todoA{move this to appendix}
 
 Let us define our task again with the~introduced terminology.
 Each review is an~instance and file \texttt{review.json} contains an~instance per line.
@@ -82,27 +86,25 @@ More on feature creation is discussed in \autoref{chap:fea}.
 Business information will be only used indirectly to drop reviews coming for unreliable sources.
 
 
-\section{What a Classifier Looks Like}
+\section{\todoB{What a Classifier Looks Like}}
 
-Probabilistic model for classification
-Generally speaking, there are two models used for classification; generative and discriminative. Generative model assumes there exist 
+\todoB{Probabilistic model for classification
+Generally speaking, there are two models used for classification; generative and discriminative. Generative model assumes there exist }
 
-\subsection{\todoA{hyperparameteres, parameters, model}}
+\subsection{\todoB{hyperparameteres, parameters, model}}
 
-what is it?
+\subsection{\todoC{discrm. vs generative}}
 
-\subsection{discrm. vs generative}
-
-\todoA{linear classifier def}
+\todoB{linear classifier def}
 
 \section{Classifiers}
 \label{chap:clscon}
 
 As we mentioned, classification is a process of building a classification model which maps
 instances onto labels.
-In this section we will describe what a classifier looks like.
+In this section, we will describe some commonly used classifiers.
 We will demonstrate them on mock data shown in \autoref{tab:custsatis}.
-We have a fictional dataset about customers being satisfied with their mobile carrier and
+We have a fictional dataset of customers of a mobile carrier and
 we are trying to predict whether customers are satisfied.
 The rows are instances and columns features.
 Our three features are 
@@ -110,10 +112,10 @@ whether the customer received a discount (yes or no), whether it is a private cu
 and what mobile internet is part of their prepaid plan (none, limited and unlimited).
 We are predicting the last column.
 
-Please note we discuss text classification in this thesis, but
-we will use non-textual features in this example for easier understanding.
+Please note that our primar focus  of this thesis is text classification in this thesis.
+However, we will use non-textual features in this example for easier understanding.
 Classifiers (except for fastText which is tailored specifically for text) take any set of features,
-so we can use them in the same way with feature extracted directly from text.
+so we can use them in the same way with features extracted directly from text.
 We will learn how to do that in \autoref{chap:fea}.
 
 \begin{table}[h!]
@@ -143,16 +145,16 @@ We will learn how to do that in \autoref{chap:fea}.
 
 \subsection{Zero-R, One-R}
 
-These two algorithms are used as a baseline as they are really simple.
-We usually run them on a new task just to see the starting performance we want to improve.
+These two algorithms are used as a baseline.
+Baseline algorithm is a very simple method used to get better idea about the dataset and dificulty of our task.
 It is useful to have a comparison to whatever more sophisticated we developed.
-Let us have a very sophisticated classifier predicting 22\% instances correctly
+Suppose, we have a very sophisticated classifier predicting 22\% instances correctly
 We may lean to say that the performance is not really good.
 And if the baseline gets 20\% well, it may really be that case.
 However, when our baseline predicts only 3\%, 22\% may be actually very good results worth the effort.
 
 {\bf Zero-R} simply takes the most frequent label and labels every instance with it.
-Zero-R would label all instances as satisfied in our example.
+Zero-R would label all customers as satisfied in our example.
 
 A bit more complicated {\bf One-R} chooses one feature and bases the classification solely on this feature.
 For every value of the feature, we take all instances corresponding to this value and choose the label occurring the most among them.
@@ -169,54 +171,189 @@ For now we can think of it as finding such a feature, that will produce the best
 
 \subsection{Na\"{i}ve Bayes}
 
-Na\"{i}ve Bayes is a probabilistic classifiers.
-Probabilistic means we will be assigning probabilities to labels and then take the one with highest probability.
-It does not directly say what label belongs to the predicted instance.
-Instead it uses the so-called generative model.
-In generative model, we suppose every instance is generated by a parametric model.
-\textbf{Parametric model} consists of~$n$~components $c_1, c_2,\ldots, c_n$.
-Every component corresponds to one class label and is parametrized by $\theta$.
-The last assumption is only for simplification and can be generalised \todoA{source}.
-All instances of one label are generated by the component representing the label.
+Na\"{i}ve Bayes is a probabilistic classifier.
+Probabilistic means that we classify an instance according to the probabilities of the instance belonging to individual classes (having that label).
+Mathematically speaking, we choose label~$\hat{c}$~from the set of all labels $C=\left\{c_1,c_2,\dots c_n\right\}$ for instance~$d_j$, such that:
 
-An instance is generated by first selecting a component and second having this component
-generate the instance.
-Component~$c_i$~is selected with probality~$P\left(c_i|\theta\right)$~and 
-instance~$d_i$~generated with probability~$P\left(d_i|c_i;\theta\right)$.
+\begin{equation}
+	\label{eq:argmax}
+	\hat{c} = \argmax_{c_i \in C} P\left(c_i  | d_j \right),
+\end{equation}
+
+where~$P\left(c_i | d_j\right)$~is the probability of~$d_j$~being labelled with~$c_i$.
+Note that we use \textit{arg\,max} which equals to the value of the argument variable
+with the highest value of the expression.
+
+However, we do not directly say what label belongs to the instance we are predicting.
+Instead, Na\"{i}ve Bayes uses the so-called generative model.
+In generative model, we assume every instance is generated by a parametric model.
+\textbf{Parametric model} consists of~$n$~components $c_1, c_2,\ldots, c_n$.
+Every component corresponds to one class label
+and is said to generate all instances with this label.
+Note that since there is one-to-one correspondence between classes and components,
+we use the same notation for both components and labels.
+It should be clear from the context what we mean (i.e. component generates an instance,
+but an instance is assigned a label).
+Also note, that the assumption about class and component correspondence is only used for simplification and can be generalised \todoA{source}.
+
+An instance is generated in two steps.
+First, a component is selected according to priors.
+Priors are the apriori probabilities of the current model denoted by $P\left(c_i\right)$ for component~$c_i$.
+Second, an instance is generated by this component according to posterios.
+Posteriors are probabilities of instance~$d_j$~being generated by component~$c_i$~denoted by~$P\left(d_j|c_i\right)$).
 
 The likelihood of instance~$d_i$~being generated is then:
 
 \begin{equation}
-	P\left(d_i|\theta\right) = \sum_{c=1}^{n}{
-	P\left(c|\theta\right)
-	P\left(d_i|c;\theta\right)
+	P\left(d_j\right) = \sum_{i=1}^{n}{
+	P\left(c_i\right)
+	P\left(d_j|c_i\right)
 }
 \end{equation}
 
-change to number iterating over comps and equality nos
+Next, we need to convert these probabilities into the probability of an instance having a label.
+We can infer \autoref{eq:bayesrule} (called \textbf{Bayes rule}) from \autoref{eq:bayesinfer}.
+
+\begin{equation}
+	\label{eq:bayesinfer}
+	P\left(A,B\right) = 
+	P\left(A|B\right)
+	P\left(B\right) = 
+	P\left(A\right)
+	P\left(B|A\right),
+\end{equation}
+\begin{equation}
+	\label{eq:bayesrule}
+	P\left(A|B\right) =
+	\frac{
+	P\left(A\right)
+P\left(B|A\right)}
+{P\left(B\right)}
+\end{equation}
+
+Our original \autoref{eq:argmax}
+
+\begin{equation}
+	\hat{c} = \argmax_{c_i \in C} P\left(c_i  | d_j \right)
+\end{equation}
+
+can be transcribed with Bayes rule as:
+
+\begin{equation}
+	\hat{c} = \argmax_{c_i \in C}
+	\frac{
+	P\left(d_j  | c_i \right)
+	P\left( c_i \right)
+}{
+	P\left( d_j \right)
+}
+\end{equation}
+
+Because we are not interested in the exact value of the expression, it is equivalent to:
+
+\begin{equation}
+	\label{eq:classprb}
+	\hat{c} = \argmax_{c_i \in C}
+	P\left(d_j  | c_i \right)
+	P\left( c_i \right)
+\end{equation}
+
+The exact values of probabilities are calculated as follows.
+Prior probabilities are the distribution of classes.
+The exact values are computed by counts.
+For computing posterios, Na\"{i}ve Bayes assumption is used.
+It says that each feature is independent of all other features.
+Note that in practical context, the assumption often does not hold.
+However, since we are only interested in the label with highest probability,
+not the probability itself, possible errors are often insignificant and Na\"{i}ve Bayes often works in practise even when the features are not independent.
+Thanks to the assumption, the probability of an instance represented by feature values is the product
+of probabilities of individual features having the given values.
+For features $f_1, f_2, \dots f_K$ it is:
+
+\begin{equation}
+	\label{eq:posterios}
+	P\left(d_j  | c_i \right) = \prod_{k=1}^{K}
+	{P\left(  f_k  | c_i \right)}
+\end{equation}
+
+By combining \autoref{eq:classprb} and \autoref{eq:posterios}, we get:
+
+\begin{equation}
+	\hat{c} = \argmax_{c_i \in C}
+	\prod_{k=1}^{K}
+	{P\left(  f_k  | c_i \right)}
+	P\left( c_i \right)
+\end{equation}
+
+Probability~$P\left(f_k|c_i\right)$~is found by counting.
+We take all instances from class~$c_i$~and the probability is the ratio of all those instances with the same value of feature~$f_k$~and the rest.
+
+Let us classify instance~$\mathit{ID}=2$~from our mock data in \autoref{tab:custsatis} for demonstration.
+For label ``yes'' (satisfied customers):
+
+\begin{equation}
+	t_{yes} = 
+	\prod_{k=1}^{K}
+	{P\left(  f_k  | c_{yes} \right)}
+	P\left( c_{yes} \right)
+\end{equation}
+
+\begin{equation}
+	t_{yes} = 
+	P\left(  f_{dis} = no | c_{yes} \right)
+	P\left(  f_{priv} = yes | c_{yes} \right)
+	P\left(  f_{int} = unlim | c_{yes} \right)
+	P\left( c_{yes} \right)
+\end{equation}
+
+$P\left(  f_{dis} = no | c_{yes} \right)$ equals $\frac{1}{4}$, because there are four satisfied customers
+and only one of them did not receive discount.
+Analogously, the remaining values are computed.
+$P\left( c_{yes} \right)$ is $\frac{4}{7}$, because there are four satisfied customers out of seven.
+Together we get:
+
+\begin{equation}
+	t_{yes} = 
+	\frac{1}{4} \times
+	\frac{3}{4} \times
+	\frac{2}{4} \times
+	\frac{4}{7}
+	\sim 0.054
+\end{equation}
+
+We compute~$t_{no}$~in the same manner for a dissatisfied customer:
+
+\begin{equation}
+	t_{no} = 
+	\prod_{k=1}^{K}
+	{P\left(  f_k  | c_{no} \right)}
+	P\left( c_{no} \right)
+\end{equation}
+
+\begin{equation}
+	t_{no} = 
+	P\left(  f_{dis} = no | c_{no} \right)
+	P\left(  f_{priv} = no | c_{no} \right)
+	P\left(  f_{int} = unlim | c_{no} \right)
+	P\left( c_{no} \right)
+\end{equation}
+
+\begin{equation}
+	t_{no} = 
+	\frac{3}{3} \times
+	\frac{2}{3} \times
+	\frac{1}{3} \times
+	\frac{3}{7}
+	\sim 0.095
+\end{equation}
+
+$t_{no}$ is higher and Na\"{i}ve Bayes classifies the instance as dissatisfied.
+Note that this may look surprising as features ``private'' and ``interneet'' suggest satisfaction,
+but the correlation between discount and satisfaction is so strong that it outweights other features in this settings.
+
+\todoC{zminka prior a posterior ohledne maximizace je prave pocitani}
 
 
-Instead of directly saying which label belongs to an instance,
-it estimates probabilities that an instances is generated by a cflass.
-It estimates all probabilities of an instance being 
-
-NB estimates the parameters by probs from training data
-
-
-
-
-- WARN: document vs instance mismatch
-Also this is only with word features
-There are two classification algorithms commonly referred to as naive Bayes. However, we will discuss them at once, because the underlying idea is the same for both.
-Naive Bayes uses generative model assuming each instance was generated by a parametric model. Because the model is not know, NB estimates the probability of an instance being generated by a class instead. We assume every document d\_i is generated by a mixture model parameterized by theta. The mixture model consists of components {c\_1, ...c\_n} component C\_i generating class c\_i. Thus a document is generated by first picking a model component (P[c\_i|theta]) and then being generated by that component P(P[d\_i|c\_i, Theta]).
-Mathematically speaking, probability of d\_i being generated is:
-P[d\_i | Theta] = sum over j = P[d\_i|c\_j, Theta] P[c\_j|Theta]
-
-
-It  does so by maximum likelihood estimation (MLE).
-MLE is a statistical method for estimating parameters such that observed (training instances in this case) is the most probable. For discrete distribution it equals to counting frequencies.
- 
-For classification one simply assesses the probability of each class to generate a classified instance and classify the instance asm the class which had the highest probability.
 
 \subsection{Decision trees}
 \label{subsec:decisiontree}
@@ -238,18 +375,29 @@ Linear in this context means that the decision on classification is based on a l
 Thanks to this, linear models are a lot faster than complicated neural networks, however the classification may not be as good.
 
 FastText uses {\it word embeddings}\footnote{see the subsection~\ref{subsec:wordembed}} instead of a simple bag of words.
-In short, it maps every word onto a vector. Every document is than represented as an average vector of all words.
+In short, it maps every word onto a vector. Every document is represented as an average vector of all words.
 
 However, fastText goes even further.
-The process is precisely discribed in \citet{Bojanowski2017enriching}.
-Here we will only briefly summarize it.
-It does not map words onto a vector, but n-grams.
+The process is precisely described in \citet{Bojanowski2017enriching}.
+we will only briefly summarize it.
+Fasttext maps n-grams onto vectors, not words.
 {\bf N-gram} is any sequence of n elements --- in this case letters.
-The algorithm learns a representation for every n-gram.
-The represation of words is then average of its n-grams.
-Also, every word is surrouned by < and >.
-The word {\it where} thus becomes {\tt <where>}.
-Note trigram {\tt her} is different from the sequence {\tt <her} from the word {\tt <here>}.
+The algorithm represents a words as an average of vectors of all its n-grams.
+Let~$w_{a}$~be a vector representation of an n-gram~$a$, then 
+the representation of \texttt{where} is the average of vectors
+$w_{whe}$, 
+$w_{her}$ and
+$w_{ere}$.
+
+For even higher performance, every word is surrounded by \texttt{<} and \texttt{>}.
+The word \textit{ where} thus becomes \texttt{<where>}.
+The vector of \texttt{where} becomes the average of vectors
+$w_{<wh}$, 
+$w_{whe}$, 
+$w_{her}$,
+$w_{ere}$ and
+$w_{er>}$.
+Note that trigram {\tt her} from \texttt{<where>} is different from {\tt <her} from the word {\tt <here>}.
 It allows even better performance, because it distinguishes n-grams at the word boundaries and in the middle.
 
 This approach has a few advantages.
@@ -258,14 +406,21 @@ This is especially useful for languages with large vocabularies and many rare wo
 Also, unlike the baseline approach, it covers the internal structure of words.
 It is useful for morphologically rich languages such as Finnish or Turkish.
 Finish has 15 different cases for nouns.
-Many of which may not appear at all in the training set.
-This gives a bigg advantage to the approach, because many words follow word formation rules which can be captured in n-grams.
+Many of which may not appear in the training set at all.
+Hence being able to reasonably represent even unseen words is a big advantage,
+because many words follow word formation rules which can be captured in n-grams.
+Other implementations represent unseen words with some kind of dummy vector.
 
+As we mentioned, every instance is average of vectors of its words.
+This representation is used for training a simple linear classifier.
+FastText uses some more tricks to reduce memory consumption and performance.
+More details can be found in~\citet{Joulin2017bag}.
 
 \todoA{a budeme muset pridat linearni model - pridej zminku o tom, jak se to klasifikuje podle toho, jestli nekde popises linearni modely vice}
-\todoB{hierarchichal softmax}
 
-\subsubsection{\todoB{GloVe - GloVe nepouzivam}}
+\todoC{hierarchichal softmax}
+
+\subsubsection{\todoC{GloVe - GloVe nepouzivam}}
 
 \subsection{\todoC{NN}}
 
