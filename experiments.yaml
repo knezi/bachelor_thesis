@@ -1,6 +1,6 @@
 config:
   chunks: 10
-experiments:
+tasks:
   - name: 'zero-R'
     classificator: 'baseline'
     features:

@@ -70,11 +70,9 @@ uzivatelska doc??
 	- lze i prednasku
 
 ## psani
-- znimint knihovny?
 
 ### later
-* read again:
-	mutual information
+* znimint knihovny?
 * fasttext
 * classificaiton
 * classifiers
@@ -106,13 +104,14 @@ capitalization
 
 
 ## programatorska dokumentace
+prdej nekam specifikaci vsech feature a preprocesoru a klasifikatoru a extra_data
 last preproces musi vratit tuple (whatever, label) for testing data - training go fuck yourself
 YAML speci:
 if you have extra_data, you need to get rid of them in preprocessing - classifier gets first element of the tuple
 	- for training also label
 config:
 chunks: 1
-experiments [
+tasks [
 	{name,
 	classificator,
 	features: [],

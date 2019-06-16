@@ -119,7 +119,7 @@ def main(config: argparse.Namespace) -> None:
             data.max_ngrams = 10
             data.limit_train_size(t_size)
 
-            for ex in experiments['experiments']:
+            for ex in experiments['tasks']:
                 # convert features to set:
                 features: Set[FeatureSetEnum] \
                     = {FeatureSetEnum[f] for f in ex['features']}
