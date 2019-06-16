@@ -1,61 +1,219 @@
-\chapter{My architecture}
+\chapter{The Software Project Architecture}
 \label{chap:arch}
 
-\todoB[try them all - possible discussion on difficulty on different types].
+The software package was designed and developed with extensibility in mind.
+It allows to add new features, specify different subsets of data and convert them into various format without breaking older classifications and experiments.
+Classifiers and preprocessing methods are implemented children of abstract classes
+to allow to easily add new algorithms.
+The entire experiment is configured in a special YAML\footnote{\url{https://yaml.org}} file.
+It allows precise definition of conducted experiments and plotted graphs.
+New folder for statistics is created every run to prevent accident overwritting of already obtained results.
+The entire project is written mostly in Python of version at least 3.6\footnote{\url{https://python.org}} and bash\footnote{\url{https://gnu.org/software/bash}} with high usage of libraries for both higher performance and easier mantainability.
+All classes and files have documentation strings which should be sufficient
+for detailed understanding.
+In this chapter, we describe the high-level overview.
 
-All measurements will be with respect to the~size of dataset, to see how the~usefulness of approaches improves with more data.
+In \autoref{tab:files}, there are defined a few names for different files for easier understanding.
 
-criteria (TD-idf, entropy...), then try to add *-grams. Later, try more linguistics features.
+\begin{table}[h]
 
-In the~next part, if you have time, try other approaches to improve performance. You can try PCA reduction, NN, or other ML algorithms/techniques.
+\centering
+\begin{tabular}{ll}
+\toprule
+\textbf{name of file}& \textbf{purpose} \\
+\midrule
+instance file		 & stores instances in the final format \\
+intermediate file	 & used for generating Geneea file \\
+Geneea file			 & contains extra linguistics data for instances \\
+experiments file	 & configures the experiments conducted \\
+\bottomrule
+\end{tabular}
 
-\section{denormalization}
+\caption{File definition}\label{tab:files}
+\end{table}
 
-\section{data loading/feature generation}
-
-\subsection{mention statistics dump (word length distribution -- choosing threshold and such)}
-
-\section{experiments (trainiong + YAML config file)}
-
-\section{evaluation}
-
-Architecture
-
-Software was designed and developed with extensibility in mind. It allows adding new features, specify different subsets of data and convert them into various format without breaking older classifications and measurements.
-The entire project is written mostly in Python and bash with high usage of libraries for both higher performance and easier mantainability.
-
-
-DIAGRAM
--> preprocess (denormalization, joining files, computing additional data - geneea, spell check…)
--> load [data] (generate samples, convert \& prepare for classification)
--> process (classify, measure performance)
--> visualise (statistics, graphs)
-
-Preprocessing
-
-Loading data
-
-After preprocessing, all necessary data is stored in two files. The former provides data from yelp and the latter provides linguistics features extracted from textual reviews analysed by Geneea.
-
-Both files are in JSON-line format and the instances are in the same order in both of them to guarantee line-by-line correspondence.
-
-The entire process is controlled by the class Data. First, it loads all reviews into pandas Dataframe to achieve high performance and convenient manipulation. Businesses with less than 50 reviews or 10 attributes are dropped for the sake of working with trustworthy restaurants only.
-
-Subsequently, samples are generated from this raw data. Method generate\_sample takes which class will be used for classification and what features are going to be used. Features are then generated from the raw data and instances are split into train and test sets. (TODO CROSSVALI>>). These samples are stored in class Sample, which provides unified interface for accessing them. It also allows to restrict the number of instances being used for experimental purposes.
-
-All samples are stored and remain the same, unless overwritten with a new sample. Thus comparison among different classification algorithms can be made.
-
-When samples are generated, they can be used for classification. The following methods are provided for converting data:
-
-dump\_fasttext\_format - stores samples in files for fasttext
-
-get\_feature\_matrix - returns list of instances represented as rows of matrix; features are filled with empty values for instances without values
-
-get\_feature\_dict - returns list of instances represented by dictionary of feature -> value; not all features are present in all instances
+\todoA{add libraries used - as another appendix??}
 
 
-Processing
+\section{Experiments File}
 
-Samples generated in the class Data are passed to classification algorithms in this part. Different combinations of attributes and size of data sets are used for experiments.
+This file contains entire configuration of experiments conducted.
+It lists classification tasks.
+Each task is a definition of a classifier to be trained and evaluated.
+Next, it contains list of graphs with results to be plotted.
 
-For unified measurement of performance wrapper class DataGraph has been created. It acts as a buffer for individual measurement. It allows adding single points of graphs. An instance of DataGraph containing all results is passed to the instance of Data. Data class instantiates the class Statistics, set paths and create directories form graphs. This instance of Statistics than plots everything. Furthermore, all plotted graphs are also stored in csv files for further analysis.
+Experiments file has the following format.
+The root element is a dictionary with three parts;
+\texttt{config}, \texttt{tasks} and \texttt{graphs}.
+An example file can be found bellow in \autoref{lst:yamlfile}.
+
+\begin{lstlisting}[label={lst:yamlfile}]
+config:
+  chunks: 10
+tasks:
+  - name: 'zero-R'
+    classificator: 'baseline'
+    features:
+      - REVIEWLEN
+      - UNIGRAMS
+    preprocessing:
+      - 'mutualinformation'
+      - 'featurematrixconversion'
+    extra_data: []
+    config:
+      algorithm: 'zero-R'
+      features_to_select: 2
+graphs:
+  - name: 'baseline'
+    data:
+      zero-R:
+        - 'f-measure'
+\end{lstlisting}
+
+The config section is another dictionary.
+It has only one element -- \texttt{chunks}.
+It specifies into how many partitions the dataset set is split for k-fold cross-validation.
+
+The section experiments is a list of classification tasks to be conducted.
+Each element is a dictionary specifying the exact parameters.
+Descriptions of individual fields is in \autoref{tab:exp_dict}
+An example of \texttt{extra\_data} is text of a review if the classifier needs to work
+with the orignal text.
+
+\begin{table}[h]
+
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{element name} & \textbf{type} & \textbf{meaning}\\
+\midrule
+name 			& string	& identification referred to in graphs\\
+classificator 	& string	& used classifier\\
+features 		& list		& extracted features \todoA{reference} \\
+preprocessing 	& list		& applied preprocessors in order\\
+extra\_data 	& list 		& extra attributes passed to the first preprocessor \\
+config			& dict		& extra configuration for all parts of pipeline \\
+\bottomrule
+\end{tabular}
+
+\caption{Experiment Configuration}\label{tab:exp_dict}
+\end{table}
+
+
+The last section \texttt{graphs} is used for specifying what graphs will be plotted.
+It is a list of individual figures.
+Each figure is a dictionary of two elements; \texttt{name}, \texttt{data}.
+Name specifies the filenames of the resulting graph ---
+for each figure png and csv files will be created.
+Element \texttt{data} specifies what data will be used.
+It is a dictionary of experiment names, values being a list of all metrics to be dumped.
+
+\section{Parts Overview}
+
+Entire project is executed by make\footnote{url{https://www.gnu.org/software/make}}.
+It is split into two main targets;
+Data preparation and running experiments.
+The former is defined as targets `data/geneea.json` and `data/data.json`.
+It is a direct dependency of the target `run`, which serves for generating results
+of experiments.
+
+\begin{code}
+DIAGRAM BETTER
+prepare data
+	denormalize
+	join
+	compute geneea
+	spellcheck
+
+run experiments
+	load data, gen samples, convert and prep
+	process YAML
+		- experiments
+			- task by task
+				- preprocess by prep
+				- classify
+				- evaluate
+		- visualise
+			- graph by graph (stats, graphs)
+\end{code}
+
+
+\section{Data Preparation}
+
+Preparation itself can be run by:
+
+\begin{code}
+make data/data.json
+\end{code}
+
+All scripts for preparing data are in the folder \texttt{denormalization}.
+It prepares instance and intermediate files.
+The process is executed by:
+
+\begin{code}
+./denormalization/denormalize.sh ../data/dataset data/data.json data/ids
+\end{code}
+
+The first argument is a directory with extracted archive of the Yelp dataset.
+The second argument is path to instance file and the last one to intermediate file.
+The script itself joins reviews and business
+and filters out reviews outside the time frame we need.
+The result is written into the instance file.
+Next, it prepares list of all IDs of used reviews into the intermediate file one ID per line.
+This file is processed on a separate server and the resulting geneea file must be stored
+in \texttt{data/geneea.json}.
+It contains additional linguistics data.
+The exact description of files can be found in \autoref{app:a}.
+
+
+\section{Running Experiments}
+
+Experiments can be run by:
+
+\begin{code}
+make run
+\end{code}
+
+This will execute \texttt{process\_data.py}.
+It loads all data from the instance and Geneea file.
+Subsequently, it conducts all experiments as specified in the given experiments file.
+
+\subsection{Load Data}
+
+Class \texttt{Data} defined in file \texttt{load\_data.py} is used for loading data.
+It stores raw data in Pandas DataFrame to achieve easier manipulation without compromising performance.
+Whenever new sample is generated, the raw data is filtered out and split
+into chunks.
+The chunks are stored in an instance of \texttt{Sample}.
+\texttt{Sample} still keeps only raw data.
+Anytime a dataset is accessed all features are regenerated to ensure it is up-to-date.
+
+
+\subsection{Conduct Experiments}
+
+Subsequently, tasks are performed.
+All tasks are guaranteed to be run on the exact same data to ensure comparability of results.
+Both training and testing is implemented by pipeline of preprocessors and a classifier.
+The preprocessors are in the same order as in the \textit{experiment} file.
+A preprocessor must be defined in directory \texttt{preprocessors} and a child of \texttt{preprocessors/preprocessingbase.py}.
+
+Every preprocessor has a method process, which must take data and return processed data.
+The format of accepted and returned data arbitrary, so long the returned is compatible
+with the one accepted by the next in the pipeline.
+The last preprocessor must of course return format compatible with the classifier.
+Hence, for most classifiers, it is needed to run conversion to matrix (\texttt{featurematrixconversion.py}).
+The first preprocessor in the pipeline must take feature\_dict with additional data as returned by \texttt{load\_data.Data.get\_feature\_dict}.
+
+The pipeline is the same for both training and testing data with the guarantee that
+training data is always passed first and classifier is called train and classify for
+training and testing data, respectively.
+
+After all tasks are run, results are plotted and dumped.
+All necessary logic is defined in \texttt{statistics.py}.
+For storing performance data, class \texttt{DataGraph} is used.
+It gathers data and publishes API for data manipulation.
+An instance of this class is subsequently passed to \texttt{Statistics},
+which handles the actual data plotting and writting to files.
+
+
+
