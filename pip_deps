@@ -1,3 +1,5 @@
+Package
+------------------
 annoy
 attrs
 Automat
@@ -16,8 +18,6 @@ defusedxml
 docutils
 entrypoints
 geneea-nlp-client
-geneea.analyzer
-geneea.utils
 gensim
 html5lib
 hyperlink

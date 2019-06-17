@@ -1,5 +1,10 @@
 # NPRG045
 
+The project was developed in Linux.
+The author uses Arch Linux.
+It was also tested on a standard debian installation (debian Stretch).
+It may work on other platform, but beware that it has not been tested.
+
 ## Dependencies:
 
 Install the following software (for most distributions the name of a package in repositories should be the same):
