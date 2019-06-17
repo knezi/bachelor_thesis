@@ -27,7 +27,7 @@ from nltk import TweetTokenizer
 from pandas import DataFrame, Series
 
 import exceptions
-from geneea.analyzer.model import f2converter
+from geneeanlpclient.g3 import f2converter
 from statistics import Statistics, DataGraph
 from utils import top_n_indexes
 
@@ -226,15 +226,15 @@ TODO
             lines: List[DataFrame] = []
             for d, g in zip(data, geneea):
                 dj = json.loads(d)
-                gx3 = f2converter.fromDict(json.loads(g))
+                g3 = f2converter.fromF2Dict(json.loads(g))
 
                 # check line-by-line correspondence
-                if dj['review_id'] != gx3.docId:
+                if dj['review_id'] != g3.docId:
                     raise exceptions.DataMismatchException(
-                        f'ids {dj["review_id"]} and {gx3.docId} do not match.')
+                        f'ids {dj["review_id"]} and {g3.docId} do not match.')
 
-                dj['sentiment'] = gx3.sentiment.label if gx3.sentiment else 'n/a'
-                dj['entities'] = [ent.stdForm for ent in gx3.entities]
+                dj['sentiment'] = g3.docSentiment.label if g3.docSentiment else 'n/a'
+                dj['entities'] = [ent.stdForm for ent in g3.entities]
 
                 lines.append(pd.DataFrame([dj]))
 

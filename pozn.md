@@ -136,6 +136,7 @@ graphs : [
 ]
 
 ## programovani
+* vytvorit analyzu geneea pro nova data
 * make nefunguje
 * data jsou pripravena jako data.json a ids
 * zkontroluj process a jestli to matchuje
