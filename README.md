@@ -35,11 +35,6 @@ Install python dependencies from pip:
 pip install `cat pip_deps`
 ```
 
-Fasttext will be installed automatically by make.
-
-TODO
-Dale predpoklada nainstalovane geneea.analyzer a geneea.utils (utils se museji instalovat prvni).
-
 ## Execution:
 
 Everything can be operated by make.

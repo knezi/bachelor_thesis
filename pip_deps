@@ -1,4 +1,6 @@
 annoy
+attrs
+Automat
 backcall
 bleach
 boto
@@ -7,15 +9,21 @@ botocore
 bz2file
 certifi
 chardet
+constantly
 cycler
 decorator
 defusedxml
 docutils
 entrypoints
+geneea-nlp-client
+geneea.analyzer
+geneea.utils
 gensim
 html5lib
+hyperlink
 idna
 IMAPClient
+incremental
 ipykernel
 ipython
 ipython-genutils
@@ -50,6 +58,7 @@ prompt-toolkit
 ptyprocess
 pygelf
 Pygments
+PyHamcrest
 pyparsing
 python-dateutil
 pytz
@@ -73,8 +82,10 @@ terminado
 testpath
 tornado
 traitlets
+Twisted
 urllib3
 wcwidth
 webencodings
 wheel
 widgetsnbextension
+zope.interface

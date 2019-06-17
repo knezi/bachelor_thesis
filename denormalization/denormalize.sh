@@ -1,5 +1,4 @@
 #!/bin/sh
-echo $PWD
 # Denormalises data from the original Yelp files such
 # that each line of the output file contains review & business info
 

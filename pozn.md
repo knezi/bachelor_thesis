@@ -69,7 +69,12 @@ uzivatelska doc??
 - citace [2] - jako kdyby to mohlo byt vynechano - jak pise Balcar [1], i Jirasek [2]
 	- lze i prednasku
 
+## experiment
+	 - baseline
+	 - prior class distribution
+
 ## psani
+
 
 ### later
 * znimint knihovny?
