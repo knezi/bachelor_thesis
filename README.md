@@ -39,7 +39,7 @@ pip install `cat pip_deps`
 
 Everything can be operated by make.
 
-For running the pipeline with sample data execute the following line. Note this does not need aspell and geneea as a dependency, because the data is already preprocessed.
+For running the pipeline with sample data execute the following line. Note this does not need aspell as a dependency, because the data is already preprocessed.
 
 ```
 make run_sample
