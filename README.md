@@ -2,9 +2,8 @@
 
 ## Dependencies:
 
-Install the following packages:
+Install the following software (for most distributions the name of a package in repositories should be the same):
 
-TODO add repositories and aspell install (packages on debian?)
 * wget
 * git
 * shell
@@ -12,8 +11,14 @@ TODO add repositories and aspell install (packages on debian?)
 * pip
 * aspell with english, german and french dictionary
 
+Pip is usually a package python-pip or python3-pip.
+It is important to install the pip version for python3.
+It is also important to have python of a version at least 3.6.
+Version 3.5 (python3 in Debian Stretch - 9) will not work.
 
-Optinally, it is possible to run everything in a virtual environment.
+Aspell with dictionaries is usally is packages `aspell`, `aspell-{en,fr,de}`.
+
+Optionally, it is possible to run the project in a virtual environment.
 python3 can be replaced with the installed version. Must be at least 3.6.
 
 ```
