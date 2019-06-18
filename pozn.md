@@ -1,4 +1,5 @@
 # bakalářka
+https://unix.stackexchange.com/questions/332641/how-to-install-python-3-6
 LOOP - fasttext
 
 /data/students/knizek
@@ -137,16 +138,13 @@ graphs : [
 
 ## programovani
 * vytvorit analyzu geneea pro nova data
-* make nefunguje
 * data jsou pripravena jako data.json a ids
 * zkontroluj process a jestli to matchuje
 * prodej pocitani a agregovani statistik
-* predelej geneea public API
+* debian python3.6
 
 ### later
 * make - expects data in ../data/datset
-* pridej napojeni geeny
-* README finish installation process
 * pridej klasifikovanou tridu do configu yamlu??
 * add switch to do graphs and statisics (on one random dataset)
 * dokumentovani kodu
@@ -154,6 +152,7 @@ graphs : [
 * restrict used entities or all?
 
 ### possible todos
+* point - error check if not enough dat
 * prozkoumat zero instances
 * vytvor podslozky, at je to vice prehledne
 * fasttext - check files exist

@@ -1,4 +1,4 @@
-RUN_DEP = fastText/fasttext ./exceptions.py ./preprocessors/__init__.py ./preprocessors/featurematrixconversion.py ./preprocessors/mutualinformation.py ./preprocessors/featureselectionbase.py ./preprocessors/dumpfasttext.py ./preprocessors/chisquare.py ./preprocessors/preprocessingbase.py ./statistics.py ./classifiers/__init__.py ./classifiers/baseline.py ./classifiers/fasttext.py ./classifiers/classifierbase.py ./classifiers/naivebayes.py ./utils.py ./load_data.py ./process_data.py
+RUN_DEP = fastText/fasttext ./exceptions.py ./preprocessors/__init__.py ./preprocessors/featurematrixconversion.py ./preprocessors/mutualinformation.py ./preprocessors/featureselectionbase.py ./preprocessors/dumpfasttext.py ./preprocessors/chisquare.py ./preprocessors/preprocessingbase.py ./my_statistics.py ./classifiers/__init__.py ./classifiers/baseline.py ./classifiers/fasttext.py ./classifiers/classifierbase.py ./classifiers/naivebayes.py ./utils.py ./load_data.py ./process_data.py
 
 DATA_GEN_DEP = ./denormalization/extract_ids.py ./denormalization/filter.py ./denormalization/join.py
 

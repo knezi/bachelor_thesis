@@ -28,7 +28,7 @@ from pandas import DataFrame, Series
 
 import exceptions
 from geneeanlpclient.g3 import f2converter
-from statistics import Statistics, DataGraph
+from my_statistics import Statistics, DataGraph
 from utils import top_n_indexes
 
 FeatureDict = List[Tuple[Dict[str, any], str]]

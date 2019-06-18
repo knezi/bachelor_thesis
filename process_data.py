@@ -16,7 +16,7 @@ import preprocessors
 from classifiers.classifierbase import ClassifierBase
 from load_data import Data, SampleTypeEnum, FeatureSetEnum, LikeTypeEnum
 from preprocessors.preprocessingbase import PreprocessorBase
-from statistics import DataGraph
+from my_statistics import DataGraph
 
 
 def compute_evaluation_scores(classifier: ClassifierBase,

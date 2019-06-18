@@ -10,7 +10,7 @@ function runtest() {
 	fi
 }
 
-for x in ./my_unittests.py ./statistics.py ./utils.py ./preprocessors/featurematrixconversion.py ./preprocessors/featureselectionbase.py ./preprocessors/chisquare.py ./preprocessors/mutualinformation.py;
+for x in ./my_unittests.py ./my_statistics.py ./utils.py ./preprocessors/featurematrixconversion.py ./preprocessors/featureselectionbase.py ./preprocessors/chisquare.py ./preprocessors/mutualinformation.py;
 do
 	runtest $x
 done

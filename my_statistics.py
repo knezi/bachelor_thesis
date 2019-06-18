@@ -10,7 +10,8 @@ Statistics - prepares directories for graphs and plots DataGraphs
 """
 from collections import defaultdict
 
-from typing import List, Dict, Generator, Set
+from statistics import mean, stdev
+from typing import List, Dict, Generator, Set, ItemsView
 
 from matplotlib.axes import Axes
 from recordclass import RecordClass
@@ -19,18 +20,47 @@ from matplotlib import pyplot
 import os
 
 
-class Point(RecordClass):
+class Point:
     """Represent a point in a graph."""
-    x: float
-    y: float
+
+    def __init__(self) -> None:
+        self._values = []
+
+    def add_value(self, val: float) -> None:
+        self._values.append(val)
+
+    def property(self, prp: str) -> float:
+        """Return statistical property of contained data.
+
+        It can return:
+        min
+        max
+        mean
+        stdev
+
+
+        :param prp: the name of the property
+        :returns: the value of the property
+        """
+        if prp == 'min':
+            return min(self._values)
+
+        if prp == 'max':
+            return max(self._values)
+
+        if prp == 'mean':
+            return mean(self._values)
+
+        if prp == 'stdev':
+            return stdev(self._values)
 
 
 class DataLine(RecordClass):
     """Store data points and format specs for a one type of data.
 
-    points - list of RecordClasses Point
+    points - dictionary of x coordinate -> RecordClasses Point
     fmt - format string for data plotting in mathplotilb"""
-    points: List[Point]
+    points: Dict[float, Point]
     fmt: str = ''
 
 
@@ -56,7 +86,10 @@ class DataGraph:
         :param xlabel: label of x axis
         :param ylabel: label of y axis
         """
-        self._data = defaultdict(lambda: defaultdict(lambda: DataLine([], '')))
+        self._data \
+            = defaultdict(lambda:
+                          defaultdict(lambda:
+                                      DataLine(defaultdict(Point), '')))
         self.name = name
         self.xlabel = xlabel
         self.ylabel = ylabel
@@ -75,7 +108,7 @@ class DataGraph:
         for key, val in value_dict.items():
             if val is None:
                 val = -1
-            self._data[namespace][key].points.append(Point(x, val))
+            self._data[namespace][key].points[x].add_value(val)
 
     def set_fmt(self, namespace: str, data_type: str, fmt: str) -> None:
         """Set fmt string for given type (default empty).
@@ -154,13 +187,17 @@ class Statistics:
         for ns in pps:
             for label, pp in pps[ns].items():
                 # convert data from [(x1,y1),...] to [[x1,x2...], [y1, y2...]]
-                ax.plot(*zip(*pp.points), pp.fmt, label=f'{ns}.{label}')
+                means = map(lambda a: (a[0], a[1].property('mean')), pp.points.items())
+                ax.plot(*zip(*means), pp.fmt, label=f'{ns}.{label}')
         ax.legend()
 
         self._fig.savefig(os.path.join(self._path, f'{fname}.png'))
 
         # dump textual representation in CSV, columns being:
+        props: tuple = ('mean', 'min', 'max', 'stdev')
+        header_y: str = ';'.join(props)
         # property1,x;prop1.y;...;propn.x;propn.y
+        # every y consists of mean;min;max;stdev as defined in props
         # convert keys to tuples to preserve the order
         # it's ((namespace, (keys)), (namespace2, (keys2))...)
         keys_ordered = tuple()
@@ -175,16 +212,29 @@ class Statistics:
             # it produces:
             # namespace1.key1;y;namespace1.key2;y;....nsn.key1;y;nsnkey2...
             for (ns, ks) in keys_ordered:
-                w.write(';y;'.join((f'{ns}.{k}' for k in ks)))
-                w.write(';y')
+                w.write(f';{header_y};'.join((f'{ns}.{k}' for k in ks)))
+                w.write(f';{header_y}')
             w.write('\n')
 
             # convert data into iterable of lines being list of strings
             # and round values to three digits
             # zip(*iterable) reverses columns and rows
+            def convert_points_to_list(points: ItemsView[float, Point]) -> List[str]:
+                """Convert list of x,point to list of 'x;mean;min;max;...'
+
+                Take [1, Point()] and return ['1;point.mean();point.min()...']
+                """
+                res = []
+                for x, y in points:
+                    y_vals: str \
+                        = ';'.join([str(round(y.property(prp), 3)) for prp in props])
+                    p_str: str = f'{round(x, 3)};{y_vals}'
+                    res.append(p_str)
+                return res
+
             data_lists: Generator[List[str], None, None] \
-                = zip(*map(lambda x: [f'{round(p.x, 3)};{round(p.y, 3)}' for p in x],
-                           [pps[ns][k].points
+                = zip(*map(convert_points_to_list,
+                           [pps[ns][k].points.items()
                             for (ns, keys) in pps.items() for k in keys]))
 
             # convert data into lines (str)
@@ -201,6 +251,8 @@ if __name__ == '__main__':
     dg = DataGraph()
     dg.add_points(1, 'n', {'hey': 2, 'a': 3})
     dg.add_points(2, 'n', {'hey': 4, 'a': 3})
+    dg.add_points(1, 'n', {'hey': 2, 'a': 3})
+    dg.add_points(2, 'n', {'hey': 3, 'a': 3})
 
     dg.set_fmt('n', 'hey', '')
     dg.set_fmt('n', 'a', 'ro')
@@ -210,3 +262,14 @@ if __name__ == '__main__':
     dg.name = 'trial2'
     dg.set_view({'n': {'hey'}})
     s.plot(dg)
+
+    p = Point()
+    p.add_value(1)
+    assert (p.property('min') == 1)
+    assert (p.property('max') == 1)
+    assert (p.property('mean') == 1)
+    p.add_value(2)
+    assert (p.property('min') == 1)
+    assert (p.property('max') == 2)
+    assert (p.property('mean') == 1.5)
+    assert (abs(p.property('stdev') ** 2 - 0.5) < 0.0001)
