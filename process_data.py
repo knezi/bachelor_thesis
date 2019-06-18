@@ -142,7 +142,7 @@ def main(config: argparse.Namespace) -> None:
                 evaluation: dict \
                     = compute_evaluation_scores(cls, test_set, LikeTypeEnum.USEFUL)
 
-                stats.add_points(train_size, ex['name'], evaluation)
+                stats.add_points(t_size, ex['name'], evaluation)
 
                 # here needs to be done average agregation
 
