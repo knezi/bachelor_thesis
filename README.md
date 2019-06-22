@@ -19,10 +19,23 @@ Install the following software (for most distributions the name of a package in 
 Pip is usually a package python-pip or python3-pip.
 It is important to install the pip version for python3.
 It is also important to have python of a version at least 3.6.
-Version 3.5 (python3 in Debian Stretch - 9) will not work.
+Version 3.5 (python3 in Debian Stretch) will not work.
 
-Aspell with dictionaries is usally is packages `aspell`, `aspell-{en,fr,de}`.
+Python can be manually installed by:
 
+apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl git
+
+```
+wget https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tgz
+tar xvf Python-3.6.3.tgz
+cd Python-3.6.3
+./configure --enable-optimizations
+make -j8
+sudo make altinstall
+```
+
+Aspell and dictionaries are usually packages `aspell` and `aspell-{en,fr,de}`.
+https://github.com/pythonhttps://github.com/python
 Optionally, it is possible to run the project in a virtual environment.
 python3 can be replaced with the installed version. Must be at least 3.6.
 

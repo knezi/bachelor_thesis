@@ -1,4 +1,5 @@
 # bakalářka
+prepsat vsechno we na me - zeptat Hany
 https://unix.stackexchange.com/questions/332641/how-to-install-python-3-6
 LOOP - fasttext
 
@@ -79,17 +80,14 @@ uzivatelska doc??
 
 ### later
 * znimint knihovny?
-* fasttext
-* classificaiton
-* classifiers
+* add somewhere mention that we have linguistics and non-ling features - mainly we use geneea for analysis
+* check appendix
 * summary
-* my arch
 * diagrams
 * typography
 * details, credentials, my data
 * experiments conducted
 * appendix - data
-* freature engineering
 * fix citations
 
 - zminit jupyter a nastroje pouzite

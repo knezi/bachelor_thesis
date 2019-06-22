@@ -2,18 +2,19 @@
 \label{chap:arch}
 
 The software package was designed and developed with extensibility in mind.
-It allows to add new features, specify different subsets of data and convert them into various format without breaking older classifications and experiments.
-Classifiers and preprocessing methods are implemented children of abstract classes
-to allow to easily add new algorithms.
-The entire experiment is configured in a special YAML\footnote{\url{https://yaml.org}} file.
-It allows precise definition of conducted experiments and plotted graphs.
-New folder for statistics is created every run to prevent accident overwritting of already obtained results.
-The entire project is written mostly in Python of version at least 3.6\footnote{\url{https://python.org}} and bash\footnote{\url{https://gnu.org/software/bash}} with high usage of libraries for both higher performance and easier mantainability.
-All classes and files have documentation strings which should be sufficient
-for detailed understanding.
-In this chapter, we describe the high-level overview.
+It allows easily adding new features, specifying different subsets of data and converting them into various format without breaking older experiments.
+Classifiers and preprocessing methods are implemented as children of abstract classes to allow users to easily add new algorithms.
+The entire experiment is configured in a special configuration file.
+It precisely defines experiments to be conducted and what results of classification the user is interested in. 
 
-In \autoref{tab:files}, there are defined a few names for different files for easier understanding.
+A new folder for statistics is created every run to prevent accidental overwriting of already obtained results.
+The entire project is written in Python of version at least 3.6\footnote{\url{https://python.org}} and bash\footnote{\url{https://gnu.org/software/bash}}.
+Various libraries are utilized for both higher performance and easier maintainability.
+All classes and files have documentation strings which should be sufficient for detailed understanding.
+In this chapter, we only describe the high-level overview.
+
+In \autoref{tab:files}, there are definitions of a few special files used for controlling the run of the software project.
+Their exact usage will be explained in appropriate sections.
 
 \begin{table}[h]
 
@@ -37,10 +38,10 @@ experiments file	 & configures the experiments conducted \\
 
 \section{Experiments File}
 
-This file contains entire configuration of experiments conducted.
-It lists classification tasks.
+This YAML\footnote{\url{https://yaml.org}}  file contains entire configuration of experiments conducted.
+It lists classification tasks and ways of evaluation.
 Each task is a definition of a classifier to be trained and evaluated.
-Next, it contains list of graphs with results to be plotted.
+Evaluation element is a definition what properties should be plotted in a graph.
 
 Experiments file has the following format.
 The root element is a dictionary with three parts;
@@ -74,11 +75,11 @@ The config section is another dictionary.
 It has only one element -- \texttt{chunks}.
 It specifies into how many partitions the dataset set is split for k-fold cross-validation.
 
-The section experiments is a list of classification tasks to be conducted.
+The section \texttt{experiments} is a list of classification tasks to be conducted.
 Each element is a dictionary specifying the exact parameters.
-Descriptions of individual fields is in \autoref{tab:exp_dict}
-An example of \texttt{extra\_data} is text of a review if the classifier needs to work
-with the orignal text.
+Descriptions of individual fields is in \autoref{tab:exp_dict}.
+\texttt{extra\_data} is any property of instances available in the raw data.
+An example can be the original text or business attributes.
 
 \begin{table}[h]
 
@@ -105,17 +106,16 @@ It is a list of individual figures.
 Each figure is a dictionary of two elements; \texttt{name}, \texttt{data}.
 Name specifies the filenames of the resulting graph ---
 for each figure png and csv files will be created.
-Element \texttt{data} specifies what data will be used.
-It is a dictionary of experiment names, values being a list of all metrics to be dumped.
+Element \texttt{data} specifies what evaluation metrics for what classifiers will be used.
+It is a dictionary of experiment names, values being a list of all metrics to be output.
 
 \section{Parts Overview}
 
-Entire project is executed by make\footnote{url{https://www.gnu.org/software/make}}.
+The entire project is executed by make\footnote{url{https://www.gnu.org/software/make}}.
 It is split into two main targets;
 Data preparation and running experiments.
 The former is defined as targets `data/geneea.json` and `data/data.json`.
-It is a direct dependency of the target `run`, which serves for generating results
-of experiments.
+It is a direct dependency of the target `run`, which serves for running the experiments.
 
 \begin{code}
 DIAGRAM BETTER
@@ -138,7 +138,7 @@ run experiments
 \end{code}
 
 
-\section{Data Preparation}
+\section{Data Preparation} 
 
 Preparation itself can be run by:
 
@@ -147,23 +147,22 @@ make data/data.json
 \end{code}
 
 All scripts for preparing data are in the folder \texttt{denormalization}.
-It prepares instance and intermediate files.
-The process is executed by:
+These scripts prepare the instance and intermediate files.
+Preparation is executed by:
 
 \begin{code}
 ./denormalization/denormalize.sh ../data/dataset data/data.json data/ids
 \end{code}
 
 The first argument is a directory with extracted archive of the Yelp Dataset.
-The second argument is path to instance file and the last one to intermediate file.
+The second argument is a path to the instance file and the last one to the intermediate file.
 The script itself joins reviews and business
 and filters out reviews outside the time frame we need.
 The result is written into the instance file.
 Next, it prepares list of all IDs of used reviews into the intermediate file one ID per line.
-This file is processed on a separate server and the resulting geneea file must be stored
+This file is processed on a separate server and the resulting Geneea file must be stored
 in \texttt{data/geneea.json}.
-It contains additional linguistics data.
-The exact description of files can be found in \autoref{app:a}.
+The exact description of what those files contain can be found in \autoref{app:a}.
 
 
 \section{Running Experiments}
@@ -191,29 +190,31 @@ Anytime a dataset is accessed all features are regenerated to ensure it is up-to
 
 \subsection{Conduct Experiments}
 
-Subsequently, tasks are performed.
+Once all data is loaded in the memory, experiments are conducted.
 All tasks are guaranteed to be run on the exact same data to ensure comparability of results.
-Both training and testing is implemented by pipeline of preprocessors and a classifier.
-The preprocessors are in the same order as in the \textit{experiment} file.
-A preprocessor must be defined in directory \texttt{preprocessors} and a child of \texttt{preprocessors/preprocessingbase.py}.
+Both training and testing is implemented by a pipeline of preprocessors and a classifier.
+The preprocessors are in the same order as in the experiment file.
+A preprocessor must be defined in the directory \texttt{preprocessors} and be a child of \texttt{preprocessors/preprocessingbase.py}.
+Also, its name must be added into \texttt{preprocessors/\_\_init\_\_.py}.
 
+\todoA{this is super confusing}
 Every preprocessor has a method process, which must take data and return processed data.
-The format of accepted and returned data arbitrary, so long the returned is compatible
-with the one accepted by the next in the pipeline.
+The format of accepted and returned data is arbitrary except for the first preprocessor,
+so long the returned data is compatible with the one accepted by the next element in the pipeline.
+The first preprocessor in the pipeline must take feature\_dict with possibly additional data specified in \texttt{extra\_data} as returned by \texttt{load\_data.Data.get\_feature\_dict}.
 The last preprocessor must of course return format compatible with the classifier.
-Hence, for most classifiers, it is needed to run conversion to matrix (\texttt{featurematrixconversion.py}).
-The first preprocessor in the pipeline must take feature\_dict with additional data as returned by \texttt{load\_data.Data.get\_feature\_dict}.
+For most classifiers, it is needed to run conversion to matrix as a last preprocessor (\texttt{featurematrixconversion.py}).
 
 The pipeline is the same for both training and testing data with the guarantee that
 training data is always passed first and classifier is called train and classify for
 training and testing data, respectively.
 
-After all tasks are run, results are plotted and dumped.
+After all tasks are performed, results are  output.
 All necessary logic is defined in \texttt{statistics.py}.
-For storing performance data, class \texttt{DataGraph} is used.
-It gathers data and publishes API for data manipulation.
-An instance of this class is subsequently passed to \texttt{Statistics},
-which handles the actual data plotting and writting to files.
+For storing evaluation data, class \texttt{DataGraph} is used.
+It servers as a buffer for evaluation data and provides API for data manipulation.
+An instance of this class is passed to \texttt{Statistics},
+which handles the actual data plotting and writing to files.
 
 
 

@@ -2,19 +2,40 @@
 \addcontentsline{toc}{chapter}{Introduction}
 
 With growing popularity of storing and sharing more data on the internet, the biggest challenge
-for us is not to get enough information, but to find the exact information we need. This thesis tries to tackle
-one of the major issues of review systems. Usually, the review systems have many reviews and it is
-hard to filter those that are useful, namely because we do not know the author (hence cannot estimate
-his or her reliability), but also because reviews are very short, often containing just one piece of information.
-Hence it is difficult for users to decide what to trust and what not.
+for us is not to get enough information, but to find the exact information we need.
+This thesis tries to tackle one of the major issues of review systems.
+A review system is a platform for sharing experience among its users.
+It is particularly aimed at information that is hard to find in another way than from direct experience.
+The information is often subjective and relevant only in a narrow context.
+Review of a novel listing historical accuracy as an advantage may be interesting to a history teacher,
+but not so much to someone who only searches for a gripping story.
 
-We will use data set containt reviews of restaurants and try to 
-filter out only useful reviews. To a lessen degree we will also filter reviews that have been labelled by users as ``funny'' and ``cool''.
-This filtering can be later used as part of the review system where the platform automatically provides users with useful reviews first.
+In particular, users use review systems for obtaining some information based on the experience of others.
+The users are often willing to spend only a couple of minutes on finding relevant information to them.
+Usually, the review systems have many reviews and review systems tries to improve the user experience by showing useful reviews first.
 
-Our main goal is to compare already existing approaches and to find the best one for the given circumstances.
+However, it is not obvious how to find useful reviews.
+First, we do not know the author and possibly have only a few reviews by the autor.
+Also, reviews by the same author can have different quality which is influenced by many factors,
+such as time spent on writing the review or wheter the actual experience contains some useful information.
+Therefore it is very hard to estimate author's reliability.
+Second, reviews are very short, often containing only one piece of information.
+Third, a review can quickly become obsolete or irrelevant.
+Fourth, what is relevant to some, may not be to others.
+All this also makes the task hard even for human operators and as such hard to evaluate our programme selecting useful reviews.
 
-\todoA{call it labelling instead of classificaotn?}
+In this thesis, we try to address the issue of saying whether a review is useful.
+We focus on data set containing reviews of restaurants.
+Since it is hard to evaluate usefulness of a review, we use data where reviews can be manually marked by users as useful.
+We use this information to assess how well our programme works.
+To a lessen degree, we select reviews that have been marked as ``funny'' and ``cool''.
+
+We use machine learning methods to solve this problem.
+To date, many approches to solve this have been introduced.
+However, there is no clearly best performing algorithm for this context.
+Our main goal is to compare already existing approaches and compare them.
+The results can serve as a guide when implementing a real review system.
+
 
 
 \todoA{conventions}
@@ -27,3 +48,5 @@ Our main goal is to compare already existing approaches and to find the best one
 \texttt{files, code}
 
 \todoA{list of chapters what is where}
+
+\todoA{add some sources doing the same}

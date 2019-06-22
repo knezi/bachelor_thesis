@@ -12,50 +12,62 @@
 %   \node [font=\Large] {\LaTeX};
 % \end{tikzpicture}
 
-The process of~filtering data we described in the~first chapter is known as {\bf text classification}.
+The process of~selecting useful review is an example of {\bf text classification}.
 \citet{AggZhai12} describe text classification as follows.
-We have a~set of~records~$\mathcal{D} = \left\{X_1, \ldots, X_N\right\}$ and each record is labeled with one~of the~class labels indexed by~$\left\{1,\ldots, k\right\}$.
-Every record consists of~attributes which contain some~information about it such as the text of a review or the number of stars given by the user.
+We have records~$X_1, \ldots, X_N$ and labels~$1,\ldots, k$.
+Record is a standalone unit and is assigned one label.
+Text classification aims to predict what label it is.
+
+Every record consists of~attributes which convey some~information about it.
+An example of an attribute is the text of a review or the number of stars given by the user.
 We will refer to a~record as {\bf an~instance} to be consistent with machine learning terminology.
 {\bf Text classification} is then a process of building a classification model that is able to assign
 an instance its label based solely on its attributes.
-{\bf Classification model} is a~mapping between an~instance and a~class label.
+{\bf Classification model} (also called classifier) is a~mapping between an~instance and a~class label.
 
-As \citet{TanBachKum08} distinguish it, there are two ways to use classification can be used; {\it descriptive} and {\it predictive}.
+\todoA{diagram records -> labels - records=instances; labels; arrows are the model}
+	\begin{code}
+		review            -->        useful
+
+		review2		-->			not-useful
+
+
+		review3 arrow up
+
+		^^^^^^^						^^^^^
+		instance					labels
+
+		arrows = model
+	\end{code}
+
+
+As \citet{TanBachKum08} distinguish it, classification is either {\it descriptive} and {\it predictive}.
 Descriptive is for finding regularities in data.
 An example of descriptive classification is a task where
 biologists try to figure out what the features distinguishing mammals and birds are.
 In this thesis, we will consider only predictive classification, where the goal is to build a classifier
-that can predict instances with unknown labels.
+that can predict labels for new instances.
 
-To be able to asses how well our model predicts instances we have two sets of instances.
-First, training set is  used for building a~classification model.
-Second, testing set is used for assessing how well the model predicts unknown labels.
-Because the testing set is taken from labeled data, we can compare our predictions with the actual labels.
-This approach of fitting a classifier to labelled data is called {\bf supervised learning}.
-In~this document we will take into account only \emph{hard version} of~classification which explicitly maps one and only one label to each record.  
+We have two sets of instances to be able to asses how well our model predicts instances.
+First, a training set is  used for building a~classification model.
+Second, a testing set is used for assessing how well the model predicts labels for new instances.
+Because the testing set contains the actual labels, we can compare our predictions with them.
 
+The approach of fitting a classifier to labelled data is called \textbf{supervised learning}.
+We have the results of classification and we are trying to build a model that approximates these results.
+On the contrary, \textbf{unsupervised learning} means that we do not know the labels and we try to group instances that are in some respect similar without having labels.
+
+In~this thesis, we take into account only \textbf{hard version} of~classification which explicitly maps one and only one label to each record.  
+\textbf{Soft version} assign probabilities to labels.
 
 \section{Text Classification Process}
 
-The entire process of classification is shown in \autoref{fig:cls_process}.
+TODO - tady jsme skoncili - prepsat tohle neni hezke
 
-We do not cover obtaining data in this thesis, because we use the freely available
-dataset from the Yelp Data Challenge.
-
-In general, an instance is described by data we obtained from various sources.
-The exact data used depends on the application.
-We always try to obtain sufficient information for each instance to describe the properties (in our case usefulness of a review).
-However, we cannot feed the data directly into our classifier.
-We have to process data into a suitable format.
-This process is called {\bf feature engineering}.
-We will extract the so called {\bf features}, which carry some information about the instance.
-Feature is simply some property of an instance like the number of words in a review.
-As we will see, it is hard to come up with features that would directly lead to successful classification.
-Hence, we will try to generate as many features as we can and then try to select the most useful.
-We will discuss both feature extraction and selection in \autoref{chap:fea}.
+The process of classification is broken down into four parts as shown in \autoref{fig:cls_process}.
 
 \todoA{diagram:}
+\begin{figure}
 \begin{code}
 obtaining dataset
 -> preprocessing {extraction} -> feature selection
@@ -64,26 +76,33 @@ obtaining dataset
 
 -> training -> evaluation
 \end{code}
-\begin{figure}
-	blah
-	\label{fig:cls_process}
+	blah\label{fig:cls_process}
 \end{figure}
 
-Finally, we want to be able to compare different classifiers and feature sets. Common evaluations will be discussed in \autoref{chap:eval}.
 
-Last three chapters are then left for the architecture of the software developed (\autoref{chap:arch}), demonstration of conducted experiments (\autoref{chap:exp}) and final discussion (\autoref{chap:concl}).
+We always need to obtain sufficient information about each instance.
+This mean we can use more sources.
+Obtaining data usually comprises of data scraping or otherwise downloading it.
+We do not cover this, because the Yelp dataset is freely available for download.
+
+We cannot feed the data directly into our classifier.
+The data has to be preprocessed first.
+This process is called {\bf feature engineering}.
+We extract the so called {\bf features}, which carry some information about the instance.
+Feature is simply some property of an instance like the number of words in a review.
+As we will see, it is hard to come up with features that would directly lead to successful classification.
+Hence, we will try to generate as many features as we can and then try to select the most useful.
+We will discuss both feature extraction and selection in \autoref{chap:fea}.
 
 
-\section{Specification of Data with Terminology}
+Once the data is ready, we build a classifier from the preprocessed data.
+This phase is called training.
+Finally, we want to be able to compare different classifiers and feature sets.
+Common evaluations will be discussed in \autoref{chap:eval}.
 
-\todoA{move this to appendix}
+Last three chapters  are left for the architecture of the software developed (\autoref{chap:arch}),
+demonstration of conducted experiments (\autoref{chap:exp}) and final discussion (\autoref{chap:concl}).
 
-Let us define our task again with the~introduced terminology.
-Each review is an~instance and file \texttt{review.json} contains an~instance per line.
-Because the raw data cannot be directly used as features, we have to extract our features first.
-An~example of such a~feature is the~number of words in a~review, which is calculated from the~review's text.
-More on feature creation is discussed in \autoref{chap:fea}.
-Business information will be only used indirectly to drop reviews coming for unreliable sources.
 
 
 \section{\todoB{What a Classifier Looks Like}}
@@ -112,7 +131,7 @@ whether the customer received a discount (yes or no), whether it is a private cu
 and what mobile internet is part of their prepaid plan (none, limited and unlimited).
 We are predicting the last column.
 
-Please note that our primar focus  of this thesis is text classification in this thesis.
+Please note that our primar focus is text classification.
 However, we will use non-textual features in this example for easier understanding.
 Classifiers (except for fastText which is tailored specifically for text) take any set of features,
 so we can use them in the same way with features extracted directly from text.
@@ -158,7 +177,7 @@ Zero-R would label all customers as satisfied in our example.
 
 A bit more complicated {\bf One-R} chooses one feature and bases the classification solely on this feature.
 For every value of the feature, we take all instances corresponding to this value and choose the label occurring the most among them.
-For predicting, We use the label we found for each value.
+For predicting, we use the label we found for each value.
 
 Suppose we choose the feature {\it discount} in our example.
 We can see that all customers that got discount are satisfied.
@@ -200,7 +219,7 @@ An instance is generated in two steps.
 First, a component is selected according to priors.
 Priors are the apriori probabilities of the current model denoted by $P\left(c_i\right)$ for component~$c_i$.
 Second, an instance is generated by this component according to posterios.
-Posteriors are probabilities of instance~$d_j$~being generated by component~$c_i$~denoted by~$P\left(d_j|c_i\right)$).
+Posteriors are probabilities of instance~$d_j$~being generated by component~$c_i$~denoted by~$P\left(d_j|c_i\right)$.
 
 The likelihood of instance~$d_i$~being generated is then:
 
@@ -348,7 +367,7 @@ We compute~$t_{no}$~in the same manner for a dissatisfied customer:
 \end{equation}
 
 $t_{no}$ is higher and Na\"{i}ve Bayes classifies the instance as dissatisfied.
-Note that this may look surprising as features ``private'' and ``interneet'' suggest satisfaction,
+Note that this may look surprising as features ``private'' and ``internet'' suggest satisfaction,
 but the correlation between discount and satisfaction is so strong that it outweights other features in this settings.
 
 \todoC{zminka prior a posterior ohledne maximizace je prave pocitani}
