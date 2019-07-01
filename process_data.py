@@ -1,5 +1,11 @@
 #!/bin/env python3
-# TODO COMMENT AUTHOR
+# This is the root file of the project.
+# It reads configuration file and creates instances of classes for
+# loading data, preprocessing, classifying and plotting graphs.
+
+# It is possible to utilize profiler by uncommenting the corresponding lines
+# at the end of the file
+
 import sys
 from collections import defaultdict
 
@@ -143,8 +149,6 @@ def main(config: argparse.Namespace) -> None:
                     = compute_evaluation_scores(cls, test_set, LikeTypeEnum.USEFUL)
 
                 stats.add_points(t_size, ex['name'], evaluation)
-
-                # here needs to be done average agregation
 
         if not data.prepare_next_dataset():
             break

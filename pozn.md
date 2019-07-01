@@ -1,12 +1,11 @@
 # bakalářka
-prepsat vsechno we na me - zeptat Hany
 https://unix.stackexchange.com/questions/332641/how-to-install-python-3-6
 LOOP - fasttext
 
 /data/students/knizek
 
 ## styl psani
- - we believe -> I believe
+- odstavece???
  - consistent past vs rpesent
  	- past for experiments
 	- present for general stuff
@@ -74,6 +73,9 @@ uzivatelska doc??
 ## experiment
 	 - baseline
 	 - prior class distribution
+	 - test fasttext with diff parmas
+	 - different feature selection
+	 - tranovaci cas v zavislosti na poctu parametru a tak - zlepseni stoji za cas?
 
 ## psani
 
@@ -140,6 +142,7 @@ graphs : [
 * zkontroluj process a jestli to matchuje
 * prodej pocitani a agregovani statistik
 * debian python3.6
+* pridej do readme kam patri data
 
 ### later
 * make - expects data in ../data/datset

@@ -3,84 +3,174 @@ config:
 tasks:
   - name: 'zero-R'
     classificator: 'baseline'
-    features:
-#      - REVIEWLEN
-#      - STARS
-#      - TFIDF
-      - UNIGRAMS
-      #- BIGRAMS
-      #- ENTITIES
+    features: []
     preprocessing:
-      - 'mutualinformation'
       - 'featurematrixconversion'
     extra_data: []
     config:
       algorithm: 'zero-R'
-      features_to_select: 2
 
-#  - name: 'one-R'
-#    classificator: 'baseline'
-#    features:
-#     - REVIEWLEN
-#     - STARS
-#    preprocessing: ['featurematrixconversion']
-#    extra_data: []
-#    config:
-#      algorithm: 'one-R'
-#
-#  - name: 'Trial'
-#    classificator: 'naivebayes'
-#    features:
-#      - REVIEWLEN
-#      - STARS
-#    preprocessing: []
-#    extra_data: []
-#    config: {}
-#
-#  - name: 'FastText'
-#    classificator: 'fasttext'
-#    features: []
-#    preprocessing: ['dumpfasttext']
-#    extra_data: ['text']
-#    config:
-#      path_prefix: 'data/data_fasttext'
-#      executable: 'fastText/fasttext'
-#      config_ft:
-#        - '-epoch'
-#        - '50'
-#        - '-wordNgrams'
-#        - '3'
-#
-#  - name: 'pokus'
-#    classificator: 'naivebayes'
-#    features: []
-#    preprocessing: []
-#    extra_data: []
-#    config: {}
+  - name: 'one-R'
+    classificator: 'baseline'
+    features:
+     - UNIGRAMS
+     - BIGRAMS
+     - TRIGRAMS
+     - FOURGRAMS
+     - STARS
+     - REVIEWLEN
+     - SPELLCHECK
+     - COSINESIM
+     - TFIDF
+     - ENTITIES
+    preprocessing:
+      - 'featurematrixconversion'
+    extra_data: []
+    config:
+      algorithm: 'one-R'
+
+  - name: 'NB - *-grams'
+    classificator: 'naivebayes'
+    features:
+      - UNIGRAMS
+      - BIGRAMS
+      - TRIGRAMS
+      - FOURGRAMS
+    preprocessing: []
+    extra_data: []
+    config: {}
+
+  - name: 'NB - TF-IDF'
+    classificator: 'naivebayes'
+    features:
+      - TFIDF
+    preprocessing: []
+    extra_data: []
+    config: {}
+
+  - name: 'NB - ENTITIES'
+    classificator: 'naivebayes'
+    features:
+      - ENTITIES
+    preprocessing: []
+    extra_data: []
+    config: {}
+
+  - name: 'FastText'
+    classificator: 'fasttext'
+    features: []
+    preprocessing: ['dumpfasttext']
+    extra_data: ['text']
+    config:
+      path_prefix: 'data/data_fasttext'
+      executable: 'fastText/fasttext'
+      config_ft:
+        - '-epoch'
+        - '50'
+        - '-wordNgrams'
+        - '3'
+
+  - name: 'NB - basic'
+    classificator: 'naivebayes'
+    features:
+      - UNIGRAMS
+      - BIGRAMS
+      - TRIGRAMS
+      - FOURGRAMS
+      - STARS
+      - REVIEWLEN
+      - SPELLCHECK
+      - COSINESIM
+      - TFIDF
+      - ENTITIES
+    preprocessing: []
+    extra_data: []
+    config: {}
+
+  - name: 'NB - chisquare'
+    classificator: 'naivebayes'
+    features:
+      - UNIGRAMS
+      - BIGRAMS
+      - TRIGRAMS
+      - FOURGRAMS
+      - STARS
+      - REVIEWLEN
+      - SPELLCHECK
+      - COSINESIM
+      - TFIDF
+      - ENTITIES
+    preprocessing: [ 'chisquare']
+    extra_data: []
+    config:
+      features_to_select: 1000
+
+  - name: 'NB - mutualinfo'
+    classificator: 'naivebayes'
+    features:
+      - UNIGRAMS
+      - BIGRAMS
+      - TRIGRAMS
+      - FOURGRAMS
+      - STARS
+      - REVIEWLEN
+      - SPELLCHECK
+      - COSINESIM
+      - TFIDF
+      - ENTITIES
+    preprocessing: [ 'mutualinformation']
+    extra_data: []
+    config:
+      features_to_select: 1000
+
 
 graphs:
   - name: 'baseline'
     data:
       zero-R:
-        - 'f-measure'
+        - 'f_measure'
       one-R:
-        - 'f-measure'
-      Trial:
-        - 'f-measure'
-      FastText:
-        - 'f-measure'
-      pokus:
-        - 'f-measure'
+        - 'f_measure'
 
-  - name: 'Trial_graph'
+  - name: 'text_features'
     data:
-      FastText:
-        - 'tp'
-        - 'precision'
-      Trial:
-        - 'recall'
+      NB - TF-IDF:
+        - 'f_measure'
+      NB - *-grams:
+        - 'f_measure'
+      NB - ENTITIES:
+        - 'f_measure'
 
-  - name: 'Trial_graph_2'
+  - name: 'feature_selection'
     data:
-      Trial:
-        - 'recall'
+      NB - basic:
+        - 'f_measure'
+      NB - chisquare:
+        - 'f_measure'
+      NB - mutualinfo:
+        - 'f_measure'
+
+  - name: 'baseline - acc'
+    data:
+      zero-R:
+        - 'accuracy'
+      one-R:
+        - 'accuracy'
+
+  - name: 'text_features - acc'
+    data:
+      NB - TF-IDF:
+        - 'accuracy'
+      NB - *-grams:
+        - 'accuracy'
+      NB - ENTITIES:
+        - 'accuracy'
+
+  - name: 'feature_selection - acc'
+    data:
+      NB - basic:
+        - 'accuracy'
+      NB - chisquare:
+        - 'accuracy'
+      NB - mutualinfo:
+        - 'accuracy'

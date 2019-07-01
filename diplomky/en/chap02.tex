@@ -18,28 +18,25 @@ We have records~$X_1, \ldots, X_N$ and labels~$1,\ldots, k$.
 Record is a standalone unit and is assigned one label.
 Text classification aims to predict what label it is.
 
-Every record consists of~attributes which convey some~information about it.
-An example of an attribute is the text of a review or the number of stars given by the user.
-We will refer to a~record as {\bf an~instance} to be consistent with machine learning terminology.
-{\bf Text classification} is then a process of building a classification model that is able to assign
-an instance its label based solely on its attributes.
+Every record is defined by its attributes.
+Attribute is a certain property of a record.
+An example is the text of a review, the number of stars rewarded or date of posting.
+We will refer to a~record as \textbf{an~instance} and an attribute as \textbf{a~feature} to be consistent with machine learning terminology.
+{\bf Text classification} is the process of building a classification model.
 {\bf Classification model} (also called classifier) is a~mapping between an~instance and a~class label.
 
-\todoA{diagram records -> labels - records=instances; labels; arrows are the model}
-	\begin{code}
-		review            -->        useful
+An example of a classification model is in \autoref{fig:cls_model}.
+Instances are reviews labeled as either `useful' or `not-useful`.
+A particular model is the actual labelling and is represented by arrows.
 
-		review2		-->			not-useful
+\begin{figure}[h]
+    \centering
+	\includegraphics[width=7cm]{figures/model.eps}
+	\caption{classification model}\label{fig:cls_model}
+\end{figure}
 
 
-		review3 arrow up
-
-		^^^^^^^						^^^^^
-		instance					labels
-
-		arrows = model
-	\end{code}
-
+\section{Classification Taxonomies}
 
 As \citet{TanBachKum08} distinguish it, classification is either {\it descriptive} and {\it predictive}.
 Descriptive is for finding regularities in data.
@@ -51,53 +48,50 @@ that can predict labels for new instances.
 We have two sets of instances to be able to asses how well our model predicts instances.
 First, a training set is  used for building a~classification model.
 Second, a testing set is used for assessing how well the model predicts labels for new instances.
-Because the testing set contains the actual labels, we can compare our predictions with them.
+Because the testing set contains the actual labels, we can compare how well our predictions align with them.
 
 The approach of fitting a classifier to labelled data is called \textbf{supervised learning}.
-We have the results of classification and we are trying to build a model that approximates these results.
-On the contrary, \textbf{unsupervised learning} means that we do not know the labels and we try to group instances that are in some respect similar without having labels.
+The correct classification is known and we are trying to build a model that approximates these results.
+On the contrary, \textbf{unsupervised learning} means that we do not know the labels and we try to split instances into groups that are in some respect similar.
 
 In~this thesis, we take into account only \textbf{hard version} of~classification which explicitly maps one and only one label to each record.  
-\textbf{Soft version} assign probabilities to labels.
+\textbf{Soft version} assign the probability of each label to each instance.
 
 \section{Text Classification Process}
 
 TODO - tady jsme skoncili - prepsat tohle neni hezke
 
-The process of classification is broken down into four parts as shown in \autoref{fig:cls_process}.
+The process of classification is broken down into four parts as shown in \autoref{fig:clsf_process}.
 
-\todoA{diagram:}
-\begin{figure}
-\begin{code}
-obtaining dataset
--> preprocessing {extraction} -> feature selection
- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    		feature engineering
-
--> training -> evaluation
-\end{code}
-	blah\label{fig:cls_process}
+\begin{figure}[h]
+    \centering
+	\includegraphics[width=12cm]{figures/clsf_process.eps}
+	\caption{classification process}\label{fig:clsf_process}
 \end{figure}
 
-
-We always need to obtain sufficient information about each instance.
-This mean we can use more sources.
+First, we need to obtain sufficient information about each instance.
 Obtaining data usually comprises of data scraping or otherwise downloading it.
+It can even mean combining data from more sources.
 We do not cover this, because the Yelp dataset is freely available for download.
 
-We cannot feed the data directly into our classifier.
-The data has to be preprocessed first.
-This process is called {\bf feature engineering}.
-We extract the so called {\bf features}, which carry some information about the instance.
-Feature is simply some property of an instance like the number of words in a review.
-As we will see, it is hard to come up with features that would directly lead to successful classification.
-Hence, we will try to generate as many features as we can and then try to select the most useful.
-We will discuss both feature extraction and selection in \autoref{chap:fea}.
+Second, the data has to be preprocessed, because we cannot feed the data directly into our classifier.
+As we mentioned, we define an instance by its features.
+We create features during \textbf{feature extraction}.
+An example is a feature expressing the number of words of a review.
+We are only given the raw text and we need to \textit{extract} the number of words in it.
+
+It is often hard to come up with features that would directly lead to successful classification,
+because machine learning is used in context where the underlying logic of data is unknown.
+The most common approach is to generate as many features as possible and use only the most informative.
+The phase of eliminating not useful features is called \textbf{feature selection}.
+
+Phases extraction and selection are distinguished as a whole phase called \textbf{feature engineering}.
+We will discuss this in \autoref{chap:fea}.
+ 
 
 
-Once the data is ready, we build a classifier from the preprocessed data.
-This phase is called training.
-Finally, we want to be able to compare different classifiers and feature sets.
+Once the data is ready, we build a classifier in the \textbf{training} phase.
+Finally, we compare different classifiers and feature sets in \textbf{evaluation}.
 Common evaluations will be discussed in \autoref{chap:eval}.
 
 Last three chapters  are left for the architecture of the software developed (\autoref{chap:arch}),
