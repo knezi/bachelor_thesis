@@ -8,17 +8,17 @@ Huan Liu
 Hiroshi Motoda}
 
 
-We cannot use the raw data as it is for training our classifier.
+We cannot use the raw data for training as it is.
 Instead, we represent each instance by a set of features;
 each feature expressing a certain property of the instance.
-An example of a feature can be a number of words in the review,
+An example of a feature can be the number of words in the review,
 whether the~word {\it food} is present in the review
 or a piece of metadata, like how many stars the user gave.
 
-Features are divided according to their values into three categories~---~nominal, ordinal and continuous.
+Features are of three types according to their values~---~nominal, ordinal and continuous.
 Nominal features are discrete and there is no relationship between their values.
 When a~feature is ordinal, it means it is discrete and also defines an ordering of the values.
-Continuous feature are any real-valued variable.
+Continuous feature is any real-valued variable.
 
 In this thesis, we will utilize nominal and ordinal only.
 We will omit the order in ordinal features and work with them the same way as nominal.
@@ -63,8 +63,8 @@ several techniques to reduce the number of features can be used.
 The objective is to use features that are in some respect useful.
 
 Having fewer features which are informative enough leads to three direct benefits.
-The resulting model is far less complex and as~such easier to~interpret.
-The~model also generalises better, because the~risk of overfitting is lower.
+First, the resulting model is far less complex and as~such easier to~interpret.
+Second, The~model also generalises better, because the~risk of overfitting is lower.
 Overfitting happens when the~model recognises irregularities in training data
 and learns to recognise individual instances.
 It should instead approximate the~general concept of the classification rules
