@@ -117,36 +117,38 @@ def main(config: argparse.Namespace) -> None:
         train_size: int \
             = int(datasize - datasize / experiments['config']['chunks'])
         train_size_log: int = int(ceil(log2(train_size)) + 1)
-        for t_size in map(lambda x: min(2 ** x, train_size),
-                          range(1, train_size_log)):
-            print(f'SIZE {t_size}')
 
-            data.max_tfidf = 10
-            data.max_ngrams = 10
-            data.limit_train_size(t_size)
+        # TODO wtf is this?
+        data.max_tfidf = 10
+        data.max_ngrams = 10
 
-            for ex in experiments['tasks']:
-                # convert features to set:
-                features: Set[FeatureSetEnum] \
-                    = {FeatureSetEnum[f] for f in ex['features']}
-                train_set = data.get_feature_dict(SampleTypeEnum.TRAIN, features,
-                                                  ex['extra_data'])
-                test_set = data.get_feature_dict(SampleTypeEnum.TEST, features,
-                                                 ex['extra_data'])
+        for ex in experiments['tasks']:
+            # convert features to set:
+            features: Set[FeatureSetEnum] \
+                = {FeatureSetEnum[f] for f in ex['features']}
+            train_set = data.get_feature_dict(SampleTypeEnum.TRAIN, features,
+                                              ex['extra_data'])
+            test_set = data.get_feature_dict(SampleTypeEnum.TEST, features,
+                                             ex['extra_data'])
+
+            for t_size in map(lambda x: min(2 ** x, train_size),
+                              range(1, train_size_log)):
+                train_set_restr = train_set[:t_size]
+                test_set_copy = test_set[:]
 
                 # preprocess data
                 for pp in ex['preprocessing']:
                     prep: PreprocessorBase \
                         = getattr(preprocessors, pp).Preprocessor(ex['config'])
-                    train_set = prep.process(train_set, SampleTypeEnum.TRAIN)
-                    test_set = prep.process(test_set, SampleTypeEnum.TEST)
+                    train_set_restr = prep.process(train_set_restr, SampleTypeEnum.TRAIN)
+                    test_set_copy = prep.process(test_set_copy, SampleTypeEnum.TEST)
 
                 cls: ClassifierBase \
                     = getattr(classifiers, ex['classificator']).Classifier(ex['config'])
-                cls.train(train_set)
+                cls.train(train_set_restr)
 
                 evaluation: dict \
-                    = compute_evaluation_scores(cls, test_set, LikeTypeEnum.USEFUL)
+                    = compute_evaluation_scores(cls, test_set_copy, LikeTypeEnum.USEFUL)
 
                 stats.add_points(t_size, ex['name'], evaluation)
 
@@ -154,7 +156,6 @@ def main(config: argparse.Namespace) -> None:
             break
 
     # aggregate results here
-
     for g in experiments['graphs']:
         stats.name = g['name']
         stats.set_view(g['data'])
@@ -171,11 +172,11 @@ if __name__ == '__main__':
     argparser.add_argument('geneea_file', type=str,
                            help='Geneea data file.')
 
-    # import cProfile
-    # pr = cProfile.Profile()
-    # pr.enable()
+    import cProfile
+    pr = cProfile.Profile()
+    pr.enable()
 
     main(argparser.parse_args(sys.argv[1:]))
 
-    # pr.disable()
-    # pr.print_stats(sort="calls")
+    pr.disable()
+    pr.print_stats(sort="calls")

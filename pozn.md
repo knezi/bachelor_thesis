@@ -70,7 +70,9 @@ uzivatelska doc??
 - citace [2] - jako kdyby to mohlo byt vynechano - jak pise Balcar [1], i Jirasek [2]
 	- lze i prednasku
 
+
 ## experiment
+	 - zminit prumerny pocet slov a pismen
 	 - baseline
 	 - prior class distribution
 	 - test fasttext with diff parmas
@@ -182,3 +184,8 @@ zkontrolovat, jestli masinerie nekde nenechava tmp soubory
 requirements.txt - python, setup.py
 
 
+## stats
+[knezi@groot dataset]$ cat review.json | sed 's/^.*text":"//' | sed 's/".*//' | wc
+5261669 506159364 2769188913
+
+526 chars, 96 words
