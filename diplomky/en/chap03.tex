@@ -28,47 +28,47 @@ but allows us easier feature manipulation.
 
 \section{Extraction}
 
-When we come up with a feature we want to use,
-we often have to do some preprocessing and computing the feature value for each particular instance.
-This process is called {\bf feature extraction}.
-We will use features that require the words to be individual
-and therefore we need to split the reviews into separate words first.
-This is called {\bf tokenization}, because we are splitting the text into tokens (words in this context).
-We will use Tweet tokenizer from library nltk \footnote{\url{https://www.nltk.org}}.
-The advantage of this library is that it does not only split words by spaces,
-but also punctuation and considers punctuation marks to be tokens as well.
-This allows the features to carry some potentially useful information.
-An example is the indication that a word is at the end of a sentence if it is followed by a full stop.
+\textbf{Feature extraction} is the process of computing feature values for individual instances.
+This may involve various operations on the given data.
+Commonly used techniques include spell checking, converting geographic coordinates to names
+or different linguistics analyses.
 
-Subsequently, it is often needed to convert words into lower case, and then {\it lemmatise} them.
-Both these techniques help to group words that express the same meaning together.
-{\bf Lemmatisation} means replacing a word with its lemma, which is a {\it base form} of the word.
-The reason for doing this is to group inflected words together.
+Also, it is often needed to split text into words.
+Splitting text in general is called {\bf tokenization} and
+the resulting units are called tokens (words in this context).
+We use the nltk Tweet tokenizer\footnote{\url{https://www.nltk.org}}.
+The tokenizer split words by spaces and punctuation.
+It also considers punctuation marks to be tokens as well.
+This allows the features to carry some potentially useful information.
+An example is the indication that a word is at the end of a sentence when followed by a full stop.
+
+Subsequently, it is often needed to convert words into lower case and {\it lemmatise} them.
+Both these techniques help to group together words that express the same meaning.
+{\bf Lemmatisation} is replacing a word with its lemma, which is a {\it base form} of the word.
 The word \textit{cars} will be therefore be treated in the same way as \textit{car}.
-Both words clearly express the same property and we may want to group them together.
-Of course, the exact meaning is different,
-but often for purposes of classification knowing that there is a car suffices.
-It is not always necessary to known whether one or more.
-Howeever for this analysis, we will omit lemmatisation and use only lower case conversion.
-Lemmatisation is not always required in English,
-becase it is not a highly inflectional language.
+Of course, the exact meaning of the two words is different,
+but the fundamental idea is the same.
+For the purposes of classification, it is often unnecessary to known whether there is one car or more.
+
+For this analysis, we omit lemmatisation and use only lower case conversion.
+Lemmatisation in English documents does not usually bring a big improvement,
+because English is not a highly inflectional language.
 
 \section{Selection}
 
-Machine learning is used in contexts where the inner logic of~data is~not known.
-Therefore it is difficult to intuitively select only useful features
-and we often extract as many features as we can hoping some of them will be useful.
+Machine learning is used in contexts where the inner logic of~data is unknown.
+It is therefore difficult to come up with useful features.
+A common approach is to extract as many features as we can hoping some of them will be useful.
 Because having too many features can lead to undesirable effects,
-several techniques to reduce the number of features can be used.
-The objective is to use features that are in some respect useful.
+several techniques have been introduced to reduce the number of features
+while retaining as much information about the class labels as possible.
 
 Having fewer features which are informative enough leads to three direct benefits.
 First, the resulting model is far less complex and as~such easier to~interpret.
 Second, The~model also generalises better, because the~risk of overfitting is lower.
 Overfitting happens when the~model recognises irregularities in training data
 and learns to recognise individual instances.
-It should instead approximate the~general concept of the classification rules
-to~be able to~classify new instances.
+It should instead approximate the~general concept to~be able to~classify new instances.
 Lastly, fewer features result in shorter training time.
 
 Three methods of feature selection are generally recognised; filters, wrappers and embedded methods.
@@ -94,13 +94,11 @@ Even though the solution to partially separate the two clusters exist,
 no filter will choose either feature, because individually they are useless.
 
 Another example of non-optimality is
-when there are features such that any single feature is individually sufficient to separate the data.
+features such that any single feature is individually sufficient to separate the data.
 Optimal solution is  to choose just one of them.
 However, any filter will choose all of them, because separately they are all useful.
 This problem can be partially solved by the advanced method described in \autoref{subsubsec:mi}.
 However, it increases the time complexity, which is the biggest advantage of filters.
-
-
 
 %reverse example
 %Suppose there are highly correlated features,

@@ -24,6 +24,16 @@ Third, a review can quickly become obsolete or irrelevant.
 Fourth, what is relevant to some, may not be to others.
 All this also makes the task hard even for human operators and as such hard to evaluate our programme selecting useful reviews.
 
+Also, the form and language of reviews is very specific.
+\citet{Song14} define it as a new genre short text.
+Short text is used in e-commerce systems and online communication in general.
+It is usually up to 200 characters per document.
+It is characterizes by its sparsity, free form and being large-scale and in realtime.
+Although an average review in our data has 526 characters, we consider this short text.
+First, it fullfills other characteristics.
+Second, the bounds are not clearly defined.
+An example of another short text system is Instant Messaging software Windows Live Messenger allowing up to 400 characters.
+
 In this thesis, we try to address the issue of saying whether a review is useful.
 We focus on data set containing reviews of restaurants.
 Since it is hard to evaluate usefulness of a review, we use data where reviews can be manually marked by users as useful.
@@ -50,3 +60,24 @@ The results can serve as a guide when implementing a real review system.
 \todoA{list of chapters what is where}
 
 \todoA{add some sources doing the same}
+
+\section{Related Work}
+
+A lot of research has been done in short text classification.
+Executive summary can be found in \citet{Song14}.
+They define short text as a new genre; listing its characteristics, summarizing possible approaches to short text classification and evaluating performance.
+
+One of the well studied data is tweets on Twitter like in \citep{sriram2010short}.
+Reviews are to author's knowledge less studied.
+One of the relevant papers is \citet{ganu2009beyond}.
+They discuss the difficulties of selecting useful restaurant reviews.
+Unlike this thesis, they do not classify reviews as a whole, but instead try to find reviews containing topics such as food or service.
+The main attempt is to find some structure in the free form.
+
+Although there is a lot of research focusing on sentiment analysis \todoA{some citations?},
+very little research focuses on usefulness.
+Relatively close research focuses on toxic speech.
+\citet{van2018challenges} talk about toxic speech as non-constructive and non-inclusive conversation including hate speech, threats, insults and in general fruitless conversation.
+Filtering out fruitless text is our focus to high extent too.
+Apart from already mentioned challenges they mention high varience in performance and difficulty to define the topic clearly.
+Basic review of toxic speech classification can be found in \citet{gunasekara2018review}.
