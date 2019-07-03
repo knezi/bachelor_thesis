@@ -3,7 +3,8 @@ config:
 tasks:
   - name: 'zero-R'
     classificator: 'baseline'
-    features: []
+    features:
+      - STARS
     preprocessing:
       - 'featurematrixconversion'
     extra_data: []
@@ -56,19 +57,19 @@ tasks:
     extra_data: []
     config: {}
 
-  - name: 'FastText'
-    classificator: 'fasttext'
-    features: []
-    preprocessing: ['dumpfasttext']
-    extra_data: ['text']
-    config:
-      path_prefix: 'data/data_fasttext'
-      executable: 'fastText/fasttext'
-      config_ft:
-        - '-epoch'
-        - '50'
-        - '-wordNgrams'
-        - '3'
+#  - name: 'FastText'
+#    classificator: 'fasttext'
+#    features: []
+#    preprocessing: ['dumpfasttext']
+#    extra_data: ['text']
+#    config:
+#      path_prefix: 'data/data_fasttext'
+#      executable: 'fastText/fasttext'
+#      config_ft:
+#        - '-epoch'
+#        - '50'
+#        - '-wordNgrams'
+#        - '3'
 
   - name: 'NB - basic'
     classificator: 'naivebayes'

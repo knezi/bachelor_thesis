@@ -80,6 +80,7 @@ uzivatelska doc??
 	 - tranovaci cas v zavislosti na poctu parametru a tak - zlepseni stoji za cas?
 
 ## psani
+ * podtrzitka??
 
 
 ### later
