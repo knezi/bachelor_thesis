@@ -1,7 +1,5 @@
 # bakalářka
 https://unix.stackexchange.com/questions/332641/how-to-install-python-3-6
-LOOP - fasttext
-
 /data/students/knizek
 
 ## styl psani
@@ -14,11 +12,8 @@ LOOP - fasttext
 - don't give summaries without thinking
 - use respectivelly carefully
 https://tex.stackexchange.com/questions/34155/autoref-does-not-capitalize-initial-character-in-sentence-when-referencing-lae
-## clanky
-tohle vypadata vazne dobre:
-	Short text classification in twitter to improve information filtering
-	short tet classification: A Survey Song
 
+## clanky
 error analysis - add section
 	http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.441.6742&rep=rep1&type=pdf
 
@@ -35,8 +30,6 @@ exploring data
 \bb - definice
 
 - nezalomitelne mezery
-- pomlcky bracho
-50 min
 - pdfa
 - vazba nemusi byt nerozebiratelna
 - pres 800 MB napsat HOffmanove
@@ -72,28 +65,23 @@ uzivatelska doc??
 
 
 ## experiment
-	 - zminit prumerny pocet slov a pismen
-	 - baseline
-	 - prior class distribution
-	 - test fasttext with diff parmas
-	 - different feature selection
-	 - tranovaci cas v zavislosti na poctu parametru a tak - zlepseni stoji za cas?
+ - zminit prumerny pocet slov a pismen
+ - baseline
+ - prior class distribution
+ - test fasttext with diff parmas
+ - different feature selection
+ - tranovaci cas v zavislosti na poctu parametru a tak - zlepseni stoji za cas?
 
 ## psani
- * podtrzitka??
-
-
 ### later
 * znimint knihovny?
 * add somewhere mention that we have linguistics and non-ling features - mainly we use geneea for analysis
-* check appendix
 * summary
-* diagrams
 * typography
 * details, credentials, my data
 * experiments conducted
-* appendix - data
 * fix citations
+* citace???
 
 - zminit jupyter a nastroje pouzite
  - pridat kecy o poctu ruznych review a tak, proc co jsem jak vybiral
@@ -103,8 +91,8 @@ uzivatelska doc??
  - taking only attributes with at least 10 and at least 50 reviews
  - measure if reducing non-restaurants helps (no, doesn't)
  - zmerit ruzne konfigurace (kosinova vzdalenost...)
+
 ### diagramy
- - tikz - nefunguje?? - zeptat
 https://grammarsherpa.wordpress.com/2011/08/13/capital-letters-in-titles-headline-styling/
 capitalization
 - dokumentace dat
@@ -114,7 +102,7 @@ capitalization
 
 ## programatorska dokumentace
 prdej nekam specifikaci vsech feature a preprocesoru a klasifikatoru a extra_data
-last preproces musi vratit tuple (whatever, label) for testing data - training go fuck yourself
+last preproces musi vratit tuple (whatever, label) for testing data - training go * yourself
 YAML speci:
 if you have extra_data, you need to get rid of them in preprocessing - classifier gets first element of the tuple
 	- for training also label
@@ -190,3 +178,11 @@ requirements.txt - python, setup.py
 5261669 506159364 2769188913
 
 526 chars, 96 words
+
+
+## zeptat
+- diagram obrazek - feature correlation
+- program sluggish
+- nezalomitelne mezery
+- citace - dost?
+- uzivatelska doc

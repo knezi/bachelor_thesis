@@ -1,13 +1,6 @@
 \chapter{Feature Engineering}
 \label{chap:fea}
 
-\todoA{FEATURE SELECTION FOR
-KNOWLEDGE DISCOVERY AND
-DATA MINING
-Huan Liu
-Hiroshi Motoda}
-
-
 We cannot use the raw data for training as it is.
 Instead, we represent each instance by a set of features;
 each feature expressing a certain property of the instance.
@@ -20,10 +13,17 @@ Nominal features are discrete and there is no relationship between their values.
 When a~feature is ordinal, it means it is discrete and also defines an ordering of the values.
 Continuous feature is any real-valued variable.
 
-In this thesis, we will utilize nominal and ordinal only.
-We will omit the order in ordinal features and work with them the same way as nominal.
+In this thesis, we utilize nominal and ordinal only.
+We omit the order in ordinal features and work with them the same way as nominal.
 This of course loses information conveyed in this ordering,
 but allows us easier feature manipulation.
+
+Feature engineering is a crucial part of the classification process,
+because even the best classifiers are helpless without good features.
+\citet{liu2012feature} even claim it is likely the most important part.
+For this reason, a lot of attention has been dragged towards choosing the right features
+and several techniques for doing so were introduced.
+
 
 
 \section{Extraction}
@@ -204,20 +204,19 @@ We will introduce a cost function to reflect this
 and~$\chi^2$~of the two variables will then be sum of the cost function over all cells.
 
 
-\todoA{aligning and crop excess vertical lines}
 \begin{table}[h!]
  \center
- \begin{tabular}{|l|l|c|c|c}
+ \begin{tabular}{ll|c|c|c}
  \cline{3-4}
         &       & \multicolumn{2}{c|}{label} & \\
         \cline{3-4}
         &       & yes        & no            & $P_Y$ \\
         \cline{1-4}
- credit & yes   & 25         & 5             & 0.30 \\
+	 \multicolumn{1}{|l|}{credit} & yes   & 25         & 5             & 0.30 \\
         \cline{2-4}
- card   & no    & 45         & 25            & 0.70 \\
+	 \multicolumn{1}{|l|}{card}   & no    & 45         & 25            & 0.70 \\
         \cline{1-4}
-        & $P_X$ & 0.50       & 0.50          & 1
+		& \multicolumn{1}{l}{$P_X$} & \multicolumn{1}{l}{0.50}       & \multicolumn{1}{l}{0.50}          & 1
  
  \end{tabular}
  \caption{$\chi^2$~Example}

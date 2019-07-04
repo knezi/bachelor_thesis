@@ -1,6 +1,8 @@
-\chapter*{Appendix A}
+\appendix
+\addappheadtotoc
+\chapter{Data Description}
 \label{app:a}
-\addcontentsline{toc}{chapter}{Appendix A}
+%\addcontentsline{toc}{chapter}{Appendix A}
 
 
 \section{Format of the Dataset}
@@ -99,8 +101,9 @@ Because we already use a spellchecker\footnote{see bellow}, we tried to use the 
 We computed the ratio of misspelled and correct words for English, German and French and picked the language with the lowest ratio.
 It worked surprisingly well, even though many English words such as ``credit card'' or ``hamburger'' are used in the other languages too.
 
-Note that we focus on restaurants only in this thesis, but in the dataset there are general businesses.
-However, we extracted about 206,000 reviews out of which about 177,000 are restaurants.
+Note that the dataset contains general businesses, but we focus on restaurants only.
+\todA{does not make any sense}
+The final reviews we utilize about 206,000 reviews out of which about 177,000 are restaurants.
 Because the number of non-restaurants is so low, we decided to treat all businesses the same way as restaurants.
 
 For easier manipulation, we denormalize the data and add information from spellchecker.
