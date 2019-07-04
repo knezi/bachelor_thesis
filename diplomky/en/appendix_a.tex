@@ -101,15 +101,15 @@ Because we already use a spellchecker\footnote{see bellow}, we tried to use the 
 We computed the ratio of misspelled and correct words for English, German and French and picked the language with the lowest ratio.
 It worked surprisingly well, even though many English words such as ``credit card'' or ``hamburger'' are used in the other languages too.
 
+\todoA{this is kind of weird}
 Note that the dataset contains general businesses, but we focus on restaurants only.
-\todA{does not make any sense}
-The final reviews we utilize about 206,000 reviews out of which about 177,000 are restaurants.
-Because the number of non-restaurants is so low, we decided to treat all businesses the same way as restaurants.
+Because the number of reviews for non-restaurants is less 30,000 out of 206,000 extracted reviews,
+we decided to treat all businesses the same way as restaurants.
 
 For easier manipulation, we denormalize the data and add information from spellchecker.
 We create an instance file which is in JSON lines containing an instance per line.
 An instance is a review with the element \texttt{business\_id} replaced by the business information.
-Also, we ran a spellchecker\footnote{url{https://aspell.net}} on every review and added the information of number of words and number of misspelled words to the review.
+Also, we ran a spellchecker\footnote{\url{https://aspell.net}} on every review and added the information of number of words and number of misspelled words to the review.
 An example of a full instance is bellow.
 
 \begin{code}
@@ -176,11 +176,6 @@ An example of a full instance is bellow.
 }
 \end{code}
 
-\todoA{add spellcheck mention - lang recognisition}
-
-
-TODO lanuage
-
 
 \section{Geneea Data}
 
@@ -212,4 +207,28 @@ experiments file	 & configures the experiments conducted \\
 \end{table}
 There sbe on line-by-line correspondence between the Geneea file and the data file prepared locally.
 
-\todoA{either filter out non-resta, or say it's negligible}.  
+\chapter{Yelp Open Dataset}
+\label{app:yelp_data}
+
+We attempt to build a system which selects useful reviews of restaurants from Yelp.
+Yelp is a US-based company whose goal is: ``to connect people with great local businesses.''\footnote{\url{https://yelp.com/about}}
+It provides both mobile and web interface listing businesses such as restaurants or shopping centres.
+Users can easily post a review for any business based on their recent visit.
+Its convenience and usefulness makes the platform very popular.
+
+There are three main reasons we chose Yelp reviews.
+
+First, this platform is very popular and as such has sufficient data.
+
+Secondly, the company publishes every year an open dataset which can be downloaded for academic
+purposes.
+It covers most information conveyed in their system ---  information about businesses and users, pictures taken by the users and textual reviews.
+The data is available for download and we can focus on building our programme, rather than obtaining data.
+
+Lastly, this dataset allows us to asses the needed properties of individual reviews.
+The platform not only allows users to post reviews, but also to asses other reviews in form of \emph{likes}.
+Each review has three buttons --- \emph{useful}, \emph{funny} and \emph{cool}.
+A user can express the property of a review by clicking on one of these buttons.
+Information how many times these buttons have been clicked is also present in the data.
+We use this for evaluating how well our algorithms perform.
+The description of the data format can be found in \autoref{sec:format}.

@@ -1,31 +1,31 @@
 \chapter*{Introduction}
 \addcontentsline{toc}{chapter}{Introduction}
 
+%Charming decore. Delicious food. Friendly staff. We'll certainly become repeat customers.", "useful": 2
+
+
 With growing popularity of storing and sharing more data on the internet, the biggest challenge
 for us is not to get enough information, but to find the exact information we need.
 This thesis tries to tackle one of the major issues of review systems.
 A review system is a platform for sharing experience among its users.
 It is particularly aimed at information that is hard to find in another way than from direct experience.
 The information is often subjective and relevant only in a narrow context.
-Review of a novel listing historical accuracy as an advantage may be interesting to a history teacher,
+A review of a novel praising historical accuracy advantage may be interesting to a history teacher,
 but not so much to someone who only searches for a gripping story.
 
 In particular, users use review systems for obtaining some information based on the experience of others.
 The users are often willing to spend only a couple of minutes on finding relevant information to them.
-Usually, the review systems have many reviews and review systems tries to improve the user experience by showing useful reviews first.
+Usually, the review systems contain many reviews and review systems tries to improve the user experience by showing useful reviews first.
 
-However, it is not obvious how to find useful reviews.
-First, we do not know the author and possibly have only a few reviews by the autor.
-Also, reviews by the same author can have different quality which is influenced by many factors,
-such as time spent on writing the review or wheter the actual experience contains some useful information.
-Therefore it is very hard to estimate author's reliability.
-Second, reviews are very short, often containing only one piece of information.
-Third, a review can quickly become obsolete or irrelevant.
-Fourth, what is relevant to some, may not be to others.
-All this also makes the task hard even for human operators and as such hard to evaluate our programme selecting useful reviews.
+A typical review of a restaurant looks like this:
 
-Also, the form and language of reviews is very specific.
-\citet{Song14} define it as a new genre short text.
+\begin{code}
+Charming decore. Delicious food. Friendly staff.
+We'll certainly become repeat customers.
+\end{code}
+
+It contains unformatted pieces of information, fragments of sentences or typos.
+In general, it can contain anything and \citet{Song14} define it as a new genre short text.
 Short text is used in e-commerce systems and online communication in general.
 It is usually up to 200 characters per document.
 It is characterizes by its sparsity, free form and being large-scale and in realtime.
@@ -34,18 +34,84 @@ First, it fullfills other characteristics.
 Second, the bounds are not clearly defined.
 An example of another short text system is Instant Messaging software Windows Live Messenger allowing up to 400 characters.
 
-In this thesis, we try to address the issue of saying whether a review is useful.
-We focus on data set containing reviews of restaurants.
-Since it is hard to evaluate usefulness of a review, we use data where reviews can be manually marked by users as useful.
-We use this information to assess how well our programme works.
-To a lessen degree, we select reviews that have been marked as ``funny'' and ``cool''.
+The reasons listed above make it difficult to work with short text.
+Furthermore, there are many factors contributing to the difficulty of finding useful reviews.
+First, we do not know the author and possibly have only a few reviews by the autor.
+Also, reviews by the same author can have different quality which is influenced by many factors,
+such as the time spent on writing the review or wheter the actual experience contains some useful information.
+Therefore it is very hard to estimate author's reliability.
+Second, reviews are very short, often containing only one piece of information.
+Third, a review can quickly become obsolete or irrelevant.
+Fourth, what is relevant to some, may not be to others.
+All this also makes the task hard even for human operators and as such hard to evaluate our programme selecting useful reviews.
 
-We use machine learning methods to solve this problem.
-To date, many approches to solve this have been introduced.
+We take reviews from Yelp, where users can flag other reviews as useful.
+A typical review flagged as useful looks like this:
+
+\begin{code}
+A proper greasy spoon.
+I was looking for a bacon flavoured hangover cure and I got one.
+And a proper builders mug of tea.
+Cheap as chips as well.
+\end{code}
+
+It clearly mentions the kind of the restaurant, what to seek there,
+who it can be for and price.
+
+On the other hand, a typical not-useful review looks like this:
+
+\begin{code}
+Awesome keg.. Always good, even with my own money!
+\end{code}
+
+It does only mention the place is good, but does not explain why --- price, friendly staff, location\dots.
+The mention about money is unclear.
+Does it mean the author has not got much money and therefore appreciate their cheap prices? Or something else?
+
+Sometimes the review is not of a big quality itself, but contains some piece of information which makes it useful.
+The review bellow is of a poor quality, not well formatted and only mentioning that we should not go there.
+However, the mention about the bouncer and the tip turns out to be very useful for many users,
+because it informs about the additional expenses added to the cost.
+
+\begin{code}
+Dont bother...this place is a dive!
+The bouncer demanded a tip, just to seat us...def seek elsewhere...
+you've been warned!!!
+\end{code}
+
+Of course, it is often near to impossible to decide whether a review is useful or not.
+The review bellow clearly expresses pros and cons.
+It is not a place to go when in hurry, not great for some delicious food,
+but it is alright when we are not in hurry and want to have a friendly service.
+However, the points are somewhat vague and the review is very subjective.
+
+\begin{code}
+It was OK. Service was friendly, but slow.
+Food was OK, but I don't think it was a good value.
+\end{code}
+
+
+More about the data and the platform can be found in \autoref{app:yelp_data}.
+
+Our objective is to utilize machine learning to predict the usefulness of a review even without having the information about the useful flag.
+To date, many approaches to solve this have been introduced.
 However, there is no clearly best performing algorithm for this context.
-Our main goal is to compare already existing approaches and compare them.
+Our main goal is to compare already existing approaches.
 The results can serve as a guide when implementing a real review system.
 
+\section{Roadmap}
+
+In \textbf{\autoref{chap:cls} Text Classification},
+
+In \textbf{\autoref{chap:fea} Feature Engineering},
+
+In \textbf{\autoref{chap:eval} Evaluation},
+
+In \textbf{\autoref{chap:arch} The Software Project Architecture},
+
+In \textbf{\autoref{chap:exp} Experiments conducted},
+
+todo appendices
 
 
 \todoA{conventions}

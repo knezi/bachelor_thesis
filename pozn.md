@@ -72,6 +72,10 @@ uzivatelska doc??
  - different feature selection
  - tranovaci cas v zavislosti na poctu parametru a tak - zlepseni stoji za cas?
 
+ - velikost dat
+ - ficury - mi, chi^2
+ - algoritmy
+
 ## psani
 ### later
 * znimint knihovny?
@@ -181,8 +185,33 @@ requirements.txt - python, setup.py
 
 
 ## zeptat
-- diagram obrazek - feature correlation
+- diagram obrazek - feature correlation - v caption dodat zdroj
 - program sluggish
 - nezalomitelne mezery
 - citace - dost?
 - uzivatelska doc
+
+
+introduction
+ - clasif -> tex clasif -> reviews
+ - roadmap
+ 	- bullets
+ 
+ yelp - az do apendixu a i rozsirit
+  - priklady - uzitecny/neuzitecny
+
+
+shrnuti zacatek a konec kapitoly
+
+
+architektura
+ - intro
+ - high level + obrazek a pospat krabicky
+ - potom konfigurovatelnost a make a...
+ - samostatna stranka - conceptual overview - papir - 
+
+
+ * doknoci archit - graf
+ * strem do souboru ficur - dratuj
+ * pis
+ dokonci 14.7
