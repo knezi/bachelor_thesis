@@ -13,11 +13,11 @@ data/geneea.json: data/ids $(DATA_GEN_DEP)
 
 run: data/data.json data/geneea.json $(RUN_DEP)
 	mkdir -p graphs
-	./process_data.py experiments.yaml data/data.json data/geneea.json
+	./process_data.py experiments/experiments.yaml data/data.json data/geneea.json
 	
 run_sample: data/data_sample.json data/geneea_sample.json $(RUN_DEP)
 	mkdir -p graphs
-	./process_data.py experiments.yaml data/data_sample.json data/geneea_sample.json
+	./process_data.py experiments/experiments.yaml data/data_sample.json data/geneea_sample.json
 
 clean:
 	rm -f data/data_fasttext_model.{bin,vec} data/data_fasttext_train

@@ -1,5 +1,7 @@
 config:
   chunks: 10
+  mi: false
+  l_curves: false
 tasks:
   - name: 'zero-R'
     classificator: 'baseline'

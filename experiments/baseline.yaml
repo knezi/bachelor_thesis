@@ -1,0 +1,33 @@
+config:
+  chunks: 10
+  mi: true
+  l_curves: false
+tasks:
+  - name: 'one-R'
+    classificator: 'baseline'
+    features:
+     - UNIGRAMS
+#     - BIGRAMS
+#     - TRIGRAMS
+#     - FOURGRAMS
+#     - STARS
+#     - REVIEWLEN
+#     - SPELLCHECK
+#     - COSINESIM
+#     - TFIDF
+#     - ENTITIES
+    preprocessing:
+      - 'featurematrixconversion'
+    extra_data: []
+    config:
+      algorithm: 'one-R'
+
+graphs:
+  - name: 'baseline'
+    data:
+      zero-R:
+        - 'f_measure'
+        - 'accuracy'
+      one-R:
+        - 'f_measure'
+        - 'accuracy'

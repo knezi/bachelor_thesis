@@ -72,9 +72,38 @@ uzivatelska doc??
  - different feature selection
  - tranovaci cas v zavislosti na poctu parametru a tak - zlepseni stoji za cas?
 
- - velikost dat
- - ficury - mi, chi^2
+1st round
+ - baseline
+ - mi
+
+2nd round
+ - ficury - naive bayes
+	- ruzne sady
+	  	- top n dle tfidf
+		- top n dle mutual info n-grams
+		- top n entit
+
+3rd round - this is a big maybe
+ - best performing
+ 	- chi^2 vs mi
+
+round
  - algoritmy
+  - fasttext
+  - naive
+  - decision tree
+  - pca
+	- svm???
+
+
+last round
+ - velikost dat
+
+
+ Zacit psat ze jsme pustili baseline, ale f-measure neni definovan
+ Nekolik round - mi, pak sady
+ Chteli bychom n*n but infeasible
+ learnign curves at the end (asi je i pridat do evaluace??)
 
 ## psani
 ### later
@@ -105,6 +134,8 @@ capitalization
 
 
 ## programatorska dokumentace
+- pridej yaml - compute mutula info
+			  - learnign curves - space size test
 prdej nekam specifikaci vsech feature a preprocesoru a klasifikatoru a extra_data
 last preproces musi vratit tuple (whatever, label) for testing data - training go * yourself
 YAML speci:
@@ -132,9 +163,7 @@ graphs : [
 ]
 
 ## programovani
-* vytvorit analyzu geneea pro nova data
-* data jsou pripravena jako data.json a ids
-* zkontroluj process a jestli to matchuje
+* exper_file - bool mutual info, learning curves
 * prodej pocitani a agregovani statistik
 * debian python3.6
 * pridej do readme kam patri data

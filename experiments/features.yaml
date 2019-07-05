@@ -1,0 +1,50 @@
+config:
+  chunks: 10
+  mi: true
+  l_curves: false
+tasks:
+  - name: 'unigrams'
+    classificator: 'naivebayes'
+    features:
+     - UNIGRAMS
+    preprocessing: []
+    extra_data: []
+    config: {}
+  - name: 'tfidf'
+    classificator: 'naivebayes'
+    features:
+     - TFIDF
+    preprocessing: []
+    extra_data: []
+    config: {}
+  - name: '{uni,bi}grams'
+    classificator: 'naivebayes'
+    features:
+     - UNIGRAMS
+     - BIGRAMS
+    preprocessing: []
+    extra_data: []
+    config: {}
+  - name: 'entities'
+    classificator: 'naivebayes'
+    features:
+     - ENTITIES
+    preprocessing: []
+    extra_data: []
+    config: {}
+
+graphs:
+  - name: 'text_features'
+    data:
+      unigrams:
+        - 'f_measure'
+        - 'accuracy'
+      tfidf:
+        - 'f_measure'
+        - 'accuracy'
+      \{uni,bi}grams:
+        - 'f_measure'
+        - 'accuracy'
+      entities:
+        - 'f_measure'
+        - 'accuracy'

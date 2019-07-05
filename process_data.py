@@ -5,7 +5,7 @@
 
 # It is possible to utilize profiler by uncommenting the corresponding lines
 # at the end of the file
-
+import numpy as np
 import sys
 from collections import defaultdict
 
@@ -15,12 +15,15 @@ from functools import reduce
 from math import log2, ceil
 
 from nltk.metrics import scores
+from scipy import sparse
+from sklearn.feature_selection import mutual_info_classif
 from typing import DefaultDict, Dict, List, Tuple, Set
 
 import classifiers
 import preprocessors
 from classifiers.classifierbase import ClassifierBase
 from load_data import Data, SampleTypeEnum, FeatureSetEnum, LikeTypeEnum
+from preprocessors import featurematrixconversion
 from preprocessors.preprocessingbase import PreprocessorBase
 from my_statistics import DataGraph
 
@@ -113,6 +116,32 @@ def main(config: argparse.Namespace) -> None:
     #         del self.gram_words[w]
     #
     # self.gram_words = frozenset(self.gram_words.keys())
+
+    # calculate mutual information of all features if wanted
+    # and dump it into text files
+    if experiments['config']['mi']:
+        for x in FeatureSetEnum:
+            # get data
+            data.set_statfile(f'mi_{x}')
+            data.print(f'Mutual Information of {x}.')
+            train = data.get_feature_dict(SampleTypeEnum.TRAIN, {x})
+            test = data.get_feature_dict(SampleTypeEnum.TEST, {x})
+            instances = train + test
+
+            # get matrix
+            matrix_convertor = featurematrixconversion.Preprocessor({})
+            vector_instances = matrix_convertor.process(instances, SampleTypeEnum.TRAIN)
+
+            # calculate mutual info
+            matrix_gen, labels_gen = zip(*vector_instances)
+            matrix = sparse.vstack(matrix_gen)
+            labels = list(labels_gen)
+            mi = mutual_info_classif(matrix, labels)
+
+            # dump data
+            for f_name, f_mi in zip(matrix_convertor.all_fs, mi):
+                data.print(f'{f_name} {f_mi}')
+
     while True:
         train_size: int \
             = int(datasize - datasize / experiments['config']['chunks'])
@@ -131,26 +160,26 @@ def main(config: argparse.Namespace) -> None:
             test_set = data.get_feature_dict(SampleTypeEnum.TEST, features,
                                              ex['extra_data'])
 
-            for t_size in map(lambda x: min(2 ** x, train_size),
-                              range(1, train_size_log)):
-                train_set_restr = train_set[:t_size]
-                test_set_copy = test_set[:]
+            # for t_size in map(lambda x: min(2 ** x, train_size),
+            #                   range(1, train_size_log)):
+            #     train_set_restr = train_set[:t_size]
+            #     test_set_copy = test_set[:]
 
-                # preprocess data
-                for pp in ex['preprocessing']:
-                    prep: PreprocessorBase \
-                        = getattr(preprocessors, pp).Preprocessor(ex['config'])
-                    train_set_restr = prep.process(train_set_restr, SampleTypeEnum.TRAIN)
-                    test_set_copy = prep.process(test_set_copy, SampleTypeEnum.TEST)
+            # preprocess data
+            for pp in ex['preprocessing']:
+                prep: PreprocessorBase \
+                    = getattr(preprocessors, pp).Preprocessor(ex['config'])
+                train_set = prep.process(train_set, SampleTypeEnum.TRAIN)
+                test_set = prep.process(test_set, SampleTypeEnum.TEST)
 
-                cls: ClassifierBase \
-                    = getattr(classifiers, ex['classificator']).Classifier(ex['config'])
-                cls.train(train_set_restr)
+            cls: ClassifierBase \
+                = getattr(classifiers, ex['classificator']).Classifier(ex['config'])
+            cls.train(train_set)
 
-                evaluation: dict \
-                    = compute_evaluation_scores(cls, test_set_copy, LikeTypeEnum.USEFUL)
+            evaluation: dict \
+                = compute_evaluation_scores(cls, test_set, LikeTypeEnum.USEFUL)
 
-                stats.add_points(t_size, ex['name'], evaluation)
+            stats.add_points(len(train_set), ex['name'], evaluation)
 
         if not data.prepare_next_dataset():
             break
@@ -172,11 +201,11 @@ if __name__ == '__main__':
     argparser.add_argument('geneea_file', type=str,
                            help='Geneea data file.')
 
-    import cProfile
-    pr = cProfile.Profile()
-    pr.enable()
+    # import cProfile
+    # pr = cProfile.Profile()
+    # pr.enable()
 
     main(argparser.parse_args(sys.argv[1:]))
 
-    pr.disable()
-    pr.print_stats(sort="calls")
+    # pr.disable()
+    # pr.print_stats(sort="calls")

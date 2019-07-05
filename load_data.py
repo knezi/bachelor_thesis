@@ -162,6 +162,7 @@ class FeatureSetEnum(Enum):
     COSINESIM = auto()
     TFIDF = auto()
     ENTITIES = auto()
+    SENTIMENT = auto()
 
 
 @unique
@@ -452,6 +453,15 @@ TODO
         """
         print(*line, file=self.stats)
 
+    def set_statfile(self, name: str) -> None:
+        """Set statfile to be used by self.print
+
+        :param name: relative path to the stat directory
+        """
+        self.stats.close()
+        self.stats = open(os.path.join(self._statPath, name), 'w')
+
+
     def add_ngram(self, features: dict, tokens: List[str], n: int) -> None:
         """Add n-gram (specified in arg) into the given feature_dict.
 
@@ -494,7 +504,6 @@ TODO
 
         # GENERAL NON-TEXTUAL FEATURES
         if FeatureSetEnum.STARS in fs_selection:
-            # TODO convert to float/int + add no?
             features[f'stars({row.stars})'] = 'Yes'
             features['stars'] = row.stars
             features['extreme_stars'] = False if 2 <= row.stars <= 4 else True
@@ -567,8 +576,8 @@ TODO
                 features[f'cos_sim0.9_{i}'] = True if x > 0.9 else False
                 features[f'cos_sim0.95_{i}'] = True if x > 0.95 else False
 
-        # TODO linguistics features
-        # sentiment
+        if FeatureSetEnum.SENTIMENT in fs_selection:
+            features['sentiment'] = row['sentiment']
 
         return features
 
