@@ -1,6 +1,6 @@
 config:
   chunks: 10
-  mi: true
+  mi: false
   l_curves: false
 tasks:
   - name: 'unigrams'
