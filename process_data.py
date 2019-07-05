@@ -147,9 +147,9 @@ def main(config: argparse.Namespace) -> None:
             = int(datasize - datasize / experiments['config']['chunks'])
         train_size_log: int = int(ceil(log2(train_size)) + 1)
 
-        # TODO wtf is this?
-        data.max_tfidf = 10
-        data.max_ngrams = 10
+        # TODO TWEAK
+        data.max_tfidf = 1000
+        data.max_ngrams = 1000
 
         for ex in experiments['tasks']:
             # convert features to set:
