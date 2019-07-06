@@ -526,7 +526,8 @@ TODO
                 raise exceptions.InsufficientDataException('TF-IDF not initialized.')
             tfidf_vector = self.tfidf.transform([row.text]).toarray()[0]
             for fs, val in zip(self.tfidf.get_feature_names(), tfidf_vector):
-                features[f'tf_idf({fs})'] = int(bool(val))
+                if bool(val):
+                    features[f'tf_idf({fs})'] = int(bool(val))
 
         # ENTITIES
         if FeatureSetEnum.ENTITIES in fs_selection:
