@@ -163,14 +163,13 @@ graphs : [
 ]
 
 ## programovani
-* exper_file - bool mutual info, learning curves
+* exper_file - learning curves
 * prodej pocitani a agregovani statistik
 * debian python3.6
 * pridej do readme kam patri data
 
 ### later
 * make - expects data in ../data/datset
-* pridej klasifikovanou tridu do configu yamlu??
 * add switch to do graphs and statisics (on one random dataset)
 * dokumentovani kodu
 * Information Gain - snizit dimenzionality - or mutual information?
@@ -221,17 +220,7 @@ requirements.txt - python, setup.py
 - uzivatelska doc
 
 
-introduction
- - clasif -> tex clasif -> reviews
- - roadmap
- 	- bullets
- 
- yelp - az do apendixu a i rozsirit
-  - priklady - uzitecny/neuzitecny
-
-
 shrnuti zacatek a konec kapitoly
-
 
 architektura
  - intro
@@ -239,8 +228,10 @@ architektura
  - potom konfigurovatelnost a make a...
  - samostatna stranka - conceptual overview - papir - 
 
-
  * doknoci archit - graf
  * strem do souboru ficur - dratuj
  * pis
  dokonci 14.7
+
+
+ add to readme - mkdir graphs
