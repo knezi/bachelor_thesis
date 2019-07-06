@@ -1,0 +1,127 @@
+\chapter{Data Preprocessing}\label{app:prepr}
+
+One of the biggest problems with short text and online platforms in general is
+the fluctuating quality.
+In this chapter, we discuss how to filter reviews to get more reliable data with
+less noise.
+Next, we describe how we prepared the data to be directly fed into the classifiers.
+
+
+\section{Filtering Reviews}
+
+The number of likes is a problematic metric for usefulness.
+Different reviews having the same ``level'' of usefulness can vary greatly
+in the number of likes.
+One of the biggest influences is the age of reviews and online popularity.
+Also, the social group visiting the business has a considerable impact.
+Locals going to the same pub for years will not produce nearly as much traffic
+as a touristic spot.
+Reviews for a club for young people will have different rates of visits and likes
+than a place for families.
+
+Using all reviews directly would therefore be problematic.
+We tried to reduce the variance by filtering out reviews.
+We use only reviews belonging to businesses with at least 50 reviews and 10 attributes.
+This is to omit infrequently visited restaurants where the number of likes could fluctuate a lot.
+Also, it avoids restaurants with incomplete online profile which may be less likely to be reviewed.
+Lastly, we dropped all reviews with one and only one like.
+One like may be only a missclick or some other noise.
+
+To avoid the problem with age, we used only reviews posted in a very specific date frame
+--- between 1$^{st}$ May 2012 and 1$^{st}$ December 2012.
+Thanks to this all reviews have been exposed for the same time to receive any likes.
+
+Note that the dataset contains general businesses, but we focus on restaurants only.
+When we analysed filtered reviews,
+there were less than 30,000 reviews for non-restaurants out of total 206,000.
+Because the rate is rather small,
+we decided to treat all businesses the same way as restaurants.
+
+Next, we needed to remove reviews in other language, because
+we focus on English text only.
+Besides English, two other languages (German and French) are frequently present.
+We decided to filter out the two languages.
+Other languages have been left intact, because they presence is not significant.
+
+For language recognition, we used very simple approach.
+We used the ratio of incorrect words to detect language.
+We computed the ratio of misspelled and correct words for English, German and French and
+picked the language with the lowest ratio.
+It worked surprisingly well, even though many English words such as ``credit card'' or ``hamburger'' are used in the other languages too.
+
+\section{Data Preparation}
+
+For easier manipulation, we denormalized the data.
+Also, we ran a spellchecker\footnote{\url{https://aspell.net}} on every review and added the information of number of words and number of misspelled words to the review.
+We used the rate of misspelled words as a feature.
+
+The resulting data has been saved in an instance file,
+which is in JSON lines containing an instance per line.
+An instance is a review with the element \texttt{business\_id} replaced by the business information.
+An example of a full instance is bellow.
+
+\begin{code}
+{
+	"review_id": "---nya_pjxWmNFDFyAcfsA",
+	"user_id": "5QOtcHU1SoqEqBCRR6FhsA",
+	"business_id": {
+		"business_id": "zQNJwaWR1M1zDjLNVJiNEw",
+		"name": "Pizza M",
+		"neighborhood": "",
+		"address": "208 W Main St",
+		"city": "Urbana",
+		"state": "IL",
+		"postal_code": "61801",
+		"latitude": 40.112655,
+		"longitude": -88.2093142,
+		"stars": 3.5,
+		"review_count": 60,
+		"is_open": 1,
+		"attributes": {
+			"RestaurantsTableService": false,
+			"Alcohol": "beer_and_wine",
+			"Caters": false,
+			"HasTV": false,
+			"RestaurantsGoodForGroups": true,
+			"NoiseLevel": "average",
+			"WiFi": "free",
+			"RestaurantsAttire": "casual",
+			"RestaurantsReservations": false,
+			"OutdoorSeating": false,
+			"BusinessAcceptsCreditCards": true,
+			"RestaurantsPriceRange2": 2,
+			"BikeParking": true,
+			"RestaurantsDelivery": true,
+			"RestaurantsTakeOut": true,
+			"GoodForKids": true,
+			"BusinessParking": {
+				"garage": true,
+				"street": true,
+				"validated": false,
+				"lot": false,
+				"valet": false
+			}
+		},
+		"categories": ["Restaurants", "Pizza"],
+		"hours": {
+			"Monday": "11:00-21:00",
+			"Tuesday": "11:00-21:00",
+			"Friday": "11:00-22:00",
+			"Wednesday": "11:00-22:00",
+			"Thursday": "11:00-22:00",
+			"Sunday": "11:00-21:00",
+			"Saturday": "11:00-23:00"
+		}
+	},
+	"stars": 1,
+	"date": "2012-06-27",
+	"text": "Another case of the Emperor's New Clothes...",
+	"useful": 10,
+	"funny": 2,
+	"cool": 3,
+	"words": 57,
+	"incorrect_words": 0
+}
+\end{code}
+
+

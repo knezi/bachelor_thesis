@@ -46,6 +46,7 @@ Fourth, what is relevant to some, may not be to others.
 All this also makes the task hard even for human operators and as such hard to evaluate our programme selecting useful reviews.
 
 We take reviews from Yelp, where users can flag other reviews as useful.
+It works in the same manner as Facebook likes.
 A typical review flagged as useful looks like this:
 
 \begin{code}
@@ -91,25 +92,51 @@ Food was OK, but I don't think it was a good value.
 \end{code}
 
 
-More about the data and the platform can be found in \autoref{app:yelp_data}.
+More about the data and the platform can be found in \autoref{app:dataset}.
 
-Our objective is to utilize machine learning to predict the usefulness of a review even without having the information about the useful flag.
-To date, many approaches to solve this have been introduced.
-However, there is no clearly best performing algorithm for this context.
-Our main goal is to compare already existing approaches.
+Our objective is to create a software package that predicts whether some users would flag a review as a useful.
+This prediction can be used for filtering out only useful reviews in a real review system.
+
+For predicting the usefulness, we take the text of reviews and utilize machine learning methods.
+This is a well studied field and to date, many approaches to solve this have been introduced.
+However, there is no clearly best performing algorithm for particular application.
+Our main goal is therefore to compare already existing approaches.
 The results can serve as a guide when implementing a real review system.
 
 \section{Roadmap}
 
-In \textbf{\autoref{chap:cls} Text Classification},
+In \textbf{\autoref{chap:cls} Text Classification}, we define our task properly as text classification and briefly mention classification in different contexts.
+We describe the utilized machine learning methods with examples of concrete usage.
 
-In \textbf{\autoref{chap:fea} Feature Engineering},
+In \textbf{\autoref{chap:fea} Feature Engineering}, we discuss several possibilities how to extract properties called features from text and how to filter only those useful.
+Next, we mention dimension reduction as a possibility to reduce the complexity of our solution.
+Finally, we introduce several commonly used features and filtering methods.
+To a lessen degree, we also talk about non-textual data as well.
 
-In \textbf{\autoref{chap:eval} Evaluation},
+In \textbf{\autoref{chap:eval} Evaluation}, we introduce methods for comparing different algorithms.
+We describe what requirements we expect a good algorithm to satisfy and how to use the data for comparing performance.
+Lastly, we mention commonly used metrics to give us some easily comparable numbers.
 
-In \textbf{\autoref{chap:arch} The Software Project Architecture},
+In \textbf{\autoref{chap:arch} The Software Project Architecture}, we describe at the conceptual level our software package.
+We describe individual modules, how they interact and the overall project structure.
+We also talk about different files and configuration the project needs and commands used for running the project.
 
-In \textbf{\autoref{chap:exp} Experiments conducted},
+In \textbf{\autoref{chap:exp} Experiments conducted}, we outline the experiments we conducted.
+We describe combinations of algorithms we used and discuss the results.
+We justify the compromises made for performance reasons.
+Finally, we talk about the impact of size of the data to the performance.
+\todoA{maybe also the training time?}
+
+In \textbf{\autoref{app:dataset} Yelp Dataset},
+we describe the source of the data and its exact format.
+We demonstrate how reviewing of businesses work and
+the exact format of the data.
+
+In \textbf{\autoref{app:prepr} Data Preprocessing},
+we describe the challenge of obtaining reliable data and
+what preprocessing has been done to allow easier manipulation and increase in reliability of the usefulness metrics.
+
+In \textbf{\autoref{app:geneea} Geneea Data},
 
 todo appendices
 

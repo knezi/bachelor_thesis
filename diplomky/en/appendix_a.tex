@@ -1,20 +1,65 @@
-\appendix
-\addappheadtotoc
-\chapter{Data Description}
-\label{app:a}
+\chapter{Yelp Dataset}\label{app:dataset}
 %\addcontentsline{toc}{chapter}{Appendix A}
 
+Yelp is a US-based company whose goal is: ``to connect people with great local businesses.''\footnote{\url{https://yelp.com/about}}
+It provides both mobile and web interface listing businesses such as restaurants or shopping centres.
+Users can easily post a review for any business based on their recent visit.
+Its convenience and usefulness makes the platform very popular.
+
+It works in a similar manner like other recommnedation systems such as IMDB\footnote{Internet Movie Database \url{https://www.imdb.com/}} or
+TripAdvisor.\footnote{\url{https://www.tripadvisor.com}}
+There are restaurant profiles to which users can add reviews.
+Users can search for restaurants based on various parameters as shown in \autoref{fig:filters}.
+
+\begin{figure}[ht]\centering
+\includegraphics[width=130mm]{../img/filters.png}
+\caption{Seeking restaurants with parameters}
+\label{fig:filters}
+\end{figure}
+
+An example of a profile is shown in \autoref{fig:dobra_trafika}.
+On the sides, various information such as price range or opening time is shown.
+The main part is devoted to reviews.
+Every review clearly displays the number of stars awarded and the text.
+Also, Yelp already works with some sort of usefulness,
+because two reviews have been hidden as can be seen in the bottom of the picture.
+
+Yelp also allows users to flag properties of other reviews in the form of \emph{likes}.
+Each review has three buttons --- \emph{useful}, \emph{funny} and \emph{cool} as can be seen in \autoref{fig:dobra_trafika}.
+A user can vote for the property of a review by clicking on one of these buttons.
+
+\begin{figure}[ht]\centering
+\includegraphics[width=130mm]{../img/dobra_trafika.png}
+\caption{An example of an online profile}
+\label{fig:dobra_trafika}
+\end{figure}
+
+There are three main reasons we chose Yelp reviews.
+
+First, this platform is very popular and as such has sufficient data.
+
+Secondly, the company publishes every year an open dataset which can be downloaded for academic
+purposes.
+It covers most information conveyed in their system ---  information about businesses and users, pictures taken by the users and textual reviews.
+The data is available for download and we can focus on building our programme, rather than obtaining data.
+
+Lastly, the dataset contains the information how many times the like buttons have been clicked on.
+This allows us to asses the needed properties of individual reviews and
+we use it to distinguish useful and not-useful reviews.
 
 \section{Format of the Dataset}
 \label{sec:format}
 
 The Yelp Dataset contains various files.
-We will use files \texttt{review.json} and \texttt{business.json}.
-The former contains reviews.
-Review is represented by JSON and there is one review per line\footnote{In fact, it is JSON lines format --- \url{https://jsonlines.org}}.
-Every review contains unique ID, user ID, business ID which is a reference to a business in file \texttt{business.json}.
-It also contains data about the review itself; review text, stars, date of publishing and number of individual likes it received so far.
-An example of pretified review is in \todoA{ref to reivew}.
+We use files \texttt{review.json} and \texttt{business.json}.
+The former contains reviews represented by JSON.
+There is one review per line.\footnote{In fact, it is JSON lines format --- \url{https://jsonlines.org}}
+
+Every review contains unique ID and business ID which is a reference to a business in file \texttt{business.json}.
+It also contains data about the review itself; review text, date of publishing and number of individual likes it received so far.
+Also, every review is acompanied by a star rating.
+The interval is one to five stars; five being the best.
+An example of a pretified review is bellow.
 
 \begin{code}
 {
@@ -86,149 +131,18 @@ An example of a business can be found bellow.
 }
 \end{code}
 
-\section{Data Preprocessing}
+There are other files that could contain potentially useful information.
+The file \texttt{user.json} is possibly interesting, because it contains information about users.
+There is a cross reference from reviews to users in the same manner as businesses,
+so we could get potentially useful information for every review;
+for exampe the number of reviews already posted by the author or
+how long the poster has been registred on Yelp.
 
-This thesis focuses on text classification and therefore we did not want to use unnecessary data.
-At the end, we used business information only for checking the type of business and whether its reviews are reliable.
-We use only reviews belonging to businesses with at least 50 reviews and 10 attributes.
-This is to omit infrequently visited restaurants where the number of likes could fluctuate a lot.
+We decided not to use this file for three main reasons.
+First, the data is very sparse and it would be hard to avoid overfitting or gain significant improvement.
+There is a lot of information about users resulting in very big denormalized data
+and as such hard to work with.
+Lastly and most importantly, this thesis focuses on extracting information from text rather than from metadata.
+For this reason we also used business information only for filtering reviews,
+but not for the actual classification.
 
-We also wanted to focus on English text.
-Besides English, two other languages (German and French) were frequently present.
-We decided to filter out the two languages and keep other languages, because they presence is not significant.
-We tried very simple approach.
-Because we already use a spellchecker\footnote{see bellow}, we tried to use the ratio of incorrect words to detect language.
-We computed the ratio of misspelled and correct words for English, German and French and picked the language with the lowest ratio.
-It worked surprisingly well, even though many English words such as ``credit card'' or ``hamburger'' are used in the other languages too.
-
-\todoA{this is kind of weird}
-Note that the dataset contains general businesses, but we focus on restaurants only.
-Because the number of reviews for non-restaurants is less 30,000 out of 206,000 extracted reviews,
-we decided to treat all businesses the same way as restaurants.
-
-For easier manipulation, we denormalize the data and add information from spellchecker.
-We create an instance file which is in JSON lines containing an instance per line.
-An instance is a review with the element \texttt{business\_id} replaced by the business information.
-Also, we ran a spellchecker\footnote{\url{https://aspell.net}} on every review and added the information of number of words and number of misspelled words to the review.
-An example of a full instance is bellow.
-
-\begin{code}
-{
-	"review_id": "---nya_pjxWmNFDFyAcfsA",
-	"user_id": "5QOtcHU1SoqEqBCRR6FhsA",
-	"business_id": {
-		"business_id": "zQNJwaWR1M1zDjLNVJiNEw",
-		"name": "Pizza M",
-		"neighborhood": "",
-		"address": "208 W Main St",
-		"city": "Urbana",
-		"state": "IL",
-		"postal_code": "61801",
-		"latitude": 40.112655,
-		"longitude": -88.2093142,
-		"stars": 3.5,
-		"review_count": 60,
-		"is_open": 1,
-		"attributes": {
-			"RestaurantsTableService": false,
-			"Alcohol": "beer_and_wine",
-			"Caters": false,
-			"HasTV": false,
-			"RestaurantsGoodForGroups": true,
-			"NoiseLevel": "average",
-			"WiFi": "free",
-			"RestaurantsAttire": "casual",
-			"RestaurantsReservations": false,
-			"OutdoorSeating": false,
-			"BusinessAcceptsCreditCards": true,
-			"RestaurantsPriceRange2": 2,
-			"BikeParking": true,
-			"RestaurantsDelivery": true,
-			"RestaurantsTakeOut": true,
-			"GoodForKids": true,
-			"BusinessParking": {
-				"garage": true,
-				"street": true,
-				"validated": false,
-				"lot": false,
-				"valet": false
-			}
-		},
-		"categories": ["Restaurants", "Pizza"],
-		"hours": {
-			"Monday": "11:00-21:00",
-			"Tuesday": "11:00-21:00",
-			"Friday": "11:00-22:00",
-			"Wednesday": "11:00-22:00",
-			"Thursday": "11:00-22:00",
-			"Sunday": "11:00-21:00",
-			"Saturday": "11:00-23:00"
-		}
-	},
-	"stars": 1,
-	"date": "2012-06-27",
-	"text": "Another case of the Emperor's New Clothes...",
-	"useful": 10,
-	"funny": 2,
-	"cool": 3,
-	"words": 57,
-	"incorrect_words": 0
-}
-\end{code}
-
-
-\section{Geneea Data}
-
-
-
-
-\section{Special Files}
-
-this probably should be moved to architecture
-
-In \autoref{chap:arch}, we refer to special files.
-Let us describe their exact format here.
-
-\begin{table}[h]
-
-\centering
-\begin{tabular}{ll}
-\toprule
-\textbf{name of file}& \textbf{purpose} \\
-\midrule
-instance file		 & stores instances in the final format \\
-intermediate file	 & used for generating Geneea file \\
-Geneea file			 & contains extra linguistics data for instances \\
-experiments file	 & configures the experiments conducted \\
-\bottomrule
-\end{tabular}
-
-\caption{File definition}\label{tab:files}
-\end{table}
-There sbe on line-by-line correspondence between the Geneea file and the data file prepared locally.
-
-\chapter{Yelp Open Dataset}
-\label{app:yelp_data}
-
-We attempt to build a system which selects useful reviews of restaurants from Yelp.
-Yelp is a US-based company whose goal is: ``to connect people with great local businesses.''\footnote{\url{https://yelp.com/about}}
-It provides both mobile and web interface listing businesses such as restaurants or shopping centres.
-Users can easily post a review for any business based on their recent visit.
-Its convenience and usefulness makes the platform very popular.
-
-There are three main reasons we chose Yelp reviews.
-
-First, this platform is very popular and as such has sufficient data.
-
-Secondly, the company publishes every year an open dataset which can be downloaded for academic
-purposes.
-It covers most information conveyed in their system ---  information about businesses and users, pictures taken by the users and textual reviews.
-The data is available for download and we can focus on building our programme, rather than obtaining data.
-
-Lastly, this dataset allows us to asses the needed properties of individual reviews.
-The platform not only allows users to post reviews, but also to asses other reviews in form of \emph{likes}.
-Each review has three buttons --- \emph{useful}, \emph{funny} and \emph{cool}.
-A user can express the property of a review by clicking on one of these buttons.
-Information how many times these buttons have been clicked is also present in the data.
-We use this for evaluating how well our algorithms perform.
-The description of the data format can be found in \autoref{sec:format}.
