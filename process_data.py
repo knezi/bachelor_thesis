@@ -140,7 +140,7 @@ def main(config: argparse.Namespace) -> None:
 
             # dump data
             for f_name, f_mi in zip(matrix_convertor.all_fs, mi):
-                data.print(f'{f_name} {f_mi}')
+                data.print(f'{f_name}	{f_mi}')
 
     while True:
         train_size: int \
