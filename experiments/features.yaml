@@ -42,7 +42,7 @@ graphs:
       tfidf:
         - 'f_measure'
         - 'accuracy'
-      \{uni,bi}grams:
+      '{uni,bi}grams':
         - 'f_measure'
         - 'accuracy'
       entities:
