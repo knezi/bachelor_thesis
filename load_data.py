@@ -300,7 +300,7 @@ TODO
             self._sample.add_chunk(
                 sample[chunk_no * chunk_size: (chunk_no + 1) * chunk_size])
         self._sample.start_iter()
-        self._regenerate_dictionaries()
+        self._regenerate_dictionaries(True)
 
         return chunk_size * chunks
 
@@ -595,7 +595,7 @@ TODO
         :param data: instance of DataGraph to be plotted"""
         self._statistics.plot(data)
 
-    def _regenerate_dictionaries(self) -> None:
+    def _regenerate_dictionaries(self, statistics=False) -> None:
         """Regenerates used n-grams, tfidf everytime data change.
 
         This can occur either when the training size is changed or a new
@@ -633,6 +633,8 @@ TODO
                      map(lambda i: set(i[0]),
                          self.get_raw_data(SampleTypeEnum.TRAIN,
                                            'entities')))
+        if statistics:
+            self.print(f'Number of unique entities: {len(self.used_entities)}')
 
         # TODO restrict used entities
         # TODO statistics

@@ -3,6 +3,15 @@ config:
   mi: true
   l_curves: false
 tasks:
+  - name: 'zero-R'
+    classificator: 'baseline'
+    features:
+      - STARS
+    preprocessing:
+      - 'featurematrixconversion'
+    extra_data: []
+    config:
+      algorithm: 'zero-R'
   - name: 'one-R'
     classificator: 'baseline'
     features:
