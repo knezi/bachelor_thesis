@@ -175,3 +175,19 @@ experiments file	 & configures the experiments conducted \\
 There sbe on line-by-line correspondence between the Geneea file and the data file prepared locally.
 
 
+The preprocessors are in the same order as in the experiment file.
+A preprocessor must be defined in the directory \texttt{preprocessors} and be a child of \texttt{preprocessors/preprocessingbase.py}.
+Also, its name must be added into \texttt{preprocessors/\_\_init\_\_.py}.
+
+Since the input and output formats of the pipeline units are arbitrary,
+it is up to the user to ensure compatibility of adjacent units.
+This holds except for the input of the first preprocessor and the output of the classifier.
+The first preprocessor in the pipeline must take feature\_dict with possibly additional data specified in \texttt{extra\_data} as returned by \texttt{load\_data.Data.get\_feature\_dict}.
+The classifier must return the predicted label.
+The output of training is not stored.
+Note that for most classifiers, it is needed to run conversion to matrix as a last preprocessor (\texttt{featurematrixconversion.py}).
+
+and classifier is called train and classify for
+training and testing data, respectively.
+The pipeline is the same for both training and testing data with the guarantee that
+training data is always passed first.

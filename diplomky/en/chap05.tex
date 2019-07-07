@@ -37,13 +37,13 @@ Information about classifier configuration is used to generate samples from \tex
 The samples have exactly the needed features for the particular classifier and necessary preprocessing is done
 resulting in \textit{preprocessed instances}.
 
-Preprocessed instances are used for training and testing the classifier.
-Testing set is used for evaluating.
+Preprocessed instances are used for training a model which is used for predicting test set.
+The predictions are used for evaluation performance.
 Evaluation results are saved into output files as defined in \textit{graphs specification} extracted from
 the \textit{experiments file}.
 
 
-\begin{figure}[h!]
+\begin{figure}[h!!]
     \centering
 	\includegraphics[width=\textwidth]{figures/conceptual_design.png}
 	\caption{Conceptual Design}\label{fig:conceptual_design}
@@ -95,56 +95,45 @@ Subsequently, it takes filtered reviews in the form of ID file to drop all unnec
 The result is stored in a file, which has to be transferred to the local computer in order to be able to continue with the next part.
 
 
+
+
+
 \subsection{Run Experiments}
 
-This entire part is handled by \texttt{process\_data.py}.
+This entire part is handled by \texttt{process\_data.py}, which executes other parts of the code.
+Loading data and generating samples is handled by \texttt{load\_data.py}.
+Preprocessing is defined in directory \texttt{preprocessors} and classification models in \texttt{classifiers}.
+Finally, creating statistics is handled by \texttt{my\_statistics.py}.
 
 
 \subsubsection{Load Data}
 
-Class \texttt{Data} is created by \texttt{process\_data.py}.
-It is defined in file \texttt{load\_data.py} and is used for loading data.
-It stores raw data in Pandas DataFrame to achieve easier manipulation without compromising performance.
+The \textit{instance} and \textit{filtered entities and sentiment} files are loaded and
+converted into full instances in memory.
+This is handled by class \texttt{Data}.
+Subsequently, splits are generated and stored in an instance of \texttt{Sample}.
+Splits are still raw data, features are generated in the next step.
 
-\texttt{process\_data.py} uses this class for generating samples and getting the right data.
-Whenever a new sample is generated, the raw data is filtered out and split into chunks.
-The chunks are stored in an instance of \texttt{Sample}.
-\texttt{Sample} still keeps only raw data.
-Anytime a dataset is accessed all features are regenerated to ensure everything is up-to-date.
+\subsubsection{Generate Samples}
 
+When \texttt{process\_data.py} loads classifier configuration,
+it uses the loaded instances to generate features for the train and test sets.
 
-\subsubsection{Conduct Experiments}
+\subsubsection{Run Experiments}
 
-Once all data is loaded in the memory, experiments are conducted.
-The file \texttt{process\_data.py} reads the experiments file, create instances of classifiers and preprocessors.
-These instances are then fed with data from the instance of \texttt{Sample}.
-All tasks are guaranteed to be run on the exactly same data to ensure comparability of results.
-
-Both training and testing is implemented by a pipeline.
+Running experiments is implemented as a pipeline being fed with the generated sets and outputting predicted labels.
 The units of the pipeline are preprocessors and a classifier.
-The preprocessors are in the same order as in the experiment file.
-A preprocessor must be defined in the directory \texttt{preprocessors} and be a child of \texttt{preprocessors/preprocessingbase.py}.
-Also, its name must be added into \texttt{preprocessors/\_\_init\_\_.py}.
+Preprocessors are implemented as children of \texttt{preprocessors/preprocessingbase.py} and classifiers
+as \texttt{classifiers/classifierbase.py}.
+The pipeline is first fed with training data to built a model.
+Subsequently, testing data is passed and predicted labels are stored.
 
-Since the input and output formats of the pipeline units are arbitrary,
-it is up to the user to ensure compatibility of adjacent units.
-This holds except for the input of the first preprocessor and the output of the classifier.
-The first preprocessor in the pipeline must take feature\_dict with possibly additional data specified in \texttt{extra\_data} as returned by \texttt{load\_data.Data.get\_feature\_dict}.
-The classifier must return the predicted label.
-The output of training is not stored.
-Note that for most classifiers, it is needed to run conversion to matrix as a last preprocessor (\texttt{featurematrixconversion.py}).
+The predicted labels are compared to the actual labels and several evaluation metrics are calculated.
+Those are stored in an instance of \texttt{DataGraph}, which serves as a buffer until all results are gathered.
 
-The pipeline is the same for both training and testing data with the guarantee that
-training data is always passed first and classifier is called train and classify for
-training and testing data, respectively.
+\subsubsection{Create Statistics}
 
-When all tasks are performed, results are output.
-All helpers classes for writing statistics are defined in \texttt{statistics.py}.
-For storing evaluation data, class \texttt{DataGraph} is used.
-It servers as a buffer for evaluation data and provides API for data manipulation.
+When all experiments are run, graph specification is read.
+Data from \texttt{DataGraph} is used to plot graphs as per the specification.
 An instance of this class is passed to \texttt{Statistics},
 which handles the actual data plotting and writing to files.
-
-
-
-
