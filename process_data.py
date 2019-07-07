@@ -142,14 +142,17 @@ def main(config: argparse.Namespace) -> None:
             for f_name, f_mi in zip(matrix_convertor.all_fs, mi):
                 data.print(f'{f_name}	{f_mi}')
 
+        data.set_statfile(f'statistics')
+
+    first_run: bool = True
+
     while True:
         train_size: int \
             = int(datasize - datasize / experiments['config']['chunks'])
         train_size_log: int = int(ceil(log2(train_size)) + 1)
 
-        # TODO TWEAK
-        data.max_tfidf = 1000
-        data.max_ngrams = 1000
+        data.max_tfidf = experiments['config']['max_tfidf']
+        data.max_ngrams = experiments['config']['max_ngrams']
 
         for ex in experiments['tasks']:
             # convert features to set:
@@ -159,6 +162,13 @@ def main(config: argparse.Namespace) -> None:
                                               ex['extra_data'])
             test_set = data.get_feature_dict(SampleTypeEnum.TEST, features,
                                              ex['extra_data'])
+
+            if first_run:
+                unique_features: set = set()
+                for inst in train_set:
+                    unique_features = unique_features.union(set(inst[0].keys()))
+                data.print(f'Number of unique features for {ex["name"]}: {len(unique_features)}')
+                unique_features = set()
 
             # for t_size in map(lambda x: min(2 ** x, train_size),
             #                   range(1, train_size_log)):
@@ -183,6 +193,7 @@ def main(config: argparse.Namespace) -> None:
 
         if not data.prepare_next_dataset():
             break
+        first_run = False
 
     # aggregate results here
     for g in experiments['graphs']:

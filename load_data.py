@@ -459,7 +459,7 @@ TODO
         :param name: relative path to the stat directory
         """
         self.stats.close()
-        self.stats = open(os.path.join(self._statPath, name), 'w')
+        self.stats = open(os.path.join(self._statPath, name), 'a')
 
 
     def add_ngram(self, features: dict, tokens: List[str], n: int) -> None:
@@ -610,6 +610,8 @@ TODO
         self.tfidf.fit(list(map(lambda a: a[0],
                                 self.get_raw_data(SampleTypeEnum.TRAIN,
                                                   'text'))))
+        if statistics:
+            self.print(f'Number of unique TF-IDF words: {len(self.tfidf.get_feature_names())}')
 
         # n-grams - mutual information
         vectorizer: CountVectorizer = CountVectorizer(tokenizer=tknz.tokenize)
@@ -626,6 +628,9 @@ TODO
         top_mi = top_n_indexes(mi, self.max_ngrams)
         ngrams = vectorizer.get_feature_names()
         self.used_ngrams = set(map(lambda i: ngrams[i], top_mi))
+
+        if statistics:
+            self.print(f'Number of unique unigrams: {len(self.used_ngrams)}')
 
         # geneea entities
         # convert lists of entities into set and then join them into one set

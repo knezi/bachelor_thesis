@@ -2,6 +2,8 @@ config:
   chunks: 10
   mi: true
   l_curves: false
+  max_ngrams: 200000
+  max_tfidf: 200000
 tasks:
   - name: 'zero-R'
     classificator: 'baseline'

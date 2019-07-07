@@ -2,20 +2,21 @@ config:
   chunks: 10
   mi: false
   l_curves: false
-  max_ngrams: 200000
-  max_tfidf: 200000
+  max_ngrams: 50000
+  max_tfidf: 1
 tasks:
-  - name: 'unigrams'
+  - name: '{uni,bi}grams'
     classificator: 'naivebayes'
     features:
      - UNIGRAMS
+     - BIGRAMS
     preprocessing: []
     extra_data: []
     config: {}
-  - name: 'tfidf'
+  - name: 'entities'
     classificator: 'naivebayes'
     features:
-     - TFIDF
+     - ENTITIES
     preprocessing: []
     extra_data: []
     config: {}
@@ -23,9 +24,12 @@ tasks:
 graphs:
   - name: 'text_features'
     data:
-      unigrams:
+      '{uni,bi}grams':
         - 'f_measure'
         - 'accuracy'
-      tfidf:
+      '{uni,bi}grams':
+        - 'f_measure'
+        - 'accuracy'
+      entities:
         - 'f_measure'
         - 'accuracy'
