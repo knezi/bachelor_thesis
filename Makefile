@@ -9,6 +9,7 @@ data/data.json data/ids: $(DATA_GEN_DEP)
 data/geneea.json: data/ids $(DATA_GEN_DEP)
 	# run geenea
 	echo 'Copy geneea.json data into `data/`, source ids are in `data/ids`'
+	echo 'Continue with enter.'
 	read
 
 run: data/data.json data/geneea.json $(RUN_DEP)

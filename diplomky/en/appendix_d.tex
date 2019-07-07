@@ -1,61 +1,54 @@
 \chapter{Package Technicalities}\label{app:techn}
 
-These parts are executed with make\footnote{url{https://www.gnu.org/software/make}} with dependencies properly set.
-The entire project can be therefore run simply by \texttt{make run}.
-
 The entire project runs in Python of version at least 3.6\footnote{\url{https://python.org}} and bash\footnote{\url{https://gnu.org/software/bash}}.
 The following libraries are used:
 
-\begin{itemize}
-\item nltk
-\item pandas
-\item numpy
-\item yaml
-\item scipy
-\item geneea-nlp-client
-\item gensim
-\end{itemize}
+\begin{table}[h]
+\centering
+\begin{tabular}{ll}
+\toprule
+\textbf{library} & \textbf{purpose} \\
+\midrule
 
-A new folder for statistics is created every run to prevent accidental overwriting of already obtained results.
-
-This part itself can be run by:
-
-\begin{code}
-make data/data.json
-\end{code}
+nltk & tokenizer, Na\"{i}ve Bayes\\
+pandas & DatFrame for storing raw data in memory\\
+scipy & sparse matrix for storing features\\
+yaml & parser for configuration file \\
+geneea-nlp-client & parser for loading Geneea analysis\\
+gensim & compute cosine similarity \todoA{unused} \\
+fasttext & classification model \\
+aspell & spell checking \\
 
 
-Preparation is executed by:
+\bottomrule
+\end{tabular}
 
-\begin{code}
-./denormalization/denormalize.sh ../data/dataset data/data.json data/ids
-\end{code}
+\caption{Used libraries}\label{tab:libs}
+\end{table}
 
-The first argument is a directory with extracted archive of the Yelp Dataset.
-The second argument is a path to the instance file and the last one to the intermediate file.
-The script itself filters out not-needed reviews.
-Also, it adds the information from the spell checker.
-Subsequently, it joins reviews and business by replacing business id by the actual data.
-The result is written in the instance file.
-Finally, it prepares list of all IDs of used reviews into the intermediate file one ID per line.
-The exact description of data and files format can be found in \autoref{app:a}.
-
-The Geneea analysis takes the text of the reviews and computes some additional linguistics data.
-It is done on a separate server for performance reasons.
-The geneea file is created and transferred to the local computer.
-Because of this, make only notifies users when it is needed to supply a new version of the geneea file.
-The resulting file must be named \texttt{data/geneea.json}.
-
-And can be run by:
+The project is executed with make\footnote{url{https://www.gnu.org/software/make}}.
+The entire project can be run by:
 
 \begin{code}
 make run
 \end{code}
 
+Or for demonstration running with a small subset of data:
+
+\begin{code}
+make run_sample
+\end{code}
+
+Because Geneea analysis is carried out remotely, \texttt{make} will prompt user for copying that file when appropriate.
+
+Results are stored in \texttt{graphs/\textit{timestamp}}.
+A new folder for statistics is created every run to prevent accidental overwriting of already obtained results.
+
+
 \section{Experiments File}
 
 This YAML\footnote{\url{https://yaml.org}}  file contains entire configuration of experiments conducted.
-It lists classification tasks and defines evaluation.
+It lists classification tasks and specifies graphs to be plotted.
 Each task is a definition of a classifier.
 Evaluation element is a definition what properties should be plotted in a graph.
 
@@ -67,6 +60,10 @@ An example file can be found bellow.
 \begin{code}
 config:
   chunks: 10
+  mi: true
+  l_curves: false
+  max_ngrams: 100
+  max_tfidf: 100
 tasks:
   - name: 'zero-R'
     classificator: 'baseline'
@@ -87,9 +84,28 @@ graphs:
         - 'f-measure'
 \end{code}
 
-The config section is another dictionary.
-It has only one element -- \texttt{chunks}.
-It specifies the argument~$k$~for k-fold cross-validation.
+The config section is a dictionary.
+It must contain the elements specified in \autoref{tab:config_yaml}.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{key} & \textbf{datatype} & \textbf{value} \\
+\midrule
+
+chunks & int & parameter $k$  k-fold crossvalidation\\
+mi & bool & if mutual information should be calculated\\
+l\_curves & bool & ordinary/learning curves evaluation\\
+max\_ngrams & int & number of unigrams used \\
+max\_tfidf & int & number of words for TF-IDF used\\
+
+\bottomrule
+\end{tabular}
+
+\caption{Config section}\label{tab:config_yaml}
+\end{table}
+
 
 The section \texttt{experiments} is a list of classification tasks.
 Each element is a dictionary specifying the exact parameters.
@@ -127,53 +143,14 @@ for each figure png and csv files will be created.
 Element \texttt{data} specifies what evaluation metrics for what classifiers will be used.
 It is a dictionary of experiment names, values being a list of all metrics to be output.
 
+
+
+
+
+TADY KONEc
+
 \autoref{tab:files} displays definitions of special files used for controlling the run of the software project.
 Their exact usage is explained in appropriate sections.
-
-\begin{table}[h]
-
-\centering
-\begin{tabular}{ll}
-\toprule
-\textbf{name of file}& \textbf{purpose} \\
-\midrule
-instance file		 & stores preprocessed instances \\
-intermediate file	 & used for generating Geneea file \\
-Geneea file			 & contains extra linguistics data for instances \\
-experiments file	 & configures the experiments conducted \\
-\bottomrule
-\end{tabular}
-
-\caption{File definition}\label{tab:files}
-\end{table}
-
-\todoA{add libraries used - as another appendix??}
-
-\section{Special Files}
-
-this probably should be moved to architecture
-
-In \autoref{chap:arch}, we refer to special files.
-Let us describe their exact format here.
-
-\begin{table}[h]
-
-\centering
-\begin{tabular}{ll}
-\toprule
-\textbf{name of file}& \textbf{purpose} \\
-\midrule
-instance file		 & stores instances in the final format \\
-intermediate file	 & used for generating Geneea file \\
-Geneea file			 & contains extra linguistics data for instances \\
-experiments file	 & configures the experiments conducted \\
-\bottomrule
-\end{tabular}
-
-\caption{File definition}\label{tab:files}
-\end{table}
-There sbe on line-by-line correspondence between the Geneea file and the data file prepared locally.
-
 
 The preprocessors are in the same order as in the experiment file.
 A preprocessor must be defined in the directory \texttt{preprocessors} and be a child of \texttt{preprocessors/preprocessingbase.py}.
