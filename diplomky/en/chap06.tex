@@ -1,4 +1,96 @@
-\chapter{Experiments conducted} \label{chap:exp}
+\chapter{Experiments Conducted}\label{chap:exp}
+
+In this chapter, we outline all experiments conducted and discuss the results.
+\todoA{az to bude hotove}
+
+Since the objective of this thesis is to compare several approaches,
+next step after building the architecture was to define sets of experiments and metrics to compare the results.
+Our original intention was to try all combinations of features, classifiers and other techniques.
+However, this turned out to be computationally infeasible.
+Instead, we tried promising subsets by only choosing the best variant out of each group and combine it.
+
+We performed the analysis in five rounds;
+each round compared variants s listed bellow:
+
+\begin{enumerate}
+	\item baseline; (plus compute mutual information)
+	\item different feature sets with Na\"{i}ve Bayes
+	\item feature selection algorithms
+	\item classifiers
+	\item size of training data
+\end{enumerate}
+
+
+\section{1st round --- Baseline}
+
+\section{2nd round --- Features}
+
+We split features in the sets defined in the two lists bellow.
+The first list contains existential features --- they express that certain phrase is present in the review.
+
+\begin{itemize}
+	\item UNIGRAMS --- top 200,000 unigrams according to mutual information
+	\item BIGRAMS --- bigrams consisting of top 50000 adjacent unigrams
+	\item TRIGRAMS  --- bigrams consisting of top 30000 adjacent unigrams
+	\item FOURGRAMS 
+	\item TFIDF  --- top 200,000 words
+	\item ENTITIES --- all entities as found by the Geneea analyzer
+\end{itemize}
+
+The threshold of n-grams ans TF-IDF were found experimentally to produce approximately the same number of features as entities.
+
+The second list contains threshold features --- they split reviews into groups based on some property reaching a threshold.
+
+\begin{itemize}
+	\item STARS 
+		\begin{itemize}
+			\item the number of stars; five groups
+			\item indicators for each stars number; five pairs one-vs-rest
+			\item extreme stars; one group 1 or 5 stars; the rest another group
+			\item the number of average stars for the business; five groups
+		\end{itemize}
+	\item REVIEWLEN 
+		\begin{itemize}
+			\item the number of words; three groups with thresholds 50 and 150
+			\item the number of words; five pairs with thresholds 35, 50, 75, 100 and 150
+		\end{itemize}
+	\item SPELLCHECK 
+		\begin{itemize}
+			\item the rate of misspelled words; five pairs with thresholds 0.02, 0.05, 0.1, 0.15 and 0.2
+			\item the number of misspelled words; four pairs with thresholds 5, 10, 15 and 20
+		\end{itemize}
+	
+	\item COSINESIM 
+\end{itemize}
+
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{feature set} & \textbf{meaning}\\
+\midrule
+UNIGRAMS & top 200,000 unigrams according to mutual information \\
+BIGRAMS & \\
+TRIGRAMS & \\
+FOURGRAMS & \\
+STARS & 
+REVIEWLEN & \\
+SPELLCHECK & \\
+COSINESIM & \\
+TFIDF & \\
+ENTITIES & \\
+\bottomrule
+\end{tabular}
+
+\caption{Feature Sets}\label{tab:fea_set}
+\end{table}
+
+\section{3rd round --- Feature Selection}
+
+\section{4th round --- Classifiers}
+
+\section{5th round --- Training Size}
 
 We use processed data as described in \autoref{app:a}.
 
@@ -17,32 +109,5 @@ In the~next part, if you have time, try other approaches to improve performance.
 
 * experiments conducted + results (what data, what features, expectations)
 
-\cite{Andel07}
-
-
-Mention here that only businesses with attributes are takne
-and also filter non in interval reviews
-
 \todoA{promysli ficury desc}
 
-\begin{table}[h]
-\centering
-\begin{tabular}{lll}
-\toprule
-\textbf{feature group} & \textbf{meaning}\\
-\midrule
-UNIGRAMS & \\
-BIGRAMS & \\
-TRIGRAMS & \\
-FOURGRAMS & \\
-STARS & individual number of stars and boolean extreme\_stars\\
-REVIEWLEN & \\
-SPELLCHECK & \\
-COSINESIM & \\
-TFIDF & \\
-ENTITIES & \\
-\bottomrule
-\end{tabular}
-
-\caption{Feature Groups}\label{tab:fea_grp}
-\end{table}

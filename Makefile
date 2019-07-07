@@ -13,6 +13,7 @@ data/geneea.json: data/ids $(DATA_GEN_DEP)
 	read
 
 run: data/data.json data/geneea.json $(RUN_DEP)
+	# TODO add auto processing of all experiments
 	mkdir -p graphs
 	./process_data.py experiments/experiments.yaml data/data.json data/geneea.json
 	
