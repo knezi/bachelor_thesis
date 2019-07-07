@@ -1,0 +1,23 @@
+config:
+  chunks: 10
+  mi: false
+  l_curves: false
+  max_ngrams: 30000
+  max_tfidf: 1
+tasks:
+  - name: '{uni,bi,tri}grams'
+    classificator: 'naivebayes'
+    features:
+     - UNIGRAMS
+     - BIGRAMS
+     - TRIGRAMS
+    preprocessing: []
+    extra_data: []
+    config: {}
+
+graphs:
+  - name: 'text_features'
+    data:
+      '{uni,bi,tri}grams':
+        - 'f_measure'
+        - 'accuracy'

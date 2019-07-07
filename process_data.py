@@ -5,7 +5,6 @@
 
 # It is possible to utilize profiler by uncommenting the corresponding lines
 # at the end of the file
-import numpy as np
 import sys
 from collections import defaultdict
 
@@ -86,6 +85,7 @@ def main(config: argparse.Namespace) -> None:
 
     print('loading data')
     data = Data(config.yelp_file, config.geneea_file)
+    data.print(f'Processing file {config.config_file}')
 
     print('generating samples')
     datasize: int = data.generate_sample(experiments['config']['chunks'],

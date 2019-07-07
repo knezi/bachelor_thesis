@@ -1,0 +1,62 @@
+config:
+  chunks: 10
+  mi: false
+  l_curves: false
+  max_ngrams: 200000
+  max_tfidf: 200000
+tasks:
+  - name: 'cosine_sim'
+    classificator: 'naivebayes'
+    features:
+     - COSINESIM
+    preprocessing: []
+    extra_data: []
+    config: {}
+  - name: 'all_together'
+    classificator: 'naivebayes'
+    features:
+     - STARS
+     - REVIEWLEN
+     - SPELLCHECK
+     - COSINESIM
+    preprocessing: []
+    extra_data: []
+    config: {}
+  - name: 'unigrams+'
+    classificator: 'naivebayes'
+    features:
+     - UNIGRAMS
+     - STARS
+     - REVIEWLEN
+     - SPELLCHECK
+     - COSINESIM
+    preprocessing: []
+    extra_data: []
+    config: {}
+  - name: 'tfidf+'
+    classificator: 'naivebayes'
+    features:
+     - TFIDF
+     - STARS
+     - REVIEWLEN
+     - SPELLCHECK
+     - COSINESIM
+    preprocessing: []
+    extra_data: []
+    config: {}
+
+graphs:
+  - name: 'text_features'
+    data:
+      cosine_sim:
+        - 'f_measure'
+        - 'accuracy'
+      all_together:
+        - 'f_measure'
+        - 'accuracy'
+      unigrams+:
+        - 'f_measure'
+        - 'accuracy'
+      tfidf+:
+        - 'f_measure'
+        - 'accuracy'
