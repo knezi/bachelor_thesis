@@ -1,7 +1,81 @@
 \chapter{Geneea Data}\label{app:geneea}
 
+Geneea Analytics\footnote{\url{https://www.geneea.com}} is a company focusing on natural language processing.
+We used their analysing tools extract additional linguistics properties.
 
-\todoA{}
+The reviews were analysed and filtered on Geneea servers.
+The resulting file is transferred to the local computer.
+It has line-by-line correspondence to the instance file created locally.
+An example of an analyzed review is bellow.
+Note that we omitted unused parts of analysis; full analysis can be found in \texttt{data/geneea\_sample.json}.
 
-define geneea file here
-There sbe on line-by-line correspondence between the Geneea file and the data file prepared locally.
+\begin{code}
+{
+  "text": "Another case of the Emperor's New Clothes...",
+  "language": {
+    "value": "en"
+  },
+  "sentiment": {
+    "value": -0.04392095867614757,
+    "label": "neutral",
+    "sentenceVals": [
+      0.0,
+      0.373666763147296,
+      -0.27144176165949063,
+      -0.32182979486854324,
+      0.0
+    ]
+  },
+  "entities": [
+    {
+      "standardForm": "limited hour",
+      "type": "phrase",
+      "links": {},
+      "instances": [
+        {
+          "text": "NSUBJ:hours(AMOD:limited)",
+          "mwLemma": [
+            "limited",
+            "hour"
+          ],
+          "sentiment": -0.010824959347792613,
+          "tokenIndices": [
+            43,
+            44
+          ],
+          "segment": "text",
+          "offset": 226
+        }
+      ]
+    },
+    {
+      "standardForm": "good fare",
+      "type": "phrase",
+      "links": {},
+      "instances": [
+        {
+          "text": "NSUBJ:fare(AMOD:good)",
+          "mwLemma": [
+            "good",
+            "fare"
+          ],
+          "sentiment": 3.6455297098939717e-09,
+          "tokenIndices": [
+            18,
+            21
+          ],
+          "segment": "text",
+          "offset": 97
+        }
+      ]
+    },
+	...
+  ],
+  "id_idx": "4362382",
+  "id": "---nya_pjxWmNFDFyAcfsA"
+}
+
+\end{code}
+
+This analysis is loaded with the geneea public SDK\footnote{\url{https://help.geneea.com/sdk/index.html}}.
+We use entities and sentiment.

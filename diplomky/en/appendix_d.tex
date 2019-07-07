@@ -27,6 +27,7 @@ aspell & spell checking \\
 \end{table}
 
 The project is executed with make\footnote{url{https://www.gnu.org/software/make}}.
+By default, it runs all experiments files defined in directory \texttt{experiments}.
 The entire project can be run by:
 
 \begin{code}
@@ -115,7 +116,7 @@ The exact definition can be found in \autoref{tab:fea_grp}.
 \texttt{extra\_data} is any property of instances available in the raw data.
 An example is the original text or business attributes.
 
-\begin{table}[h]
+\begin{table}[h!]
 
 \centering
 \begin{tabular}{lll}
@@ -125,7 +126,7 @@ An example is the original text or business attributes.
 name 			& string	& identification referred to in graphs\\
 classificator 	& string	& used classifier\\
 features 		& list		& used features \\
-preprocessing 	& list		& applied preprocessors in order\\
+preprocessing 	& list		& applied preprocessors in the order\\
 extra\_data 	& list 		& extra attributes passed to the first preprocessor \\
 config			& dict		& extra configuration for all parts of pipeline \\
 \bottomrule
@@ -144,27 +145,16 @@ Element \texttt{data} specifies what evaluation metrics for what classifiers wil
 It is a dictionary of experiment names, values being a list of all metrics to be output.
 
 
+\section{Defining New Preprocessors and Classifiers}
 
-
-
-TADY KONEc
-
-\autoref{tab:files} displays definitions of special files used for controlling the run of the software project.
-Their exact usage is explained in appropriate sections.
-
-The preprocessors are in the same order as in the experiment file.
-A preprocessor must be defined in the directory \texttt{preprocessors} and be a child of \texttt{preprocessors/preprocessingbase.py}.
+A preprocessor must be defined in directory \texttt{preprocessors} and be a child of \texttt{preprocessors/preprocessingbase.py}.
 Also, its name must be added into \texttt{preprocessors/\_\_init\_\_.py}.
+Analogously, a new classifier is to be created in directory \texttt{classifiers}.
 
-Since the input and output formats of the pipeline units are arbitrary,
-it is up to the user to ensure compatibility of adjacent units.
-This holds except for the input of the first preprocessor and the output of the classifier.
-The first preprocessor in the pipeline must take feature\_dict with possibly additional data specified in \texttt{extra\_data} as returned by \texttt{load\_data.Data.get\_feature\_dict}.
-The classifier must return the predicted label.
-The output of training is not stored.
-Note that for most classifiers, it is needed to run conversion to matrix as a last preprocessor (\texttt{featurematrixconversion.py}).
+The input and output formats of preprocessors is arbitrary, so long the following conditions are met.
+First, adjacent units must be compatible.
+Second, the first preprocessor in the pipeline must take \texttt{feature\_dict} with possibly additional data specified in \texttt{extra\_data} as returned by \texttt{load\_data.Data.get\_feature\_dict}.
+Lastly, the last preprocessor must be compatible with the input of the used classifier.
 
-and classifier is called train and classify for
-training and testing data, respectively.
-The pipeline is the same for both training and testing data with the guarantee that
-training data is always passed first.
+The input of the classifier is up to the user.
+However, the output of the classifier must be the predicted label.

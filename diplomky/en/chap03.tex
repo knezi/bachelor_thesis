@@ -416,13 +416,25 @@ Even more complicated relations like $x_{king} - x_{man} + x_{woman} \sim x_{que
 They use this property to solve word analogies in the form {\it a is to b as c is to \_\_\_}.
 
 
-\subsection{Geneea entities}http://aspell.net/
+\subsection{Geneea entities}
 
-\bf entities extracted from geneea \rm
+Named entity is any group of words belonging together having a particular meaning.
+The words does not necessarily be adjacent.
+In the text bellow, there are among others entities \textit{limited hour} and \textit{good fare}.
+
+\begin{code}
+Another case of the Emperor's New Clothes.
+Someone of the artsy set decided that this relatively good
+but overpriced fare was great pizza and all the lemmings followed suit.
+\end{code}
+
+For extracting entities, we used Geneea analyzer as described in \autoref{app:geneea}.
 
  \todoB{- filter them based on the~geneea value of importance}
 
  \todoA{- occurrences - pick only the~most frequent}
+
+ \todoA{sentiment}
 
 \subsection{\todoB{Cosine sim}}
 
