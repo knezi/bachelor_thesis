@@ -188,6 +188,13 @@ def main(config: argparse.Namespace) -> None:
                 train_set = prep.process(train_set, SampleTypeEnum.TRAIN)
                 test_set = prep.process(test_set, SampleTypeEnum.TEST)
 
+            if first_run:
+                unique_features: set = set()
+                for inst in train_set:
+                    unique_features = unique_features.union(set(inst[0].keys()))
+                data.print(f'Number of unique features after preprocessing for {ex["name"]}: {len(unique_features)}')
+                unique_features = set()
+
             cls: ClassifierBase \
                 = getattr(classifiers, ex['classificator']).Classifier(ex['config'])
             cls.train(train_set)
