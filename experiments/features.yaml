@@ -2,8 +2,8 @@ config:
   chunks: 10
   mi: false
   l_curves: false
-  max_ngrams: 200000
-  max_tfidf: 200000
+  max_ngrams: 50000
+  max_tfidf: 50000
 tasks:
   - name: 'unigrams'
     classificator: 'naivebayes'

@@ -121,6 +121,12 @@ def main(config: argparse.Namespace) -> None:
     # and dump it into text files
     if experiments['config']['mi']:
         for x in FeatureSetEnum:
+            if x == FeatureSetEnum.BIGRAMS or \
+                    x == FeatureSetEnum.TRIGRAMS or \
+                    x == FeatureSetEnum.FOURGRAMS:
+                continue
+            if x == FeatureSetEnum.UNIGRAMS:  # TODO REMOVE
+                continue
             # get data
             data.set_statfile(f'mi_{x}')
             data.print(f'Mutual Information of {x}.')

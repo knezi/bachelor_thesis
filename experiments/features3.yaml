@@ -2,7 +2,7 @@ config:
   chunks: 10
   mi: false
   l_curves: false
-  max_ngrams: 30000
+  max_ngrams: 10000
   max_tfidf: 1
 tasks:
   - name: '{uni,bi,tri}grams'
@@ -14,10 +14,20 @@ tasks:
     preprocessing: []
     extra_data: []
     config: {}
+  - name: 'trigrams'
+    classificator: 'naivebayes'
+    features:
+     - TRIGRAMS
+    preprocessing: []
+    extra_data: []
+    config: {}
 
 graphs:
   - name: 'text_features'
     data:
       '{uni,bi,tri}grams':
+        - 'f_measure'
+        - 'accuracy'
+      'trigrams':
         - 'f_measure'
         - 'accuracy'

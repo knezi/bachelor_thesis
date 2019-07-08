@@ -14,19 +14,41 @@ tasks:
     extra_data: []
     config:
       algorithm: 'zero-R'
-  - name: 'one-R'
+  - name: 'one-R - uni+arb'
     classificator: 'baseline'
     features:
      - UNIGRAMS
-#     - BIGRAMS
-#     - TRIGRAMS
-#     - FOURGRAMS
-#     - STARS
-#     - REVIEWLEN
-#     - SPELLCHECK
-#     - COSINESIM
-#     - TFIDF
-#     - ENTITIES
+     - STARS
+     - REVIEWLEN
+     - SPELLCHECK
+     - COSINESIM
+    preprocessing:
+      - 'featurematrixconversion'
+    extra_data: []
+    config:
+      algorithm: 'one-R'
+  - name: 'one-R - big'
+    classificator: 'baseline'
+    features:
+     - BIGRAMS
+    preprocessing:
+      - 'featurematrixconversion'
+    extra_data: []
+    config:
+      algorithm: 'one-R'
+  - name: 'one-R - tfidf'
+    classificator: 'baseline'
+    features:
+     - TFIDF
+    preprocessing:
+      - 'featurematrixconversion'
+    extra_data: []
+    config:
+      algorithm: 'one-R'
+  - name: 'one-R - ent'
+    classificator: 'baseline'
+    features:
+     - ENTITIES
     preprocessing:
       - 'featurematrixconversion'
     extra_data: []
@@ -39,6 +61,15 @@ graphs:
       zero-R:
         - 'f_measure'
         - 'accuracy'
-      one-R:
+      one-R - uni+arb:
+        - 'f_measure'
+        - 'accuracy'
+      one-R - big:
+        - 'f_measure'
+        - 'accuracy'
+      one-R - tfidf:
+        - 'f_measure'
+        - 'accuracy'
+      one-R - ent:
         - 'f_measure'
         - 'accuracy'
