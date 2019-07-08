@@ -13,7 +13,7 @@ tasks:
     preprocessing: []
     extra_data: []
     config: {}
- - name: 'bigrams':
+  - name: 'bigrams'
     classificator: 'naivebayes'
     features:
      - BIGRAMS
@@ -34,7 +34,7 @@ graphs:
       '{uni,bi}grams':
         - 'f_measure'
         - 'accuracy'
-      '{uni,bi}grams':
+      bigrams:
         - 'f_measure'
         - 'accuracy'
       entities:
