@@ -8,6 +8,7 @@ Data - class for loading, generating inferred and storing (in Sample) data
 from math import floor
 
 from functools import reduce
+from collections import Counter
 
 from enum import Enum, unique, auto
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
@@ -642,8 +643,8 @@ TODO
         if statistics:
             self.print(f'Number of unique entities: {len(self.used_entities)}')
 
-        # TODO restrict used entities
-        # TODO statistics
-        # print(self.used_ngrams)
-        # pyplot.hist(mi)
-        # pyplot.savefig('graphs/ngrams_histogram')
+        if statistics:
+            train = self.get_raw_data(SampleTypeEnum.TRAIN, 'classification')
+            test = self.get_raw_data(SampleTypeEnum.TEST, 'classification')
+            counts = Counter(train) + Counter(test)
+            self.print(counts)
