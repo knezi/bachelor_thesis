@@ -2,6 +2,8 @@ RUN_DEP = fastText/fasttext ./exceptions.py ./preprocessors/__init__.py ./prepro
 
 DATA_GEN_DEP = ./denormalization/extract_ids.py ./denormalization/filter.py ./denormalization/join.py
 
+EXPS = $(basename $(wildcard experiments/*yaml))
+
 data/data.json data/ids: $(DATA_GEN_DEP)
 	# run denormalize
 	./denormalization/denormalize.sh ../data/dataset data/data.json data/ids
@@ -12,10 +14,11 @@ data/geneea.json: data/ids $(DATA_GEN_DEP)
 	echo 'Continue with enter.'
 	read
 
-run: data/data.json data/geneea.json $(RUN_DEP)
-	# TODO add auto processing of all experiments
+$(EXPS): data/data.json data/geneea.json $(RUN_DEP)
 	mkdir -p graphs
-	./process_data.py experiments/experiments.yaml data/data.json data/geneea.json
+	./process_data.py '$@.yaml' data/data.json data/geneea.json
+
+run: $(EXPS)
 	
 run_sample: data/data_sample.json data/geneea_sample.json $(RUN_DEP)
 	mkdir -p graphs
@@ -24,8 +27,6 @@ run_sample: data/data_sample.json data/geneea_sample.json $(RUN_DEP)
 clean:
 	rm -f data/data_fasttext_model.{bin,vec} data/data_fasttext_train
 	rm -r fastText
-	# add data/ids here once it's generated properly
-	# todo data cleaning
 
 fastText/fasttext:
 	wget https://github.com/facebookresearch/fastText/archive/v0.2.0.zip
@@ -43,4 +44,4 @@ thesis.pdf:
 all: run thesis.pdf
 
 .DEFAULT: all
-.PHONY: all run run_sample clean
+.PHONY: all run run_sample clean $(EXPS)

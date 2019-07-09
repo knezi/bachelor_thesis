@@ -74,6 +74,15 @@ For a full run:
 make run
 ```
 
-It will first preprocess and denormalize data and then process them. Repeated run will only rerun the second part. `make run` runs the experiment stored in `experiments.yaml`
+It will first preprocess and denormalize data and then process them. Repeated run will only rerun the second part. `make run` runs all experiments in directory `experiments`.
+
+It is possible to run tasks in parallel with:
+
+```
+make run -j<number-of-threads>
+```
+
+However, note that for each thread approximately 7GB of RAM is required.
+
 
 Resulting data can be found in `graphs/current_timestamp`
