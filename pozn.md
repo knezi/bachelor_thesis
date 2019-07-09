@@ -107,7 +107,6 @@ last round
 
 ## psani
 ### later
-* znimint knihovny?
 * add somewhere mention that we have linguistics and non-ling features - mainly we use geneea for analysis
 * summary
 * typography
@@ -119,9 +118,7 @@ last round
 - zminit jupyter a nastroje pouzite
  - pridat kecy o poctu ruznych review a tak, proc co jsem jak vybiral
  	-> grafy poctu slov/error rate and stuff
- - taking only business_review_count > 50
  - don't include word error unles you check the language
- - taking only attributes with at least 10 and at least 50 reviews
  - measure if reducing non-restaurants helps (no, doesn't)
  - zmerit ruzne konfigurace (kosinova vzdalenost...)
 
@@ -214,11 +211,9 @@ requirements.txt - python, setup.py
 
 ## zeptat
 - diagram obrazek - feature correlation - v caption dodat zdroj
-- program sluggish
 - nezalomitelne mezery
 - citace - dost?
 - uzivatelska doc
-
 
 shrnuti zacatek a konec kapitoly
 
@@ -228,10 +223,7 @@ architektura
  - potom konfigurovatelnost a make a...
  - samostatna stranka - conceptual overview - papir - 
 
- * doknoci archit - graf
- * strem do souboru ficur - dratuj
  * pis
  dokonci 14.7
-
 
  add to readme - mkdir graphs

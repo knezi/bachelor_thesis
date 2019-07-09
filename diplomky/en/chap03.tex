@@ -434,9 +434,26 @@ For extracting entities, we used Geneea analyzer as described in \autoref{app:ge
 
  \todoA{- occurrences - pick only the~most frequent}
 
- \todoA{sentiment}
+\subsection{Sentiment}
 
-\subsection{\todoB{Cosine sim}}
+In general, \textbf{Sentiment} is a mood of a text.
+We use negative, neutral and positive sentiment extracted from the reviews by the Geneea analyzer.
+
+\subsection{Cosine Similarity}
+
+\textbf{Cosine similarity} is a measure of similiarity between two feature vectors.
+It is the angle between the two vectors.
+The cosine similarity of vectors~$v$~and~$w$~is:
+
+\[
+	\mathit{similarity} = \cos\left(\theta\right) = \frac{v \cdot w}{\|v\| \| w \|}
+\]
+
+Usually, one takes a sample from the data and when classifying an instance,
+cosine similarities to all instances in the sample are computed.
+The feature suggests that an instance has the label with the label of the closest instance.
+
+\todoA{source}
 
 
 \subsection{Hand Crafted Features}
