@@ -1,0 +1,29 @@
+config:
+  chunks: 10
+  mi: false
+  l_curves: false
+  max_ngrams: 25000
+  max_tfidf: 1
+tasks:
+  - name: 'FT'
+    classificator: 'fasttext'
+    features: []
+    preprocessing:
+        - 'dumpfasttext'
+    extra_data: ['text']
+    config:
+      features_to_select: 1000
+      path_prefix: 'data/data_fasttext'
+      executable: 'fastText/fasttext'
+      config_ft:
+        - '-epoch'
+        - '50'
+        - '-wordNgrams'
+        - '3'
+
+graphs:
+  - name: 'classifiers'
+    data:
+      FT:
+        - 'f_measure'
+        - 'accuracy'
