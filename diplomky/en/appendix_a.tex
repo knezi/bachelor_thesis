@@ -36,7 +36,9 @@ A user can vote for the property of a review by clicking on one of these buttons
 \label{fig:dobra_trafika}
 \end{figure}
 
-There are three main reasons we chose Yelp reviews.
+\jh{tohle vypada divne, asi dejte bullets/enumerate}
+
+There are three main reasons we chose Yelp reviews\jh{:} 
 
 First, this platform is very popular and as such has sufficient data.
 
@@ -59,7 +61,7 @@ There is one review per line.\footnote{In fact, it is JSON lines format --- \url
 
 Every review contains unique ID and business ID which is a reference to a business in file \texttt{business.json}.
 It also contains data about the review itself; review text, date of publishing and number of individual likes it received so far.
-Also, every review is acompanied by a star rating.
+Also, every review is accompanied by a star rating.
 The interval is one to five stars; five being the best.
 An example of a pretified review is bellow.
 
@@ -137,7 +139,7 @@ There are other files that could contain potentially useful information.
 File \texttt{user.json} is possibly interesting, because it contains information about users.
 There is a cross reference from reviews to users in the same manner as businesses,
 so we could get potentially useful information for every review;
-for exampe the number of reviews already posted by the author or
+for example the number of reviews already posted by the author or
 how long the poster has been registred on Yelp.
 
 We decided not to use this file for three main reasons.
