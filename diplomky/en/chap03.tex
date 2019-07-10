@@ -89,7 +89,7 @@ Filters are popular, because their time complexity is linear in the~number of~fe
 However, the feature selection may~not be optimal,
 because neither the~used classifier nor feature correlation is taken into account.
 
-Such a~case is documented by \citet{GuyEli03} in \autoref{fig:guyeli03-figure3}.
+Such a~case is documented by \citet{GuyEli03} in \Cref{fig:guyeli03-figure3}.
 The bottom left graph shows the original data and the~top left shows projection onto only one axis.
 It is clear that one variable cannot be sufficient for separating the clusters.
 However, if we project the data onto a combination of the two axes,
@@ -101,7 +101,7 @@ Another example of non-optimality is
 features such that any single feature is individually sufficient to separate the data.
 Optimal solution is  to choose just one of them.
 However, any filter will choose all of them, because separately they are all useful.
-This problem can be partially solved by the advanced method described in \autoref{subsubsec:mi}.
+This problem can be partially solved by the advanced method described in \Cref{subsubsec:mi}.
 However, it increases the time complexity, which is the biggest advantage of filters.
 
 %reverse example
@@ -198,7 +198,7 @@ To asses this, we want to compute~$\chi^2$ of the variables~$X$~and~$Y$.
 First, representing the feature \textit{credit card}.
 Second, the true label.
 
-\autoref{tab:chi_ex} shows example data.
+\Cref{tab:chi_ex} shows example data.
 The inner cells express how many instances there are with the given combination of variable values.
 The bottom most row and right most column express marginal probability distributions
 calculated by the number of samples.
@@ -253,7 +253,7 @@ the observed values will differ from expected and~$\chi^2$ will by non-zero.
 The farther observed value from the expected is, the higher penalization with square.
 Also, it is normalized by dividing it in E.
 
-The value of $\chi$ in our example in \autoref{tab:chi_ex}
+The value of $\chi$ in our example in \Cref{tab:chi_ex}
 ~is:
 
 \begin{equation}
@@ -281,7 +281,7 @@ The optimal subset is than chosen.
 Thanks to this, wrappers are universal and robust.
 
 Furthermore, wrappers can perform a lot better than filters on certain datasets.
-Such an example was shown in \autoref{subsec:filters}.
+Such an example was shown in \Cref{subsec:filters}.
 
 Unfortunately, wrappers tend to be computationally expensive,
 because every subset must by classified separately.
@@ -416,7 +416,7 @@ Even more complicated relations like $x_{king} - x_{man} + x_{woman} \sim x_{que
 They use this property to solve word analogies in the form {\it a is to b as c is to \_\_\_}.
 
 
-\subsection{Geneea entities}
+\subsection{Entities}
 
 Named entity is any group of words belonging together having a particular meaning.
 The words does not necessarily be adjacent.
@@ -428,7 +428,7 @@ Someone of the artsy set decided that this relatively good
 but overpriced fare was great pizza and all the lemmings followed suit.
 \end{code}
 
-For extracting entities, we used Geneea analyzer as described in \autoref{app:geneea}.
+For extracting entities, we used NLP analysis as described in \Cref{app:geneea}.
 
  \todoB{- filter them based on the~geneea value of importance}
 
@@ -437,7 +437,7 @@ For extracting entities, we used Geneea analyzer as described in \autoref{app:ge
 \subsection{Sentiment}
 
 In general, \textbf{Sentiment} is a mood of a text.
-We use negative, neutral and positive sentiment extracted from the reviews by the Geneea analyzer.
+We use negative, neutral and positive sentiment extracted from the reviews by the NLP analysis.
 
 \subsection{Cosine Similarity}
 

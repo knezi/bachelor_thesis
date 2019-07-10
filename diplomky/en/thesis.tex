@@ -45,6 +45,7 @@
 \usepackage[toc,page]{appendix}
 %% Further useful packages (included in most LaTeX distributions)
 \usepackage{amsmath}        % extensions for typesetting of math
+\usepackage{cleveref}
 \usepackage{amsfonts}       % math fonts
 \usepackage{amsthm}         % theorems, definitions, etc.
 \usepackage{bbding}         % various symbols (squares, asterisks, scissors, ...)
@@ -149,6 +150,8 @@ Abstract. \X{Recommended length around 80--200 words. This is not a~copy of your
 \include{epilog}
 
 %\addappheadtotoc
+\addcontentsline{toc}{chapter}{Appendices}
+\appendix
 \include{appendix_a}
 \include{appendix_b}
 \include{appendix_c}

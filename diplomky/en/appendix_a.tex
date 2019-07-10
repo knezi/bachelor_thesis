@@ -1,6 +1,4 @@
 %\addappheadtotoc
-\addcontentsline{toc}{chapter}{Appendices}
-\appendix
 \chapter{Yelp Dataset}\label{app:dataset}
 
 Yelp is a US-based company whose goal is: ``to connect people with great local businesses.''\footnote{\url{https://yelp.com/about}}
@@ -11,7 +9,7 @@ Its convenience and usefulness makes the platform very popular.
 It works in a similar manner like other recommnedation systems such as IMDB\footnote{Internet Movie Database \url{https://www.imdb.com/}} or
 TripAdvisor.\footnote{\url{https://www.tripadvisor.com}}
 There are restaurant profiles to which users can add reviews.
-Users can search for restaurants based on various parameters as shown in \autoref{fig:filters}.
+Users can search for restaurants based on various parameters as shown in \Cref{fig:filters}.
 
 \begin{figure}[ht]\centering
 \includegraphics[width=130mm]{../img/filters.png}
@@ -19,7 +17,7 @@ Users can search for restaurants based on various parameters as shown in \autore
 \label{fig:filters}
 \end{figure}
 
-An example of a profile is shown in \autoref{fig:dobra_trafika}.
+An example of a profile is shown in \Cref{fig:dobra_trafika}.
 On the sides, various information such as price range or opening time is shown.
 The main part is devoted to reviews.
 Every review clearly displays the number of stars awarded and the text.
@@ -27,7 +25,7 @@ Also, Yelp already works with some sort of usefulness,
 because two reviews have been hidden as can be seen in the bottom of the picture.
 
 Yelp also allows users to flag properties of other reviews in the form of \emph{likes}.
-Each review has three buttons --- \emph{useful}, \emph{funny} and \emph{cool} as can be seen in \autoref{fig:dobra_trafika}.
+Each review has three buttons --- \emph{useful}, \emph{funny} and \emph{cool} as can be seen in \Cref{fig:dobra_trafika}.
 A user can vote for the property of a review by clicking on one of these buttons.
 
 \begin{figure}[ht]\centering
@@ -36,23 +34,22 @@ A user can vote for the property of a review by clicking on one of these buttons
 \label{fig:dobra_trafika}
 \end{figure}
 
-\jh{tohle vypada divne, asi dejte bullets/enumerate}
+There are three main reasons we chose Yelp reviews: 
 
-There are three main reasons we chose Yelp reviews\jh{:} 
+\begin{itemize}
+\item this platform is very popular and as such has sufficient data.
 
-First, this platform is very popular and as such has sufficient data.
-
-Secondly, the company publishes every year an open dataset which can be downloaded for academic
+\item the company publishes every year an open dataset which can be downloaded for academic
 purposes.
 It covers most information conveyed in their system ---  information about businesses and users, pictures taken by the users and textual reviews.
 The data is available for download and we can focus on building our programme, rather than obtaining data.
 
-Lastly, the dataset contains the information how many times the like buttons have been clicked on.
+\item  the dataset contains the information how many times the like buttons have been clicked on.
 This allows us to asses the needed properties of individual reviews and
 we use it to distinguish useful and not-useful reviews.
+\end{itemize}
 
-\section{Format of the Dataset}
-\label{sec:format}
+\section{Format of the Dataset}\label{sec:format}
 
 The Yelp Dataset contains various files.
 We use files \texttt{review.json} and \texttt{business.json}.

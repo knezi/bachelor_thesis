@@ -2,7 +2,7 @@
 
 In this chapter, we outline the conceptual design of the software package.
 We describe individual parts and how they interact.
-More thorough description with implementation details can be found in \autoref{app:techn}.
+More thorough description with implementation details can be found in \Cref{app:techn}.
 
 
 The software package was designed and developed with extensibility in mind.
@@ -14,7 +14,7 @@ A special configuration file is utilized allowing to change the behaviour withou
 All classes and files have documentation strings which should be sufficient for detailed understanding.
 In this chapter, we only describe the high-level overview.
 
-A conceptual overview is outlined in \autoref{fig:conceptual_design}.
+A conceptual overview is outlined in \Cref{fig:conceptual_design}.
 The flow of the programme is top to bottom.
 Ellipses represent processes, rectangles data and cut rectangles input data.
 The output is represented by \textit{result}.
@@ -55,9 +55,9 @@ the \textit{experiments file}.
 
 \section{Parts Overview}
 
-The project is implemented in three separate parts as shown in \autoref{fig:arch_process}.
-\texttt{Prepare data} creates the instances file and corresponds to rectangle A in \autoref{fig:conceptual_design}.
-\texttt{Add Geneea analysis} corresponds to rectangle B --- it creates filtered entities and sentiment.
+The project is implemented in three separate parts as shown in \Cref{fig:arch_process}.
+\texttt{Prepare data} creates the instances file and corresponds to rectangle A in \Cref{fig:conceptual_design}.
+\texttt{Add NLP analysis} corresponds to rectangle B --- it creates filtered entities and sentiment.
 The last part \texttt{Run experiments} does the entire training, evaluating and creating statistics process.
 It is represented by rectangle C.
 Subset of the last part is devoted to running the experiments; \texttt{run experiments} corresponds to rectangle D.
@@ -65,7 +65,7 @@ Subset of the last part is devoted to running the experiments; \texttt{run exper
 We describe each part in a separate subsection.
 
 \begin{figure}[h]
-    \centering
+	\centering
 	\includegraphics[width=10cm]{figures/arch_process.eps}
 	\caption{Architecture Design}\label{fig:arch_process}
 \end{figure}
@@ -75,20 +75,20 @@ We describe each part in a separate subsection.
 
 All scripts for preparing data are in the folder \texttt{denormalization}.
 These scripts take the dataset and produce an instance file.
-Filtering of reviews as specified in \autoref{app:prepr} is done.
+Filtering of reviews as specified in \Cref{app:prepr} is done.
 Because reviews are processed through the spellchecker for filtering,
 the output is added into data as a byproduct.
 In \texttt{denormalize}, businesses are joined.
 
 At the end, in addition to the instance file, ID file is also created.
 It contains extracted IDs from the instance file.
-This is used to tell the Geneea analyzer what reviews are needed to save bandwidth,
-because the Geneea analysis is performed on a remote server.
+This is used to tell the NLP analyzer what reviews are needed to save bandwidth,
+because the analysis is performed on a remote server.
 
-\subsection{Geneea Analysis}
+\subsection{NLP Analysis}
 
-Geneea analysis uses external tools for extracting more linguistics features.
-Thorough description can be found in \autoref{app:geneea}.
+NLP analysis uses external tools for extracting more linguistics features.
+Thorough description can be found in \Cref{app:geneea}.
 The analysis extracts entities and sentiment from all reviews.
 Subsequently, it takes filtered reviews in the form of ID file to drop all unnecessary data.
 The result is stored in a file, which has to be transferred to the local computer in order to be able to continue with the next part.

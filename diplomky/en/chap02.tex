@@ -16,12 +16,12 @@ We will refer to a~record as \textbf{an~instance} and an attribute as \textbf{a~
 {\bf Text classification} is the process of building a classification model.
 {\bf Classification model} (also called classifier) is a~mapping between an~instance and a~class label.
 
-An example of a classification model is in \autoref{fig:cls_model}.
+An example of a classification model is in \Cref{fig:cls_model}.
 Instances are reviews labeled as either `useful' or `not-useful`.
 A particular model is the actual labelling and is represented by arrows.
 
 \begin{figure}[h]
-    \centering
+	\centering
 	\includegraphics[width=7cm]{figures/model.eps}
 	\caption{classification model} \label{fig:cls_model}
 \end{figure}
@@ -52,10 +52,10 @@ In~this thesis, we take into account only \textbf{hard version} of~classificatio
 
 TODO - tady jsme skoncili - prepsat tohle neni hezke
 
-The process of classification is broken down into four parts as shown in \autoref{fig:clsf_process}.
+The process of classification is broken down into four parts as shown in \Cref{fig:clsf_process}.
 
 \begin{figure}[h]
-    \centering
+	\centering
 	\includegraphics[width=12cm]{figures/clsf_process.eps}
 	\caption{classification process}\label{fig:clsf_process}
 \end{figure}
@@ -77,16 +77,16 @@ The most common approach is to generate as many features as possible and use onl
 The phase of eliminating not useful features is called \textbf{feature selection}.
 
 Phases extraction and selection are distinguished as a whole phase called \textbf{feature engineering}.
-We will discuss this in \autoref{chap:fea}.
+We will discuss this in \Cref{chap:fea}.
  
 
 
 Once the data is ready, we build a classifier in the \textbf{training} phase.
 Finally, we compare different classifiers and feature sets in \textbf{evaluation}.
-Common evaluations will be discussed in \autoref{chap:eval}.
+Common evaluations will be discussed in \Cref{chap:eval}.
 
-Last three chapters  are left for the architecture of the software developed (\autoref{chap:arch}),
-demonstration of conducted experiments (\autoref{chap:exp}) and final discussion (\autoref{chap:concl}).
+Last three chapters  are left for the architecture of the software developed (\Cref{chap:arch}),
+demonstration of conducted experiments (\Cref{chap:exp}) and final discussion (\Cref{chap:concl}).
 
 
 
@@ -107,7 +107,7 @@ Generally speaking, there are two models used for classification; generative and
 As we mentioned, classification is a process of building a classification model which maps
 instances onto labels.
 In this section, we will describe some commonly used classifiers.
-We will demonstrate them on mock data shown in \autoref{tab:custsatis}.
+We will demonstrate them on mock data shown in \Cref{tab:custsatis}.
 We have a fictional dataset of customers of a mobile carrier and
 we are trying to predict whether customers are satisfied.
 The rows are instances and columns features.
@@ -120,7 +120,7 @@ Please note that our primar focus is text classification.
 However, we will use non-textual features in this example for easier understanding.
 Classifiers (except for fastText which is tailored specifically for text) take any set of features,
 so we can use them in the same way with features extracted directly from text.
-We will learn how to do that in \autoref{chap:fea}.
+We will learn how to do that in \Cref{chap:fea}.
 
 \begin{table}[h!]
 
@@ -170,7 +170,7 @@ Hence all customers getting a discount are according to one-R satisfied.
 Three customers that did not get discount are dissatisfied and one is satisfied.
 Hence one-R will predict all customers without a discount as dissatisfied.
 
-The problem is how to choose the most informative feature which we will tackle in \autoref{subsec:decisiontree}.
+The problem is how to choose the most informative feature which we will tackle in \Cref{subsec:decisiontree}.
 For now we can think of it as finding such a feature, that will produce the best classifier.
 
 \subsection{Na\"{i}ve Bayes}
@@ -216,7 +216,7 @@ The likelihood of instance~$d_i$~being generated is then:
 \end{equation}
 
 Next, we need to convert these probabilities into the probability of an instance having a label.
-We can infer \autoref{eq:bayesrule} (called \textbf{Bayes rule}) from \autoref{eq:bayesinfer}.
+We can infer \Cref{eq:bayesrule} (called \textbf{Bayes rule}) from \Cref{eq:bayesinfer}.
 
 \begin{equation}
 	\label{eq:bayesinfer}
@@ -235,7 +235,7 @@ P\left(B|A\right)}
 {P\left(B\right)}
 \end{equation}
 
-Our original \autoref{eq:argmax}
+Our original \Cref{eq:argmax}
 
 \begin{equation}
 	\hat{c} = \argmax_{c_i \in C} P\left(c_i  | d_j \right)
@@ -280,7 +280,7 @@ For features $f_1, f_2, \dots f_K$ it is:
 	{P\left(  f_k  | c_i \right)}
 \end{equation}
 
-By combining \autoref{eq:classprb} and \autoref{eq:posterios}, we get:
+By combining \Cref{eq:classprb} and \Cref{eq:posterios}, we get:
 
 \begin{equation}
 	\hat{c} = \argmax_{c_i \in C}
@@ -292,7 +292,7 @@ By combining \autoref{eq:classprb} and \autoref{eq:posterios}, we get:
 Probability~$P\left(f_k|c_i\right)$~is found by counting.
 We take all instances from class~$c_i$~and the probability is the ratio of all those instances with the same value of feature~$f_k$~and the rest.
 
-Let us classify instance~$\mathit{ID}=2$~from our mock data in \autoref{tab:custsatis} for demonstration.
+Let us classify instance~$\mathit{ID}=2$~from our mock data in \Cref{tab:custsatis} for demonstration.
 For label ``yes'' (satisfied customers):
 
 \begin{equation}
