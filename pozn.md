@@ -227,3 +227,18 @@ architektura
  dokonci 14.7
 
  add to readme - mkdir graphs
+
+
+- DNES
+ - eps funguje?
+ - apendixy furt nefungujou
+ - app E - threshold vypada hnusne
+
+
+ spellchecker
+ tabulky
+ pdfa 
+ citace i s carkama
+
+
+ todo - highlight best results in the tables

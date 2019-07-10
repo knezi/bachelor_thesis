@@ -1,10 +1,15 @@
 \chapter{Top Features by Mutual Information}\label{app:mi}
 
-In this appendix, we report mutual information of features as defined in \Cref{subsubsec:mi}.
+In this appendix, we report mutual information (\textbf{MI} for short) of features as defined in \Cref{subsubsec:mi}.
 We use it for getting the idea of individual features and how to set thresholds for how many features
 are used.
 
-First, we report mutual information of threshold features as listed in \Cref{chap:exp}.
+Mutual information is a great way to evaluate informativness of features.
+However, it tends to prefer features of higher arity, because
+they are more likely to decrease the entropy.
+This can be observed in \Cref{tab:mi_words} and \Cref{tab:mi_stars}.
+
+First, we report MI of threshold features as listed in \Cref{chap:exp}.
 In the tables bellow, there are features listed with different thresholds.
 The meaning of particular thresholds is the following:
 
@@ -17,19 +22,24 @@ The meaning of particular thresholds is the following:
 \end{itemize}
 
 
+In \Cref{tab:mi_errors}, we report MI of features regarding spelling mistakes.
+Feature conveying absolute number of typos has negligible MI, probably owing to the high variance in the reviews' length.
+On the contrary, the relative number of typos has proven to be an informative property.
+The best performing having MI almost~0.002.
 
 \begin{table}[h!]
 
 \centering
-\begin{tabular}{llS[table-format=3.2]}
+\begin{tabular}{lrS[table-format=3.2]}
 \toprule
 \textbf{feature} & \textbf{threshold} & \textbf{mutual information} \\
 \midrule
 error rate & 0.02 & 0.00007 \\
-error rate & 0.05 & 0.00182 \\
-error rate & 0.1 & 0.00174 \\
+\textbf{error rate} & 0.05 & 0.00182 \\
+\textbf{error rate} & 0.10 & 0.00174 \\
 error rate & 0.15 & 0.00074 \\
-error rate & 0.2 & 0.00038 \\
+error rate & 0.20 & 0.00038 \\
+\midrule
 error total & 5 & 0.00000 \\
 error total & 10 & 0.00000 \\
 error total & 15 & 0.00000 \\
@@ -40,26 +50,10 @@ error total & 20 & 0.00000 \\
 \caption{Mutual information of spelling mistakes}\label{tab:mi_errors}
 \end{table}
 
-\begin{table}[h!]
 
-\centering
-\begin{tabular}{lrS[table-format=3.2]}
-\toprule
-\textbf{feature} & \textbf{threshold} & \textbf{mutual information} \\
-\midrule
-biz stars & 1, 2, 3, 4, 5 & 0.00112 \\
-extreme stars & 1, 5 & 0.00175 \\
-stars & 1, 2, 3, 4, 5& 0.01060 \\
-stars & 1 & 0.00657 \\
-stars & 2 & 0.00204 \\
-stars & 3 & 0.00221 \\
-stars & 4 & 0.00137 \\
-stars & 5 & 0.00004 \\
-\bottomrule
-\end{tabular}
-
-\caption{Mutual information of stars}\label{tab:mi_stars}
-\end{table}
+The features conveying the number of words turned out to be very informative.
+The best performing was the feature with thresholds 50 and 150 having MI 0.07866 which
+is more than 40 times more than the best performing error rate.
 
 \begin{table}[h!]
 
@@ -68,7 +62,7 @@ stars & 5 & 0.00004 \\
 \toprule
 \textbf{feature} & \textbf{threshold} & \textbf{mutual information} \\
 \midrule
-review length & 50, 150 & 0.07866 \\
+\textbf{review length} & 50, 150 & 0.07866 \\
 review length & 35 & 0.02680 \\
 review length & 50 & 0.04091 \\
 review length & 75 & 0.05996 \\
@@ -79,6 +73,9 @@ review length & 150 & 0.06580 \\
 \end{tabular}
 \caption{Mutual information of the number of words}\label{tab:mi_words}
 \end{table}
+
+Sentiment has MI approximately 0.01, which is about ten times higher
+than error rate, but eight times worse than the number of words.
 
 \begin{table}[h!]
 \centering
@@ -92,7 +89,12 @@ sentiment & neg, neut, pos & 0.00969 \\
 \caption{Mutual information of sentiment}\label{tab:mi_sentiment}
 \end{table}
 
-
+It follows from the experiments, that it greatly depends what instances
+we choose for the cosine similarity features.
+Only two out of ten instances in the cosine similarity corpus resulted in
+non-negligible MI.
+The best performing instances has MI of~\num{0.00006}, which is insignificant
+in comparison with other features.
 
 \begin{table}[h!]
 \centering
@@ -100,27 +102,66 @@ sentiment & neg, neut, pos & 0.00969 \\
 \toprule
 \textbf{feature} & \textbf{threshold} & \textbf{mutual information} \\
 \midrule
-instance 1 & 0.4 & 0.00006 \\
-instance 1 & 0.6 & 0.00002 \\
-instance 1 & 0.8 & 0.00002 \\
-instance 1 & 0.9 & 0.00002 \\
+\textbf{instance 1} & 0.40 & 0.00006 \\
+instance 1 & 0.60 & 0.00002 \\
+instance 1 & 0.80 & 0.00002 \\
+instance 1 & 0.90 & 0.00002 \\
 instance 1 & 0.95 & 0.00002 \\
-instance 2 & 0.4 & 0.00004 \\
-instance 2 & 0.6 & 0.00002 \\
-instance 2 & 0.8 & 0.00002 \\
-instance 2 & 0.9 & 0.00002 \\
+\midrule
+\textbf{instance 2} & 0.40 & 0.00004 \\
+instance 2 & 0.60 & 0.00002 \\
+instance 2 & 0.80 & 0.00002 \\
+instance 2 & 0.90 & 0.00002 \\
 instance 2 & 0.95 & 0.00002 \\
 \bottomrule
 \end{tabular}
 \caption{Mutual information of cosine similarity (2 best performing instances)}\label{tab:mi_cossim}
 \end{table}
 
+\todoA{rephrase this}
+The best performing feature for stars convey the exact number of stars.
+It has MI 0.01, which is comparable to sentiment.
+However, it may not be as suitable for classification,
+because great part of the MI of the feature belongs to the second highest feature.
+This feature is a boolean whether on stars has been given.
+It sounds logical.
+Reviews giving only one star are likely to express serious complains, which are probably more useful than praising a business.
+Data analysis backs this claim --- approximately 78\% of 1 star reviews have been repeatedly marked as useful.
+However, there's only as much as 0.4\% reviews giving 1 star making this
+feature virtually worthless.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{lrS[table-format=3.2]}
+\toprule
+\textbf{feature} & \textbf{threshold} & \textbf{mutual information} \\
+\midrule
+biz stars & 1, 2, 3, 4, 5 & 0.00112 \\
+extreme stars & 1, 5 & 0.00175 \\
+\textbf{stars} & 1, 2, 3, 4, 5& 0.01060 \\
+stars & 1 & 0.00657 \\
+stars & 2 & 0.00204 \\
+stars & 3 & 0.00221 \\
+stars & 4 & 0.00137 \\
+stars & 5 & 0.00004 \\
+\bottomrule
+\end{tabular}
+
+\caption{Mutual information of stars}\label{tab:mi_stars}
+\end{table}
+
 
 Second, we report mutual information of existential features.
-\todoA{tady jsme skoncili}
+The value of the function in the two graphs bellow expresses
+MI of the~$x$-th best feature at the point~$x$.
+It is the same as if we ordered the feature in the descending order
+and plotted their MI in the order.
+Note that x axis is logarithmic.
 
-\jh{je k tomu nekde aspon minimalni komentar? Pokud ne, dejte ho sem "From the graph, we can see that a small number (..) of unigrams ...}
-\jh{grafy - co je na ktere ose?, Jedna osa je logaritmicka, treba zminit}
+In \Cref{fig:mi_unigrams},
+we can see that only top 1000 performing unigrams have non-neglibigle MI.
+\Cref{fig:mi_entities} expresses the same for entities
+--- approximately 1000 features are somewhat informative.
 
 
 \begin{figure}[ht]\centering
@@ -129,13 +170,6 @@ Second, we report mutual information of existential features.
 \label{fig:mi_unigrams}
 \end{figure}
 
-
-\todoA{maybe this is useless - see mention in chap 6}
-\begin{figure}[ht]\centering
-\includegraphics[width=130mm]{figures/bigrams.png}
-\caption{Mutual information of bigrams}
-\label{fig:mi_bigrams}
-\end{figure}
 
 \begin{figure}[ht]\centering
 \includegraphics[width=130mm]{figures/entities.png}

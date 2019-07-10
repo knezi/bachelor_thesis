@@ -17,5 +17,7 @@ y = list(map(float, y))
 # y = y[::10]
 pp.plot(x, y)
 pp.xscale('log')
+pp.xlabel('the i-th best feature')
+pp.ylabel('mutual information')
 # pp.xticks(np.arange(0, max(map(int, x)), step=10000))
 pp.savefig('out.png', dpi=300)
