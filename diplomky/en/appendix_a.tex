@@ -6,7 +6,7 @@ It provides both mobile and web interface listing businesses such as restaurants
 Users can easily post a review for any business based on their recent visit.
 Its convenience and usefulness makes the platform very popular.
 
-It works in a similar manner like other recommnedation systems such as IMDB\footnote{Internet Movie Database \url{https://www.imdb.com/}} or
+It works in a similar manner like other recommendation systems such as IMDB\footnote{Internet Movie Database \url{https://www.imdb.com/}} or
 TripAdvisor.\footnote{\url{https://www.tripadvisor.com}}
 There are restaurant profiles to which users can add reviews.
 Users can search for restaurants based on various parameters as shown in \Cref{fig:filters}.
@@ -60,7 +60,7 @@ Every review contains unique ID and business ID which is a reference to a busine
 It also contains data about the review itself; review text, date of publishing and number of individual likes it received so far.
 Also, every review is accompanied by a star rating.
 The interval is one to five stars; five being the best.
-An example of a pretified review is bellow.
+An example of a prettified review is bellow.
 
 \begin{code}
 {
@@ -77,7 +77,7 @@ An example of a pretified review is bellow.
 \end{code}
 
 The second file we use is \texttt{business.json}.
-Again, it is in JSON lines and it contains business information such as openning hours or availability of a car park.
+Again, it is in JSON lines and it contains business information such as opening hours or availability of a car park.
 An example of a business can be found bellow.
 
 \begin{code}
@@ -137,7 +137,7 @@ File \texttt{user.json} is possibly interesting, because it contains information
 There is a cross reference from reviews to users in the same manner as businesses,
 so we could get potentially useful information for every review;
 for example the number of reviews already posted by the author or
-how long the poster has been registred on Yelp.
+how long the poster has been registered on Yelp.
 
 We decided not to use this file for three main reasons.
 First, the data is very sparse and it would be hard to avoid overfitting or gain significant improvement.

@@ -82,7 +82,7 @@ Three methods of feature selection are generally recognised; filters, wrappers a
 
 Filters work with individual features independently of any supervised classification algorithm.
 The main objective of filters is to filter out features that are not informative on their own.
-They evaluate the \textit{informativness} of each feature individually
+They evaluate the \textit{informativeness} of each feature individually
 and drop all bellow a certain threshold.
 
 Filters are popular, because their time complexity is linear in the~number of~features.
@@ -274,7 +274,7 @@ The value of $\chi$ in our example in \Cref{tab:chi_ex}
 \subsection{Wrappers}
 
 Unlike filters, wrappers work with subsets of features
-and use a classifier to directly asses informativness of the subset as a whole.
+and use a classifier to directly asses informativeness of the subset as a whole.
 Every subset is classified by the classifier used as a black box
 and evaluated by some common evaluation metrics.
 The optimal subset is than chosen.
@@ -313,9 +313,6 @@ This approach may be infeasible for really big data sets, but guarantees to incl
 
 Embedded methods are part of a classification algorithm itself.
 An example can be a decision tree, which takes features that lower the entropy the most first.
-More on this in descriptions of particular algorithms.
-
-\todoA{The last sentence should be removed if there are no such algos in this doc.}
 
 \section{Principal Component Analysis}
 
@@ -334,7 +331,7 @@ having lower dimensionality.
 Mathematically speaking, the objective is to retain as much variation of variables
 as possible and reduce any variable correlation.
 The exact description is way beyond the scope of this text.
-More detauled explanations can be found in~\citet{Jolliffe02}.
+More detailed explanations can be found in~\citet{Jolliffe02}.
 
 \section{Commonly Used Features}
 
@@ -372,7 +369,7 @@ we can calculate TF-IDF for word~$w$ in an individual document~$d$ as:
 	w_d = TF \times IDF = f_{w, d} \times \log \left( \frac{\abs{D}}{f_{w,D}}  \right),
 \]
 
-where $TF = f_{w, d}$ is the number of times~$w$~occured~$d$ and
+where $TF = f_{w, d}$ is the number of times~$w$~occurred~$d$ and
 IDF corresponds to $\log \left( \frac{\abs{D}}{f_{w,D}}  \right)$ for $\abs{D}$ being the total number of documents and $f_{w, D}$ the number of documents containing~$w$.
 
 Let us explore how the value changes with different variable values.
@@ -383,9 +380,9 @@ This is again desired, because these words occur relatively often in the given d
 
 \todoA{Is this really the way we're going to use it? We have very short texts}
 
-\todoA{- TD*IDF - with given threshholds - how to find it?}
+\todoA{- TD*IDF - with given thresholds - how to find it?}
 
-\todoB{try TD*IDF not with a~given threshold, but rather find te optimal threshold for cuts}
+\todoB{try TD*IDF not with a~given threshold, but rather find the optimal threshold for cuts}
 
 \subsection{N-grams}
 
@@ -406,7 +403,7 @@ Word embeddings is another way to convert words into features.
 This is also sometimes referred to as \textit{distributed word representation}.
 This mapping is obtained by using a big corpus of data and optimizing some cost function on it.
 
-\citet{Mik13} showed that if parameters are set carefully, word embeddings conveys both semantic and sytanctic information.
+\citet{Mik13} showed that if parameters are set carefully, word embeddings conveys both semantic and syntactic information.
 First, similar words are mapped to similar vectors. So we can measure a sort of synonymity.
 Not only that, but it also conveys relationships between words.
 An example is singular vs plural.
@@ -441,7 +438,7 @@ We use negative, neutral and positive sentiment extracted from the reviews by th
 
 \subsection{Cosine Similarity}
 
-\textbf{Cosine similarity} is a measure of similiarity between two feature vectors.
+\textbf{Cosine similarity} is a measure of similarity between two feature vectors.
 It is the angle between the two vectors.
 The cosine similarity of vectors~$v$~and~$w$~is:
 
@@ -482,7 +479,7 @@ Again, we clustered values into groups to get binary or ternary features.
 Sometimes it may be necessary to use metadata
 if the text itself does not contain enough information.
 The exact usage will depend on the task.
-We used metadata mostly for filtering out restaraunts without enough data.
+We used metadata mostly for filtering out restaurants without enough data.
 The only feature we tried to extract from metadata was the number of stars the review gives.
 We tested two approaches.
 First, a simple feature expressing how many stars were given.
