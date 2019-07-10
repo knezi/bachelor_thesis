@@ -176,37 +176,52 @@ def main(config: argparse.Namespace) -> None:
                 data.print(f'Number of unique features for {ex["name"]}: {len(unique_features)}')
                 unique_features = set()
 
-            # for t_size in map(lambda x: min(2 ** x, train_size),
-            #                   range(1, train_size_log)):
-            #     train_set_restr = train_set[:t_size]
-            #     test_set_copy = test_set[:]
+            l_curves = experiments['config']['l_curves']
+            start_size: int = 1 if l_curves \
+                else train_size_log-1
 
-            # preprocess data
-            for pp in ex['preprocessing']:
-                prep: PreprocessorBase \
-                    = getattr(preprocessors, pp).Preprocessor(ex['config'])
-                train_set = prep.process(train_set, SampleTypeEnum.TRAIN)
-                test_set = prep.process(test_set, SampleTypeEnum.TEST)
+            for t_size in map(lambda x: min(2 ** x, train_size),
+                              range(start_size, train_size_log)):
+                if l_curves:
+                    train_set_copy = train_set[:t_size]
+                    test_set_copy = test_set[:]
+                else:
+                    train_set_copy = train_set
+                    test_set_copy = test_set
 
-            if first_run and hasattr(train_set[0][0], 'keys'):
-                unique_features: set = set()
-                for inst in train_set:
-                    unique_features = unique_features.union(set(inst[0].keys()))
-                data.print(f'Number of unique features after preprocessing for {ex["name"]}: {len(unique_features)}')
-                unique_features = set()
+                # preprocess data
+                for pp in ex['preprocessing']:
+                    prep: PreprocessorBase \
+                        = getattr(preprocessors, pp).Preprocessor(ex['config'])
+                    train_set_copy = prep.process(train_set_copy, SampleTypeEnum.TRAIN)
+                    test_set_copy = prep.process(test_set_copy, SampleTypeEnum.TEST)
 
-            cls: ClassifierBase \
-                = getattr(classifiers, ex['classificator']).Classifier(ex['config'])
-            cls.train(train_set)
+                if first_run and hasattr(train_set[0][0], 'keys'):
+                    unique_features: set = set()
+                    for inst in train_set:
+                        unique_features = unique_features.union(set(inst[0].keys()))
+                    data.print(f'Number of unique features after preprocessing for {ex["name"]}: {len(unique_features)}')
+                    unique_features = set()
 
-            evaluation: dict \
-                = compute_evaluation_scores(cls, test_set, LikeTypeEnum.USEFUL)
+                cls: ClassifierBase \
+                    = getattr(classifiers, ex['classificator']).Classifier(ex['config'])
+                cls.train(train_set_copy)
 
-            stats.add_points(len(train_set), ex['name'], evaluation)
+                evaluation: dict \
+                    = compute_evaluation_scores(cls, test_set_copy, LikeTypeEnum.USEFUL)
+
+                stats.add_points(len(train_set_copy), ex['name'], evaluation)
+
+                if l_curves:
+                    evaluation: dict \
+                        = compute_evaluation_scores(cls, train_set_copy, LikeTypeEnum.USEFUL)
+
+                    stats.add_points(len(train_set_copy), ex['name']+'-train', evaluation)
+
+                first_run = False
 
         if not data.prepare_next_dataset():
             break
-        first_run = False
 
     # aggregate results here
     for g in experiments['graphs']:

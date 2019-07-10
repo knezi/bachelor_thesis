@@ -1,0 +1,33 @@
+config:
+  chunks: 10
+  mi: false
+  l_curves: true
+  max_ngrams: 25000
+  max_tfidf: 1
+tasks:
+  - name: 'NB-chi-1000'
+    classificator: 'naivebayes'
+    features:
+      - ENTITIES
+      - STARS
+      - REVIEWLEN
+      - SPELLCHECK
+      - COSINESIM
+    preprocessing: [ 'chisquare']
+    extra_data: []
+    config:
+      features_to_select: 1000
+
+graphs:
+  - name: 'accuracy_learning_curves'
+    data:
+      NB-chi-1000:
+        - 'accuracy'
+      NB-chi-1000-train:
+        - 'accuracy'
+  - name: 'f_measure_learning_curves'
+    data:
+      NB-chi-1000:
+        - 'f_measure'
+      NB-chi-1000-train:
+        - 'f_measure'
