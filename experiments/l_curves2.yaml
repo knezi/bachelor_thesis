@@ -1,0 +1,31 @@
+config:
+  chunks: 10
+  mi: false
+  l_curves: true
+  max_ngrams: 25000
+  max_tfidf: 1
+tasks:
+  - name: 'NB'
+    classificator: 'naivebayes'
+    features:
+      - STARS
+      - REVIEWLEN
+      - SPELLCHECK
+      - COSINESIM
+    preprocessing: []
+    extra_data: []
+    config: {}
+
+graphs:
+  - name: 'accuracy_learning_curves'
+    data:
+      NB:
+        - 'accuracy'
+      NB-train:
+        - 'accuracy'
+  - name: 'f_measure_learning_curves'
+    data:
+      NB:
+        - 'f_measure'
+      NB-train:
+        - 'f_measure'
