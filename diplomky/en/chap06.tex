@@ -17,6 +17,8 @@ For labels, we used the number of useful likes.
 Reviews with zero likes were labelled not-useful and
 reviews with at least two likes useful.
 1 like reviews were dropped.
+The entire dataset contains 44,921 not-useful and
+19,629 useful instances.
 
 We split features into the sets defined in the two lists bellow.
 The first list contains existential features --- they express that certain phrase is present in the review.
@@ -80,15 +82,16 @@ Also, we computed mutual information of all features.
 
 Zero-R has accuracy
 
+tady je potreba zminit pocatecni distribuci a jak to afect zero-r
+
 
 \section{2nd round --- Features}
 
 In this round, we run Na\"{\i}ve Bayes with different sets of features.
 Configurations with results are shown in \Cref{tab:feat_perf}.
 Names refer to feature sets.
-\{uni,bi\}grams and \{uni,bi,tri\}grams are listed n-grams together.
-All\_basic is STARS, REVIEWLEN, SPELLCHECK and COSINESIM.
-Plus sign denotes a feature set combined with all\_basic.
+\textbf{\{uni,bi\}grams} and \textbf{\{uni,bi,tri\}grams} are listed n-grams together.
+\textbf{basic} is STARS, REVIEWLEN, SPELLCHECK and COSINESIM.
 
 \begin{table}[h!]
 
@@ -105,10 +108,10 @@ entities & 0.48 & (0.47, 0.49) & $\pm$ 0.005 & 0.35 & (0.34, 0.36) & $\pm$ 0.005
 \{uni,bi,tri\}grams & 0.47 & (0.46, 0.48) & $\pm$ 0.008 & 0.30 & (0.29, 0.32) & $\pm$ 0.007	\\
 trigrams & 0.47 & (0.46, 0.49) & $\pm$ 0.008 & 0.32 & (0.31, 0.33) & $\pm$ 0.006		\\
 cosine\_sim & \multicolumn{3}{c}{N/A} & 0.70 & (0.69, 0.70) & $\pm$ 0.006		\\
-all\_basic & 0.59 & (0.58, 0.60) & $\pm$ 0.005 & 0.71 & (0.71, 0.72) & $\pm$ 0.004		\\
-bigrams+ & 0.48 & (0.47, 0.49) & $\pm$ 0.007 & 0.35 & (0.34, 0.36) & $\pm$ 0.006		\\
-tfidf+ & 0.48 & (0.47, 0.50) & $\pm$ 0.007 & 0.36 & (0.35, 0.37) & $\pm$ 0.006			\\
-entities+ & 0.55 & (0.54, 0.56) & $\pm$ 0.008 & 0.54 & (0.53, 0.55) & $\pm$ 0.006		\\
+\textbf{basic} & 0.59 & (0.58, 0.60) & $\pm$ 0.005 & 0.71 & (0.71, 0.72) & $\pm$ 0.004		\\
+basic+bigrams & 0.48 & (0.47, 0.49) & $\pm$ 0.007 & 0.35 & (0.34, 0.36) & $\pm$ 0.006		\\
+basic+tfidf & 0.48 & (0.47, 0.50) & $\pm$ 0.007 & 0.36 & (0.35, 0.37) & $\pm$ 0.006			\\
+\textbf{basic+entities} & 0.55 & (0.54, 0.56) & $\pm$ 0.008 & 0.54 & (0.53, 0.55) & $\pm$ 0.006		\\
 \bottomrule
 \end{tabular}
 
@@ -125,31 +128,51 @@ All reported values are in the format `value (min, max) $\pm$ standard deviation
 \section{3rd round --- Feature Selection}
 
 In this round, we compare three different methods of feature selection to performance when all features are used as are.
-We use bigrams+ from the previous round.
+We use \textbf{basic+bigrams} from the previous round.
 Na\"{i}ve Bayes with BIGRAMS, STARS, REVIEWLEN, COSINESIM and SPELLCHECK from the previous round is used.
 We run PCA with 100 dimensions as recommended by scipy documentation.
 For mutual information and chi square, we choose top 1000 features.
 
 \begin{table}[h!]
-
-\centering
-\begin{tabular}{lllll}
+\begin{tabular}{lr@{~}r@{~}rr@{~}r@{~}r}
 \toprule
-\textbf{name}\\	%& \textbf{f-measure} & \textbf{accuracy} \\
+\textbf{name}	& \multicolumn{3}{c}{\textbf{f-measure}} & \multicolumn{3}{c}{\textbf{accuracy}} \\
+
 \midrule
-bigrams+ \\
-bigrams+[MI] \\
-bigrams+[CHI] \\
-bigrams+[PCA] \\
+basic+bigrams & 0.48 & (0.47, 0.49) & $\pm$ 0.007 & 0.35 & (0.34, 0.36) & $\pm$ 0.006		\\
+%basic+bigrams[MI] \\
+%basic+bigrams[CHI] \\
+%basic+bigrams[PCA] \\
+
+\midrule
+basic+entities & 0.55 & (0.54, 0.56) & $\pm$ 0.008 & 0.54 & (0.53, 0.55) & $\pm$ 0.006		\\
+basic+entities[MI] & 0.56 & (0.55, 0.57) & $\pm$ 0.007 & 0.58 & (0.57, 0.60) & $\pm$ 0.008 \\
+basic+entities[CHI] & 0.56 & (0.55, 0.57) & $\pm$ 0.007 & 0.58 & (0.57, 0.59) & $\pm$ 0.007 \\
+basic+entities[PCA] & 0.47 & (0.46, 0.48) & $\pm$ 0.007 & 0.30 & (0.3, 0.31) & $\pm$ 0.006 \\
+
+
 \bottomrule
 \end{tabular}
 
-\caption{Performance of Feature Configurations}\label{tab:feat_perf}
+\caption{Performance of Feature Selections}\label{tab:sel_perf}
 \end{table}
 
 \section{4th round --- Classifiers}
 
 \section{5th round --- Training Size}
+
+\begin{figure}[h]\centering
+\includegraphics[width=130mm]{figures/l_curves_accuracy.png}
+\caption{Dependency of accuracy on the training size}
+\label{fig:l_curves_accuracy}
+\end{figure}
+
+\begin{figure}[h]\centering
+\includegraphics[width=130mm]{figures/l_curves_f_measure.png}
+\caption{Dependency of f-measure on the training size}
+\label{fig:l_curves_f_measure}
+\end{figure}
+
 
 We use processed data as described in \Cref{app:a}.
 

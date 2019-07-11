@@ -12,7 +12,7 @@ Text classification aims to predict what label it is.
 Every record is defined by its attributes.
 Attribute is a certain property of a record.
 An example is the text of a review, the number of stars rewarded or date of posting.
-We will refer to a~record as \textbf{an~instance} and an attribute as \textbf{a~feature} to be consistent with machine learning terminology.
+We refer to a~record as \textbf{an~instance} and an attribute as \textbf{a~feature} to be consistent with machine learning terminology.
 {\bf Text classification} is the process of building a classification model.
 {\bf Classification model} (also called classifier) is a~mapping between an~instance and a~class label.
 
@@ -33,7 +33,7 @@ As \citet{TanBachKum08} distinguish it, classification is either {\it descriptiv
 Descriptive is for finding regularities in data.
 An example of descriptive classification is a task where
 biologists try to figure out what the features distinguishing mammals and birds are.
-In this thesis, we will consider only predictive classification, where the goal is to build a classifier
+In this thesis, we consider only predictive classification, where the goal is to build a classifier
 that can predict labels for new instances.
 
 We have two sets of instances to be able to asses how well our model predicts instances.
@@ -77,7 +77,7 @@ The most common approach is to generate as many features as possible and use onl
 The phase of eliminating not useful features is called \textbf{feature selection}.
 
 Phases extraction and selection are distinguished as a whole phase called \textbf{feature engineering}.
-We will discuss this in \Cref{chap:fea}.
+We discuss this in \Cref{chap:fea}.
  
 
 
@@ -87,27 +87,28 @@ Common evaluations will be discussed in \Cref{chap:eval}.
 
 Last three chapters  are left for the architecture of the software developed (\Cref{chap:arch}),
 demonstration of conducted experiments (\Cref{chap:exp}) and final discussion (\Cref{chap:concl}).
+\todoA{link}
 
 
 
-\section{\todoB{What a Classifier Looks Like}}
+%\section{\todoB{What a Classifier Looks Like}}
 
-\todoB{Probabilistic model for classification
-Generally speaking, there are two models used for classification; generative and discriminative. Generative model assumes there exist }
+%\todoB{Probabilistic model for classification
+%Generally speaking, there are two models used for classification; generative and discriminative. Generative model assumes there exist }
 
-\subsection{\todoB{hyperparameteres, parameters, model}}
+%\subsection{\todoB{hyperparameteres, parameters, model}}
 
-\subsection{\todoC{discrm. vs generative}}
+%\subsection{\todoC{discrm. vs generative}}
 
-\todoB{linear classifier def}
+%\todoB{linear classifier def}
 
 \section{Classifiers}
 \label{chap:clscon}
 
 As we mentioned, classification is a process of building a classification model which maps
 instances onto labels.
-In this section, we will describe some commonly used classifiers.
-We will demonstrate them on mock data shown in \Cref{tab:custsatis}.
+In this section, we describe some commonly used classifiers.
+We demonstrate them on mock data shown in \Cref{tab:custsatis}.
 We have a fictional dataset of customers of a mobile carrier and
 we are trying to predict whether customers are satisfied.
 The rows are instances and columns features.
@@ -382,7 +383,7 @@ In short, it maps every word onto a vector. Every document is represented as an 
 
 However, fastText goes even further.
 The process is precisely described in \citet{Bojanowski2017enriching}.
-we will only briefly summarize it.
+we only briefly summarize it.
 Fasttext maps n-grams onto vectors, not words.
 {\bf N-gram} is any sequence of n elements --- in this case letters.
 The algorithm represents a words as an average of vectors of all its n-grams.
@@ -416,21 +417,24 @@ Other implementations represent unseen words with some kind of dummy vector.
 
 As we mentioned, every instance is average of vectors of its words.
 This representation is used for training a simple linear classifier.
-FastText uses some more tricks to reduce memory consumption and performance.
+\textbf{Linear classifier} means that the resulting model is a linear function
+of features.
+
+For achieving even better performannce and reduce memory consumption, FastText uses some more tricks.
 More details can be found in~\citet{Joulin2017bag}.
 
-\todoA{a budeme muset pridat linearni model - pridej zminku o tom, jak se to klasifikuje podle toho, jestli nekde popises linearni modely vice}
+%\todoA{a budeme muset pridat linearni model - pridej zminku o tom, jak se to klasifikuje podle toho, jestli nekde popises linearni modely vice}
 
-\todoC{hierarchichal softmax}
+%\todoC{hierarchichal softmax}
 
-\subsubsection{\todoC{GloVe - GloVe nepouzivam}}
+%\subsubsection{\todoC{GloVe - GloVe nepouzivam}}
 
-\subsection{\todoC{NN}}
+%\subsection{\todoC{NN}}
 
-\subsection{\todoC{Let you imagination go wild}}
+%\subsection{\todoC{Let you imagination go wild}}
 
 
-\section{\todoB{interpretability -see w8}}
+%\section{\todoB{interpretability -see w8}}
 
 In this chapter, we defined text classification as a mapping from feature space to labels
 and demonstrated several classification algorithms.

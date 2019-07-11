@@ -113,11 +113,11 @@ However, it increases the time complexity, which is the biggest advantage of fil
 %However, any filter will choose all of them,
 %because filters consider features independently of each other.
  
- \todoA{citation and vector}
 
 \begin{figure}[ht]\centering
 \includegraphics[width=100mm]{../img/guyeli_figure3.png}
 \caption{Example of correlated features from the article}
+This example has been taken from \citet{GuyEli03}.
 \label{fig:guyeli03-figure3}
 \end{figure}
 
@@ -134,6 +134,7 @@ As \citet{Hoq14} defines it,
 I(X,Y) = \sum_{x,y} p\left(x,y\right)
 \log
 \frac{p\left(x,y\right)}{p\left(x\right)p\left(y\right)},
+\label{eq:mi}
 \end{equation}
 
 where $p\left(x, y\right)$ is the joint probability of~$X$ and $Y$ and~$p(x)$~and~$p(y)$~
@@ -141,13 +142,146 @@ are marginal probability distributions of the individual variables.
 
 Mutual information can be also expressed as
 
-$$I(X, Y) = H(X) - H(X|Y),$$
+\begin{equation}
+	I(X, Y) = H(X) - H(X|Y),
+\end{equation}
 
 \todoB{explain entropy}
 
 where~$H(X)$~is the entropy of~$X$~and~$H(X|Y)$~the conditional entropy.
 This way~$H(X)$~expresses the amount of uncertainty of~$X$~and~$H(X|Y)$~what~$Y$~does not say about~$X$.
 This supports the intuitive idea that information gain expresses how much information one variable carries about the other one.
+
+Let us demonstrate mutual information on an example.
+Suposse we are trying to predict the mood of our examiner.
+We have created two features --- whether it is raining and whether the examiner is hungry as shown in \Cref{tab:mi_ex}.
+Now, we want to estimate how good those features are using mutual information.
+
+
+\begin{table}[h!]
+ \center
+ \begin{tabular}{lll}
+	\toprule
+	 \textbf{raining} & \textbf{hungry} & \textbf{mood} \\ 
+	 \midrule
+	 yes & yes & happy \\
+	 no & yes & happy \\
+	 no & yes & angry \\
+	 no & no & angry \\
+	 yes  & no & angry \\
+	 \bottomrule
+ \end{tabular}
+ \caption{Mutual information example}
+ \label{tab:mi_ex}
+\end{table}
+
+Using \Cref{eq:mi} we get the following for variables $\mathit{rain}$ and $\mathit{mood}$:
+
+
+\todoA{this looks ugly}
+\begin{equation}
+	I(\mathit{rain}, \mathit{mood}) =
+	f(yes, happy) +
+	f(no, happy) +
+	f(yes, angry) +
+	f(no, angry),
+\end{equation}
+
+where:
+
+\begin{equation}
+	f(x, y) = P(rain=x,mood=y)\log\frac{P(rain=x,mood=y)}{P(rain=x)P(mood=y)}
+\end{equation}
+
+
+With the values from \Cref{tab:mi_ex}, we get:
+
+\begin{equation}
+	I(\mathit{rain}, \mathit{mood}) =
+	\frac{1}{5}
+		\log \frac{
+	\frac{1}{5}
+	}{
+	\frac{2}{5}
+	\frac{2}{5}
+	} +
+%
+	\frac{1}{5}
+		\log \frac{
+	\frac{1}{5}
+	}{
+	\frac{3}{5}
+	\frac{2}{5}
+	} +
+%
+	\frac{1}{5}
+		\log \frac{
+	\frac{1}{5}
+	}{
+	\frac{2}{5}
+	\frac{3}{5}
+	} +
+%
+	\frac{2}{5}
+		\log \frac{
+	\frac{2}{5}
+	}{
+	\frac{3}{5}
+	\frac{3}{5}
+	}
+\end{equation}
+
+\begin{equation}
+	I(\mathit{rain}, \mathit{mood}) \approx 0.014
+\end{equation}
+
+We compute $I(\mathit{hungry}, \mathit{mood})$ in the same way:
+
+\begin{equation}
+	I(\mathit{hungry}, \mathit{mood}) =
+	\frac{2}{5}
+		\log \frac{
+	\frac{2}{5}
+	}{
+	\frac{3}{5}
+	\frac{2}{5}
+	} +
+%
+	\frac{0}{5}
+		\log \frac{
+	\frac{0}{5}
+	}{
+	\frac{2}{5}
+	\frac{2}{5}
+	} +
+%
+	\frac{1}{5}
+		\log \frac{
+	\frac{1}{5}
+	}{
+	\frac{3}{5}
+	\frac{3}{5}
+	} +
+%
+	\frac{2}{5}
+		\log \frac{
+	\frac{2}{5}
+	}{
+	\frac{2}{5}
+	\frac{3}{5}
+	}
+\end{equation}
+
+\begin{equation}
+	I(\mathit{hungry}, \mathit{mood}) \approx 0.291
+\end{equation}
+
+The mutual information of \textit{hungry} is higher than \textit{raining}.
+It intuitively makes sense if we look at the table.
+\textit{Hungry} predicts the mood four times out of five correctly.
+Especially, when the examiner is hungry, he is always happy.
+On the contrary, regardless whether it is raining or not, the examiner
+is sometimes happy, sometimes angry.
 
 The basic approach for selecting features is
 to compute mutual information of each feature and the class label.
@@ -175,8 +309,6 @@ threshold.
 At the end, features from~$S$ are used for classification.
 We have not used this approach due to the lack of time and used the basic approach only.
 
-
-\todoB{example}
 
 \subsubsection{Chi-square~---~$\chi^2$}
 
@@ -269,8 +401,6 @@ The value of $\chi$ in our example in \Cref{tab:chi_ex}
 \end{equation}
 
 
-\todoB{advantages/dis... a bit of discussion}
-
 \subsection{Wrappers}
 
 Unlike filters, wrappers work with subsets of features
@@ -346,10 +476,18 @@ However, working with sentences as a whole is somewhat difficult. Hence, the ord
 
 \subsubsection{TF-IDF}
 
-In a general document there are many words that are not directly useful.
+In a general document, there are many words that are not directly useful.
 {\it TF--IDF} is a way to evaluate which words are the most important for individual documents and
 choose reduce the number of words used in BOW.
-\citet{SalBuc88} describe the motivation for introducing this.
+
+\citet{ramos2003using} Describe using TF-IDF for detecting relevant words.
+TF-IDF for text classification is described in \citet{trstenjak2014knn}.
+Even though variations for improving performance have been described,
+we introduce the basic version of TF-IDF.
+More advanced variants can be found in \citet{berger2000bridging} or
+\citet{yun2005improved}
+
+The motivation for introducing TF-IDF is well described in \citet{SalBuc88}.
 The goal is to select such words for a document
 that they will define it well enough, yet leave enough room for describing all relevant documents by the same words.
 We will introduce two metrics to convey these two requirements and then use a combination of those two to gain the best results.
@@ -378,11 +516,6 @@ This is desired behaviour because words that occur in virtually every document  
 On the other hand, words having $f_{w,d}$ large and $f_{w,D}$ small are given much higher importance.
 This is again desired, because these words occur relatively often in the given document and not so often in the document set overall.
 
-\todoA{Is this really the way we're going to use it? We have very short texts}
-
-\todoA{- TD*IDF - with given thresholds - how to find it?}
-
-\todoB{try TD*IDF not with a~given threshold, but rather find the optimal threshold for cuts}
 
 \subsection{N-grams}
 

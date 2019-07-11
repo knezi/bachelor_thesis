@@ -224,7 +224,27 @@ More thorough description of evaluation can be found in \Cref{TanBachKum08}.
 
 How to debug and improve from what we saw.
 
-\subsection{\todoB{learning curves - overfitting/underfitting}}
+\subsection{Learning Curves}
+
+As \citet{sammut2011encyclopedia} describe it,
+\textbf{learning curves} is a way of representing how well the model  generalizes.
+It is a way of finding reasons why our model performs poorly.
+
+In general machine learning, it is visualized as a function
+from the size of the training set to performance.
+Usually, this function is plotted for both training and testing set.
+This a bit counter intuitive approach shows as how well the model
+actually fits the training data and how well it is able to predict unseen instances.
+If the model performs significantly better on the training set then testing,
+that is likely a case of overfitting.
+On the other hand, if both training and testing set are a bad fit by the model,
+the model is unlikely to be good in general.
+Also, if the difference between the two decreases, but does not get close enough,
+it may be a signal we do not have enough data for training.
+
+\todoA{example}
+
+
 
 In this chapter, we discussed what properties of classification are desirable
 and outlined how to use data to evaluate the performance.

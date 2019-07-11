@@ -125,7 +125,6 @@ In \textbf{\Cref{chap:exp} Experiments conducted}, we outline the experiments we
 We describe combinations of algorithms we used and discuss the results.
 We justify the compromises made for performance reasons.
 Finally, we talk about the impact of size of the data to the performance.
-\todoA{maybe also the training time?}
 
 In \textbf{\Cref{app:dataset} Yelp Dataset},
 we describe the source of the data and its exact format.
@@ -147,15 +146,18 @@ In \textbf{\Cref{app:mi} Top Features by Mutual Information},
 we list mutual information of selected features.
 
 
-\todoA{conventions}
+\section{Typographic Conventions}
 
+In this thesis, we use the following typographic conventions:
 
-{\bf definitons}
+\begin{itemize}
+\item \textbf{bold} for definitions of new terms
 
-{\it names of algorithms, approaches, data}
+\item \textit{italics} for mentions of already defined names. It also denotes data files in \Cref{chap:arch}.
 
-\texttt{files, code, processes}
+\item \texttt{monospace} is used for code and filenames. It is used for process names in \Cref{chap:arch}.
 
+\end{itemize}
 
 \section{Related Work}
 
@@ -163,15 +165,27 @@ A lot of research has been done in short text classification.
 Executive summary can be found in \citet{Song14}.
 They define short text as a new genre; listing its characteristics, summarizing possible approaches to short text classification and evaluating performance.
 
-One of the well studied data is tweets on Twitter like in \citep{sriram2010short}.
+One of the well studied dataset is tweets from Twitter.\footnote{\url{https://twitter.com}}
+A lot of studies on sentiment analysis have been conducted.
+\citet{jiang2011target} allege that most approaches follow
+\citet{pang2002thumbs} who utilize machine learning based classifiers;
+the state-of-the-art being \citet{go2009twitter} and \citet{barbosa2010robust}.
+Perhaps more relevant study on Twitter is \citep{sriram2010short},
+which tackles the problem of filtering relevant information.
+
 Reviews are to author's knowledge less studied.
 One of the relevant papers is \citet{ganu2009beyond}.
 They discuss the difficulties of selecting useful restaurant reviews.
 Unlike this thesis, they do not classify reviews as a whole, but instead try to find reviews containing topics such as food or service.
 The main attempt is to find some structure in the free form.
 
-Although there is a lot of research focusing on sentiment analysis \todoA{some citations?},
-very little research focuses on usefulness.
+Related text classification research focuses on sentiment analysis and toxic speech detection.
+A lot of research is focusing on sentiment analysis.
+As \citet{kaushik2014scalable} note, most sentiment analyses use machine learning or lexicon based solutions.
+Machine learning, which is relevant to us, is well described in
+\citet{melville2009sentiment}. They also compare machine learning to lexical methods.
+Another good paper is \citet{xia2011ensemble}, which compares different machine learning methods.
+
 Relatively close research focuses on toxic speech.
 \citet{van2018challenges} talk about toxic speech as non-constructive and non-inclusive conversation including hate speech, threats, insults and in general fruitless conversation.
 Filtering out fruitless text is our focus to high extent too.
