@@ -2,3 +2,4 @@
 import classifiers.naivebayes
 import classifiers.fasttext
 import classifiers.baseline
+import classifiers.decisiontree

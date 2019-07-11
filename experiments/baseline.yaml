@@ -18,6 +18,11 @@ tasks:
     classificator: 'baseline'
     features:
      - REVIEWLEN
+    preprocessing:
+      - 'featurematrixconversion'
+    extra_data: []
+    config:
+      algorithm: 'one-R'
 
 graphs:
   - name: 'baseline'
