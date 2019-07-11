@@ -239,6 +239,7 @@ architektura
  tabulky
  pdfa 
  citace i s carkama
+ pridat referenci guy - cor fes
 
 
  todo - highlight best results in the tables

@@ -52,4 +52,5 @@ class Classifier(ClassifierBase):
                      encoding='utf-8',
                      stdout=sp.PIPE)
 
-        return finished_process.stdout.strip()
+        # strip __label__ -> first niene characters
+        return finished_process.stdout.strip()[9:]
