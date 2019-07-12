@@ -124,8 +124,8 @@ This example has been taken from \citet{GuyEli03}.
 There are number of filters differing in the filter condition.
 We will discuss mutual information and Chi-square.
 
-\subsubsection{Mutual Information}
-\label{subsubsec:mi}
+\subsubsection{Mutual Information}\label{subsubsec:mi}
+
 As \citet{Hoq14} defines it,
 {\bf mutual information}~$I(X, Y)$~is the amount of uncertainty in X due to the amount of knowledge of Y.
 {\bf Mutual information} of variables $X$ and $Y$ is defined as:
@@ -560,9 +560,9 @@ but overpriced fare was great pizza and all the lemmings followed suit.
 
 For extracting entities, we used NLP analysis as described in \Cref{app:geneea}.
 
- \todoB{- filter them based on the~geneea value of importance}
+ %\todoB{- filter them based on the~geneea value of importance}
 
- \todoA{- occurrences - pick only the~most frequent}
+ %\todoA{- occurrences - pick only the~most frequent}
 
 \subsection{Sentiment}
 
@@ -583,7 +583,9 @@ Usually, one takes a sample from the data and when classifying an instance,
 cosine similarities to all instances in the sample are computed.
 The feature suggests that an instance has the label with the label of the closest instance.
 
-\todoA{source}
+Cosine similarity is well measured with number of proposed extensions.
+More precise description with improvements over the basic variant can be found
+in \citet{li2013distance} or \citet{mikawa2011proposal}.
 
 
 \subsection{Hand Crafted Features}
@@ -593,12 +595,8 @@ The feature suggests that an instance has the label with the label of the closes
 We also tried to measure typos in the review.
 The hypothesis was that reviews with many typos may be less useful,
 because the reviewer apparently did not spend much time writing it.
-We used the open source package aspell \footnote{\url{http://aspell.net/}}
-to compute the ratio of incorrect words out of all words.
-Subsequently, we clustered the values into two groups; with and without typos.
-We allowed instances with up to a few typos to be in the latter group.
+We tried to split features into two groups --- with and without typos.
 
-\todoA{incoherent with appendix}
 
 \subsubsection{Review length}
 

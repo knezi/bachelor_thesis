@@ -9,7 +9,11 @@ However, it tends to prefer features of higher arity, because
 they are more likely to decrease the entropy.
 This can be observed in \Cref{tab:mi_words} and \Cref{tab:mi_stars}.
 
+
+\section{Threshold Features}
+
 First, we report MI of threshold features as listed in \Cref{chap:exp}.
+Threshold features cluster instances into groups based on some numeric value.
 In the tables bellow, there are features listed with different thresholds.
 The meaning of particular thresholds is the following:
 
@@ -20,7 +24,6 @@ The meaning of particular thresholds is the following:
 \item \textit{Review length} with threshold 50, 150 is a ternary feature --- bellow, within and above the interval.
 \item \textit{sentiment} is a ternary feature with values negative, neutral and positive.
 \end{itemize}
-
 
 In \Cref{tab:mi_errors}, we report MI of features regarding spelling mistakes.
 Feature conveying absolute number of typos has negligible MI, probably owing to the high variance in the reviews' length.
@@ -118,16 +121,15 @@ instance 2 & 0.95 & 0.00002 \\
 \caption{Mutual information of cosine similarity (2 best performing instances)}\label{tab:mi_cossim}
 \end{table}
 
-\todoA{rephrase this}
 The best performing feature for stars convey the exact number of stars.
 It has MI 0.01, which is comparable to sentiment.
-However, it may not be as suitable for classification,
-because great part of the MI of the feature belongs to the second highest feature.
-This feature is a boolean whether on stars has been given.
-It sounds logical.
+
+The second best feature, \textit{whether the number of stars equals one}, shows a disadvantage of mutual information as a metrics for evaluate goodness of features.
+
+The MI is fairly high and the feature looks useful at first.
 Reviews giving only one star are likely to express serious complains, which are probably more useful than praising a business.
 Data analysis backs this claim --- approximately 78\% of 1 star reviews have been repeatedly marked as useful.
-However, there's only as much as 0.4\% reviews giving 1 star making this
+However, the problem is that there is only as much as 0.4\% reviews giving 1 star making this
 feature virtually worthless.
 
 \begin{table}[h!]
@@ -151,7 +153,11 @@ stars & 5 & 0.00004 \\
 \end{table}
 
 
+\section{Existential Features}
+
 Second, we report mutual information of existential features.
+Those features express whether a certain phrase exist in the text.
+
 The value of the function in the two graphs bellow expresses
 MI of the~$x$-th best feature at the point~$x$.
 It is the same as if we ordered the feature in the descending order

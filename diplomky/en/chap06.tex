@@ -80,10 +80,33 @@ Each round focuses on a different variable as listed bellow:
 In this round, we ran zero-R and one-R to get an idea about the problem.
 Also, we computed mutual information of all features.
 
-Zero-R has accuracy
+Zero-R achieves accuracy of 70\% as reported in \Cref{tab:base_perf}.
+This is in compliance with the label distribution,
+because the dataset contains approximately the same proportion of not-useful instances.
+One-R raises this performance a bit to 73\%.
 
-tady je potreba zminit pocatecni distribuci a jak to afect zero-r
+Because zero-R assigns all instances label \textit{not-useful},
+there are no true positive instances.
+Hence precision and recall are zero.
+For this reason, f-measure is undefined for zero-R.
+For f-measure, we use the baseline performance of one-R --- 56\%.
 
+\begin{table}[h!]
+
+\centering
+\begin{tabular}{lr@{~}r@{~}rr@{~}r@{~}r}
+\toprule
+\textbf{name}	& \multicolumn{3}{c}{\textbf{f-measure}} & \multicolumn{3}{c}{\textbf{accuracy}} \\
+\midrule
+zero-R & \multicolumn{3}{c}{N/A} & 0.70 & (0.69, 0.70) & $\pm$ 0.004 \\
+one-R & 0.56 & (0.54, 0.58) & $\pm$ 0.012 & 0.73 & (0.72, 0.74) & $\pm$ 0.005 \\
+
+\bottomrule
+\end{tabular}
+
+\caption{Performance of Feature Selections}\label{tab:base_perf}
+All reported values are in the format `value (min, max) $\pm$ standard deviation'.
+\end{table}
 
 \section{2nd round --- Features}
 
@@ -92,6 +115,19 @@ Configurations with results are shown in \Cref{tab:feat_perf}.
 Names refer to feature sets.
 \textbf{\{uni,bi\}grams} and \textbf{\{uni,bi,tri\}grams} are listed n-grams together.
 \textbf{basic} is STARS, REVIEWLEN, SPELLCHECK and COSINESIM.
+
+We can clearly see that none of the feature set brought desired improvement.
+Only feature set \textbf{basic} brought a 3 percent improvement in f-measure.
+Other sets brought immense deterioration.
+Any combination of \textbf{Bigrams} or \textbf{TF-IDF} decreased the accuracy by at least 30\%.
+This is probably due to overfitting.
+The feature sets contains so many features, that our model learnt to recognise
+irregularities in the data.
+This claim supports a brief analysis of the features showing that
+even words like `in', `to' or `that,' which clearly carry no information about usefulness.
+It is interesting to note that f-measure did not suffer from such a big decrease.
+
+
 
 \begin{table}[h!]
 
@@ -116,10 +152,6 @@ basic+tfidf & 0.48 & (0.47, 0.50) & $\pm$ 0.007 & 0.36 & (0.35, 0.37) & $\pm$ 0.
 \end{tabular}
 
 
-
-
-
-
 \caption{Performance of Feature Configurations}\label{tab:feat_perf}
 All reported values are in the format `value (min, max) $\pm$ standard deviation'.
 \end{table}
@@ -127,27 +159,33 @@ All reported values are in the format `value (min, max) $\pm$ standard deviation
 
 \section{3rd round --- Feature Selection}
 
-In this round, we compare three different methods of feature selection to performance when all features are used as are.
-We use \textbf{basic+bigrams} from the previous round.
-Na\"{i}ve Bayes with BIGRAMS, STARS, REVIEWLEN, COSINESIM and SPELLCHECK from the previous round is used.
+In this round, we compare three different methods of feature selection.
+The attempt is to avoid the overfitting described in the previous section.
+We use features \textbf{basic+entities} and Na\"{i}ve Bayes.
 We run PCA with 100 dimensions as recommended by scipy documentation.
 For mutual information and chi square, we choose top 1000 features.
 
+From \Cref{tab:sel_perf}, we can see that both mutual information
+and chi-square improved the accuracy to 58\% and f-measure even to the original
+0.56 from the baseline.
+Choosing the threshold for the number of features more carefully could improve the results even further, possible above the performance of the baseline.
+We have not analyzed this due the lack of time.
+
+PCA decreased the performance by a significant margin.
+This could be due to non-optimal parameters, which
+again could be improved by more careful analysis.
+
 \begin{table}[h!]
+
+\centering
 \begin{tabular}{lr@{~}r@{~}rr@{~}r@{~}r}
 \toprule
 \textbf{name}	& \multicolumn{3}{c}{\textbf{f-measure}} & \multicolumn{3}{c}{\textbf{accuracy}} \\
 
 \midrule
-basic+bigrams & 0.48 & (0.47, 0.49) & $\pm$ 0.007 & 0.35 & (0.34, 0.36) & $\pm$ 0.006		\\
-%basic+bigrams[MI] \\
-%basic+bigrams[CHI] \\
-%basic+bigrams[PCA] \\
-
-\midrule
 basic+entities & 0.55 & (0.54, 0.56) & $\pm$ 0.008 & 0.54 & (0.53, 0.55) & $\pm$ 0.006		\\
-basic+entities[MI] & 0.56 & (0.55, 0.57) & $\pm$ 0.007 & 0.58 & (0.57, 0.60) & $\pm$ 0.008 \\
-basic+entities[CHI] & 0.56 & (0.55, 0.57) & $\pm$ 0.007 & 0.58 & (0.57, 0.59) & $\pm$ 0.007 \\
+\textbf{basic+entities[MI]} & 0.56 & (0.55, 0.57) & $\pm$ 0.007 & 0.58 & (0.57, 0.60) & $\pm$ 0.008 \\
+\textbf{basic+entities[CHI]} & 0.56 & (0.55, 0.57) & $\pm$ 0.007 & 0.58 & (0.57, 0.59) & $\pm$ 0.007 \\
 basic+entities[PCA] & 0.47 & (0.46, 0.48) & $\pm$ 0.007 & 0.30 & (0.3, 0.31) & $\pm$ 0.006 \\
 
 
@@ -155,9 +193,47 @@ basic+entities[PCA] & 0.47 & (0.46, 0.48) & $\pm$ 0.007 & 0.30 & (0.3, 0.31) & $
 \end{tabular}
 
 \caption{Performance of Feature Selections}\label{tab:sel_perf}
+All reported values are in the format `value (min, max) $\pm$ standard deviation'.
 \end{table}
 
 \section{4th round --- Classifiers}
+
+In the fourth round, we decided to try different classifiers as opposed the previously used Na\"{\i}ve Bayes.
+For Na\"{\i}ve Bayes, we chose the best performing model with the only feature set \textbf{basic}.
+FastText was used without any features, only with raw text.
+Lastly, we used decision tree.
+Decision tree tends to suffer from overfitting when too many features are used.
+Also, the training time increases significantly with the number of features,
+because mutual information needs to be computed for all features in all nodes.
+Therefore, we used only feature set \textbf{basic}.
+
+The results can be seen in \Cref{tab:clsf_perf}.
+The performance of FastText was comparable to Na\"{\i}ve Bayes on \textbf{basic+entities}.
+The best performance was achieved by decision tree.
+It improves the previous top performing one-R by 3\%, but decreasing the f-measure.
+This is a reasonable result, since one-R is a special simpler case of decision tree.
+
+
+\begin{table}[h!]
+
+\centering
+\begin{tabular}{lr@{~}r@{~}rr@{~}r@{~}r}
+\toprule
+\textbf{name}	& \multicolumn{3}{c}{\textbf{f-measure}} & \multicolumn{3}{c}{\textbf{accuracy}} \\
+\midrule
+
+Na\"{\i}ve Bayes & 0.59 & (0.58, 0.60) & $\pm$ 0.005 & 0.71 & (0.71, 0.72) & $\pm$ 0.004		\\
+
+FastText & 0.53 & (0.52, 0.54) & $\pm$ 0.009 & 0.55 & (0.54, 0.57) & $\pm$ 0.008 \\
+\textbf{Decision tree} & 0.52 & (0.49, 0.54) & $\pm$ 0.012 & 0.74 & (0.73, 0.74) & $\pm$ 0.004 \\
+
+\bottomrule
+\end{tabular}
+
+\caption{Performance of Different Classifiers}\label{tab:clsf_perf}
+All reported values are in the format `value (min, max) $\pm$ standard deviation'.
+\end{table}
+
 
 \section{5th round --- Training Size}
 
@@ -175,19 +251,3 @@ basic+entities[PCA] & 0.47 & (0.46, 0.48) & $\pm$ 0.007 & 0.30 & (0.3, 0.31) & $
 
 
 We use processed data as described in \Cref{app:a}.
-
-also mention what filter condition has been used, and geenea
-
-
-\todoB[try them all - possible discussion on difficulty on different types].
-
-All measurements will be with respect to the~size of dataset, to see how the~usefulness of approaches improves with more data.
-
-criteria (TD-idf, entropy...), then try to add *-grams. Later, try more linguistics features.
-
-In the~next part, if you have time, try other approaches to improve performance. You can try PCA reduction, NN, or other ML algorithms/techniques.
-
-* experiments conducted + results (what data, what features, expectations)
-
-\todoA{promysli ficury desc}
-

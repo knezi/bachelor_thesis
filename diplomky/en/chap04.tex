@@ -30,12 +30,8 @@ The less complicated solution is less likely to suffer from overfitting,
 because there is simply not enough space to include all various idiosyncrasies.
 An example of such a process can be a {\bf Decision Tree}.
 If we have two trees with comparable performance,
-the one with less nodes is more likely to generalise better and not suffer from overfitting.
+the one with less nodes is more likely to generalise better.
 \citet{TanBachKum08} describe this in more detail in chapter 4.
-
-{source: kumar 188}
-
-\todoA{add mention of underfittin???}
 
 \section{Partitioning Data}
 
@@ -60,10 +56,16 @@ The training set can be chosen in such a way that it contains biased data.
 We also should be aware of the fact that training and testing sets are no longer independent,
 because the entire dataset is split between the two.
 Because of this reason, particular choice of one set directly influences the properties of the other.
-\todoA{rephrase it}
-An example of this dependency is
-when there are more instances of one label in one subset,
-there will be less instances in the other set.
+
+An example of this dependency is the distribution of labels.
+Suppose there are 80\% positive and 20\% negative instances.
+If we choose the training set such that 90\% instances are positive,
+there will be less than 80\% positive instances in the testing set.
+
+A way of overcoming this problem is \textit{stratification}.
+\citet{sammut2011encyclopedia} define it as a way of keeping the class
+distribution as close as possible across all sets.
+More on this can be found in  \citet{TanBachKum08} in chapter Sampling.
 
 
 \subsection{Cross-Validation}
@@ -185,8 +187,6 @@ or equivalently
 
 In our mock example accuracy is~$21/28$ and error rate~$7/28$.
 
-\todoB{problems with accuracy}.
-
 More commonly used metrics for their better properties are precision, recall and f-measure.
 {\bf Precision} is the ratio of correctly classified instances out of those classified as positive.
 It expresses our confidence on how likely an instance is positive when we classify it so.
@@ -218,9 +218,9 @@ More thorough description of evaluation can be found in \Cref{TanBachKum08}.
 \todoA{Kumar has only accuracy and error rate - find prec, f-0measure, recall somewhere else}
 
 
-\subsection{\todoC{guyon - kniha -a pendix A hezky prehled null hypothesis}}
+%\subsection{\todoC{guyon - kniha -a pendix A hezky prehled null hypothesis}}
 
-\subsection{\todoB{error analysis - see w8}}
+%\subsection{\todoB{error analysis - see w8}}
 
 How to debug and improve from what we saw.
 

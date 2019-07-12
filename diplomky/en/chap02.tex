@@ -162,17 +162,70 @@ However, when our baseline predicts only 3\%, 22\% may be actually very good res
 Zero-R would label all customers as satisfied in our example.
 
 A bit more complicated {\bf One-R} chooses one feature and bases the classification solely on this feature.
-For every value of the feature, we take all instances corresponding to this value and choose the label occurring the most among them.
-For predicting, we use the label we found for each value.
+For every value of the feature, we take all instances corresponding to this value and remember the label occurring the most among them.
+For predicting, we use the label we remember for the particular value.
 
-Suppose we choose the feature {\it discount} in our example.
+Suppose we choose feature \textit{discount} in our example.
 We can see that all customers that got discount are satisfied.
 Hence all customers getting a discount are according to one-R satisfied.
 Three customers that did not get discount are dissatisfied and one is satisfied.
 Hence one-R will predict all customers without a discount as dissatisfied.
 
-The problem is how to choose the most informative feature which we will tackle in \Cref{subsec:decisiontree}.
-For now we can think of it as finding such a feature, that will produce the best classifier.
+The only problem left is how to choose the most informative feature.
+We want to choose such a feature which has some sort of dependency on the label.
+One possibility is to use mutual information for finding the feature
+that correlates the best with the label.
+More about mutual information can be found in \Cref{subsubsec:mi}.
+
+
+\subsection{Decision Trees}\label{subsec:decisiontree}
+
+Imagine taking the concept of one-R a bit further.
+Suppose we have one-R with feature \textit{discount} from the previous section.
+The classifier works perfectly for all instances with discount being \textbf{yes}.
+However, when the value is \textbf{no}, it makes a mistake.
+
+To improve the predictions, we build another one-R classifier
+whenever we get an instance without discount.
+The reduced task is to learn how to predict instances 2, 3, 5 and 7 with features \textit{private} and \textit{internet}.
+Let us say we choose feature \textit{internet}.
+For values \textbf{limited} and \textbf{no} the prediction is dissatisfied.
+In case of \textbf{unlimited}, we get a tie.
+However we break it, we get one instance incorrectly classified.
+
+So, for instances with unlimited internet and without discount, we do not stop, but
+build another one-R classifier.
+This time taking the last feature --- \textit{private}.
+After using even this feature, all predictions are correct.
+
+What we just did is building a decision tree classifier.
+It can be described as
+building a one-R classifier and whenever we are not certain with our prediction,
+we build ask another one-R classifier for a prediction.
+The network of one-R classifiers is called a \textbf{decision tree}.
+Representation for our example is shown in \Cref{fig:tree}.
+
+We predict by traversing the graph.
+We start in a root and depending on the actual value of the instance,
+we traverse the graph until we arrive in a leaf which contains a prediction.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\textwidth]{figures/decisiontree.png}
+	\caption{Decision tree} \label{fig:tree}
+\end{figure}
+
+For choosing the features and the tree structure,
+we utilize mutual information.
+We choose a feature with highest mutual information for root.
+This splits our dataset into independent groups.
+We recursively do the same for each group individually until a certain stop condition is met.
+Usually, once all remaining features have lower mutual information than a given threshold.
+\todoA{citation}
+
+
+
+
 
 \subsection{Na\"{i}ve Bayes}
 
@@ -356,12 +409,6 @@ We compute~$t_{no}$~in the same manner for a dissatisfied customer:
 $t_{no}$ is higher and Na\"{i}ve Bayes classifies the instance as dissatisfied.
 Note that this may look surprising as features ``private'' and ``internet'' suggest satisfaction,
 but the correlation between discount and satisfaction is so strong that it outweighs other features in this settings.
-
-
-
-\subsection{Decision trees}
-\label{subsec:decisiontree}
-\todoC{Decision trees - if you decide not to do it, change ONE-R reference to evaluation}
 
 \subsection{FastText}
 
