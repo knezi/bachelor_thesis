@@ -86,8 +86,7 @@ Finally, we compare different classifiers and feature sets in \textbf{evaluation
 Common evaluations will be discussed in \Cref{chap:eval}.
 
 Last three chapters  are left for the architecture of the software developed (\Cref{chap:arch}),
-demonstration of conducted experiments (\Cref{chap:exp}) and final discussion (\Cref{chap:concl}).
-\todoA{link}
+demonstration of conducted experiments (\Cref{chap:exp}) and final discussion (\nameref{chap:concl}).
 
 
 
@@ -221,7 +220,8 @@ We choose a feature with highest mutual information for root.
 This splits our dataset into independent groups.
 We recursively do the same for each group individually until a certain stop condition is met.
 Usually, once all remaining features have lower mutual information than a given threshold.
-\todoA{citation}
+More thorough description of decision trees and training algorithm ID3 can be found in
+\citet{Quinlan1986}.
 
 
 
@@ -252,7 +252,9 @@ Note that since there is one-to-one correspondence between classes and component
 we use the same notation for both components and labels.
 It should be clear from the context what we mean (i.e. component generates an instance,
 but an instance is assigned a label).
-Also note, that the assumption about class and component correspondence is only used for simplification and can be generalised \todoA{source}.
+Also note, that the assumption about class and component correspondence is only used for simplification and can be generalised.
+Exact description of a mixture model can be found in 
+\citet{DBLP:journals/corr/cmp-lg-9705005}.
 
 An instance is generated in two steps.
 First, a component is selected according to a certain probability distribution.
