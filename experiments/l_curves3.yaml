@@ -1,0 +1,32 @@
+config:
+  chunks: 10
+  mi: false
+  l_curves: true
+  max_ngrams: 1
+  max_tfidf: 1
+tasks:
+  - name: 'DT'
+    classificator: 'decisiontree'
+    features:
+      - STARS
+      - REVIEWLEN
+      - SPELLCHECK
+      - COSINESIM
+    preprocessing:
+      - 'featurematrixconversion'
+    extra_data: []
+    config: {}
+
+graphs:
+  - name: 'accuracy_learning_curves'
+    data:
+      DT:
+        - 'accuracy'
+      DT-train:
+        - 'accuracy'
+  - name: 'f_measure_learning_curves'
+    data:
+      DT:
+        - 'f_measure'
+      DT-train:
+        - 'f_measure'
