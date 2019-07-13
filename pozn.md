@@ -13,22 +13,7 @@ https://unix.stackexchange.com/questions/332641/how-to-install-python-3-6
 - use respectivelly carefully
 https://tex.stackexchange.com/questions/34155/autoref-does-not-capitalize-initial-character-in-sentence-when-referencing-lae
 
-## clanky
-error analysis - add section
-	http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.441.6742&rep=rep1&type=pdf
-
-exploring data
- - visualisation
- Kumar data Mining
-
- - najit bakalarky podobneho zamezeni
- - najit sentiment analysis and classification
- - find state of the art of language modelingz
-
 ## odevzdani
-\it -jmena algoritmu, postupu a tak
-\bb - definice
-
 - nezalomitelne mezery
 - pdfa
 - vazba nemusi byt nerozebiratelna
@@ -243,3 +228,6 @@ architektura
 
 
  todo - highlight best results in the tables
+
+ projit jeste na konci vsechny shrnuti a roadmapy, jeslti to sedi
+ preface - sections don't make any sense

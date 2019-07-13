@@ -1,8 +1,48 @@
 \chapter*{Conclusion}\label{chap:concl}
-
 \addcontentsline{toc}{chapter}{Conclusion}
 
-- what was the focus
-- what was achieved
--what the problems were
-- possible expansion and further research
+In this thesis, we focused on comparing various classification methods.
+Our incentive was to filter useful reviews for a recommendation system,
+in order to improve the user experience and usability.
+For used the Yelp dataset to evaluate our results.
+
+We have built an extensive software package for comparing classification models.
+This package can be easily used in further research in machine learning 
+as it allows extensibility and flexibility.
+
+For the actual experiments, we tried different sets of features, feature selection algorithms and
+classifiers.
+Finally, we performed learning curves analysis to confirm the generalisability and look for
+ways for further improvement.
+
+The experiments showed it is a hard problem 
+and that all our solutions were only insignificantly better than the baseline solution.
+It has showed
+we would need to study this problem more in depth to be able to gain a significant improvement.
+
+Especially, the following areas, which are well beyond the scope of this thesis, could be extended:
+
+\begin{itemize}
+
+\item analysis of thresholds ---
+most thresholds were chosen based on some previous research without adjusting them to our situation, insufficient analysis or simply our intuition.
+In an ideal case, an optimization algorithm would be used to find the perfect values.
+
+\item feature selection methods ---
+except for TF-IDF, features were filtered by feature selection algorithms as a black box.
+It may be beneficial to tune the selection exactly to our case or even try some wrappers or embedded methods.
+
+\item dataset preparation ---
+the data contain a lot of noise which may be possible to filter out.
+Also, it is not very clear whether our labelling of the dataset is a reliable method.
+
+\item classifier tuning ---
+we used only three different classifiers with the default parameters.
+More thorough tuning by using an optimization algorithm could be beneficial.
+
+\item use more advanced techniques ---
+our models may be too simple.
+It may beneficial to use more sophisticated methods
+such as ensemble classifiers or neural networks
+ 
+\end{itemize}

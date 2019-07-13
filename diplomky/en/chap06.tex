@@ -1,7 +1,9 @@
-\chapter{Experiments Conducted}\label{chap:exp}
+\chapter{Conducted Experiments}\label{chap:exp}
 
-In this chapter, we outline all experiments conducted and discuss the results.
-\todoA{az to bude hotove}
+In this chapter, we outline all experiments and discuss the results.
+We end up with two best performing models --- Na\"{\i}ve Bayes and decision tree.
+Maybe somewhat surprisingly, those models do not make use of any textual features,
+but exploit only high-level features.
 
 Since the objective of this thesis is to compare several approaches,
 next step after building the architecture was to define sets of experiments and metrics to compare the results.
@@ -12,6 +14,18 @@ Instead, we tried promising subsets by only choosing the best variant out of eac
 The training and testing was done on a dataset with 64,550 instances.
 For each evaluation, 10-fold crossvalidation was used, resulting in
 training sets with 58,095 instances and testing with 6,455 instances.
+The exact format of the dataset can be found in \Cref{app:dataset}.
+The description of data preprocessing in \Cref{app:prepr}.
+
+It is often not possible to choose the best performing model,
+because there are different winners for different metrics.
+We decided to report accuracy and f-measure.
+Because every classifier was trained and tested 10 times,
+we report the mean as a representative value of the classifier
+together with minimum, maximum and standard deviation.
+As can be seen from the tables bellow, 
+the values were fairly stable with low standard deviation and
+as such should be reasonably reliable.
 
 For labels, we used the number of useful likes.
 Reviews with zero likes were labelled not-useful and
@@ -34,9 +48,6 @@ The first list contains existential features --- they express that certain phras
 Note that the best way for selecting bigrams and trigrams would be to compute mutual information of all bigrams, resp. trigrams.
 However, this is computationally very expensive, as there is well over 1,100,000 unique bigrams in the reviews.
 Instead, we decided to use n-grams that consist of top unigrams only as described in the list.
-
-The threshold of n-grams and TF-IDF were found experimentally to produce approximately the same number of features as entities.
-\todoA{not true}
 
 The second list contains threshold features --- they split reviews into groups based on some property reaching a threshold.
 
@@ -198,10 +209,17 @@ All reported values are in the format `value (min, max) $\pm$ standard deviation
 
 \section{4th round --- Classifiers}
 
-In the fourth round, we decided to try different classifiers as opposed the previously used Na\"{\i}ve Bayes.
-For Na\"{\i}ve Bayes, we chose the best performing model with the only feature set \textbf{basic}.
-FastText was used without any features, only with raw text.
-Lastly, we used decision tree.
+In the fourth round, we decided to try different classifiers as opposed to the previously used Na\"{\i}ve Bayes.
+We used the following classifiers and features:
+
+\begin{itemize}
+\item Na\"{\i}ve Bayes; \textbf{basic}
+\item FastText; raw text
+\item decision tree; \textbf{basic}
+\end{itemize}
+
+Na\"{\i}ve Bayes was chosen the best performing data set.
+Fast Text is designed for working with raw text.
 Decision tree tends to suffer from overfitting when too many features are used.
 Also, the training time increases significantly with the number of features,
 because mutual information needs to be computed for all features in all nodes.
@@ -209,9 +227,12 @@ Therefore, we used only feature set \textbf{basic}.
 
 The results can be seen in \Cref{tab:clsf_perf}.
 The performance of FastText was comparable to Na\"{\i}ve Bayes on \textbf{basic+entities}.
-The best performance was achieved by decision tree.
+
+
+The best performance in accuracy was achieved by decision tree.
 It improves the previous top performing one-R by 3\%, but decreasing the f-measure.
 This is a reasonable result, since one-R is a special simpler case of decision tree.
+The best performing model in terms of f-measure is Na\"{\i}ve Bayes.
 
 
 \begin{table}[h!]
@@ -237,17 +258,59 @@ All reported values are in the format `value (min, max) $\pm$ standard deviation
 
 \section{5th round --- Training Size}
 
+Lastly, we perform learning curves analysis as described in \Cref{sec:lcurves}.
+We report f-measure and accuracy of the two best performing models from the previous round.
+Both are trained on feature set \textbf{basic}.
+The performance of Na\"{\i}ve Bayes is displayed in \Cref{fig:l_curves2_accuracy} and \Cref{fig:l_curves2_f_measure},
+decision tree is in \Cref{fig:l_curves3_accuracy} and \Cref{fig:l_curves3_f_measure}.
+The graphs show the values of the given metrics for both training and testing set.
+Testing set is the same for all sizes of the training set.
+For the training set, subsets of the original are used in such a way that 
+all smaller set are proper subsets of any bigger.
+The x axis is log scaled.
+Some values of f-measure for very small sets were ignored for the same reason as with zero-R.
+It is undefined as there were no true positives.
+
+As we can see in \Cref{fig:l_curves2_accuracy} and \Cref{fig:l_curves2_f_measure}, Na\"{\i}ve Bayes performs comparably the same on both the training and testing sets when trained
+on already only as many as 100 instances.
+It is very likely to generalise well as the performance is virtually identical.
+Also, the performance stabilizes well as the minimal and maximal values are very close to the mean.
+
+It is worth noting that decision tree achieves comparable performance as can be seen in
+\Cref{fig:l_curves3_accuracy} and \Cref{fig:l_curves3_f_measure}.
+However, it needs at least 10 000 instances to achieve so.
+Na\"{\i}ve Bayes is a clear winner here as it needs a lot less instances.
+It would be beneficial to plot learning curves for other models,
+because it could show the reasons why our more sophisticated models with
+more features performed significantly worse.
+However, due to the computing complexity, we did not analyse it.
+It can be a subject of further research.
+
+From the numbers, it is clear that our models did not perform significantly better than 
+a baseline model.
+Even our best performing models achieved accuracy of only 70\% which can be simply accomplished by labelling all instances as not-useful.
+The reason could simply be there is not enough information in the reviews to predict
+ usefulness, the inner dependency is much more complicated than what can be conveyed by our simple models or the number of useful likes is simply not a representative metrics.
+
+
+
 \begin{figure}[h]\centering
-\includegraphics[width=130mm]{figures/l_curves_accuracy.png}
-\caption{Dependency of accuracy on the training size}
-\label{fig:l_curves_accuracy}
+\includegraphics[width=130mm]{figures/lc2_acc.png}
+\caption{Learning curves with standard deviation for Na\"{\i}ve Bayes --- accuracy}\label{fig:l_curves2_accuracy}
 \end{figure}
 
 \begin{figure}[h]\centering
-\includegraphics[width=130mm]{figures/l_curves_f_measure.png}
-\caption{Dependency of f-measure on the training size}
-\label{fig:l_curves_f_measure}
+\includegraphics[width=130mm]{figures/lc2_fm.png}
+\caption{Learning curves with standard deviation for Na\"{\i}ve Bayes --- f-measure}\label{fig:l_curves2_f_measure}
 \end{figure}
 
 
-We use processed data as described in \Cref{app:a}.
+\begin{figure}[h]\centering
+\includegraphics[width=130mm]{figures/lc3_acc.png}
+\caption{Learning curves with standard deviation for decision tree --- accuracy}\label{fig:l_curves3_accuracy}
+\end{figure}
+
+\begin{figure}[h]\centering
+\includegraphics[width=130mm]{figures/lc3_fm.png}
+\caption{Learning curves with standard deviation for decision tree --- f-measure}\label{fig:l_curves3_f_measure}
+\end{figure}

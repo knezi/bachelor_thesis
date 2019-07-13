@@ -123,20 +123,18 @@ The other diagonal represents all misclassified instances.
 \center
 \begin{tabular}{ll|c|c|}
 \cline{3-4}
-& & \multicolumn{2}{l|}{predicted label} \\
+& & \multicolumn{2}{c|}{predicted label} \\
 \cline{3-4}
-& & yes & no \\
+& & \hbox to 1cm{\hfil yes\hfil} & \hbox to 1cm{\hfil no\hfil} \\
 \hline
 \multicolumn{1}{|l|}{actual}& yes & TP & FN\\
 \cline{2-4}
 \multicolumn{1}{|l|}{label}						   & no & FP & TN \\
-
 \hline
 
 \end{tabular}
 	\caption{Confusion Matrix}\label{tab:confmatrix}
 \end{table}
-\todoA{table is ugly}
 
 In the example below, we have 10 and 11 instances classified correctly. 
 They are true positives and true negatives respectively.
@@ -146,11 +144,11 @@ The last cell represents 2 not-useful instances classified as useful --- these a
 
 \begin{table}[h!]
 \center
-\begin{tabular}{ll|c|c|}
+\begin{tabular}{ll|r|r|}
 \cline{3-4}
 & & \multicolumn{2}{l|}{predicted label} \\
 \cline{3-4}
-& & useful & not \\
+& & \hbox to 1.2cm{\hfill useful\hfil} & \hbox to 1.2cm{\hfill not\hfil} \\
 \hline
 \multicolumn{1}{|l|}{actual}& useful & 10 & 5\\
 \cline{2-4}
@@ -224,7 +222,7 @@ More thorough description of evaluation can be found in \Cref{TanBachKum08}.
 
 How to debug and improve from what we saw.
 
-\subsection{Learning Curves}
+\subsection{Learning Curves}\label{sec:lcurves}
 
 As \citet{sammut2011encyclopedia} describe it,
 \textbf{learning curves} is a way of representing how well the model  generalizes.

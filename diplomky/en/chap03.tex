@@ -153,8 +153,9 @@ This way~$H(X)$~expresses the amount of uncertainty of~$X$~and~$H(X|Y)$~what~$Y$
 This supports the intuitive idea that information gain expresses how much information one variable carries about the other one.
 
 Let us demonstrate mutual information on an example.
-Suposse we are trying to predict the mood of our examiner.
-We have created two features --- whether it is raining and whether the examiner is hungry as shown in \Cref{tab:mi_ex}.
+Suposse we are trying to predict the mood of the examiner for our exam.
+We have created two features --- whether it is raining and whether the examiner is hungry.
+Mock data is shown in \Cref{tab:mi_ex}.
 Now, we want to estimate how good those features are using mutual information.
 
 
@@ -175,16 +176,13 @@ Now, we want to estimate how good those features are using mutual information.
  \label{tab:mi_ex}
 \end{table}
 
-Using \Cref{eq:mi} we get the following for variables $\mathit{rain}$ and $\mathit{mood}$:
+Using \Cref{eq:mi}, MI of variables $\mathit{rain}$ and $\mathit{mood}$ is:
 
 
 \todoA{this looks ugly}
 \begin{equation}
 	I(\mathit{rain}, \mathit{mood}) =
-	f(yes, happy) +
-	f(no, happy) +
-	f(yes, angry) +
-	f(no, angry),
+	f(yes, happy) + f(no, happy) + f(yes, angry) + f(no, angry),
 \end{equation}
 
 where:
@@ -283,8 +281,9 @@ Especially, when the examiner is hungry, he is always happy.
 On the contrary, regardless whether it is raining or not, the examiner
 is sometimes happy, sometimes angry.
 
-The basic approach for selecting features is
-to compute mutual information of each feature and the class label.
+Once we know how to compute mutual information,
+we only need to select the best performing features.
+The basic approach is to compute mutual information of each feature and the class label.
 Only features exceeding some given threshold are used for training.
 
 There is also an improved algorithm proposed by \citet{Hoq14}.
@@ -342,7 +341,7 @@ and~$\chi^2$~of the two variables will then be sum of the cost function over all
 
 \begin{table}[h!]
  \center
- \begin{tabular}{ll|c|c|c}
+ \begin{tabular}{ll|r|r|r}
  \cline{3-4}
         &       & \multicolumn{2}{c|}{label} & \\
         \cline{3-4}
@@ -410,7 +409,7 @@ and evaluated by some common evaluation metrics.
 The optimal subset is than chosen.
 Thanks to this, wrappers are universal and robust.
 
-Furthermore, wrappers can perform a lot better than filters on certain datasets.
+Also, wrappers can perform a lot better than filters on certain datasets.
 Such an example was shown in \Cref{subsec:filters}.
 
 Unfortunately, wrappers tend to be computationally expensive,

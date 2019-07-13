@@ -151,10 +151,13 @@ A preprocessor must be defined in directory \texttt{preprocessors} and be a chil
 Also, its name must be added into \texttt{preprocessors/\_\_init\_\_.py}.
 Analogously, a new classifier is to be created in directory \texttt{classifiers}.
 
-The input and output formats of preprocessors is arbitrary, so long the following conditions are met.
-First, adjacent units must be compatible.
-Second, the first preprocessor in the pipeline must take \texttt{feature\_dict} with possibly additional data specified in \texttt{extra\_data} as returned by \texttt{load\_data.Data.get\_feature\_dict}.
-Lastly, the last preprocessor must be compatible with the input of the used classifier.
+The input and output formats of preprocessors are arbitrary, so long the following conditions are met:
+
+\begin{itemize}
+	\item  adjacent units must be compatible.
+	\item the first preprocessor in the pipeline must take \texttt{feature\_dict} as returned by \texttt{load\_data.Data.get\_feature\_dict}.
+	\item the last preprocessor must be compatible with the input of the used classifier.
+\end{itemize}
 
 The input of the classifier is up to the user.
 However, the output of the classifier must be the predicted label.
