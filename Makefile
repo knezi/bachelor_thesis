@@ -3,6 +3,7 @@ RUN_DEP = fastText/fasttext ./exceptions.py ./preprocessors/__init__.py ./prepro
 DATA_GEN_DEP = ./denormalization/extract_ids.py ./denormalization/filter.py ./denormalization/join.py
 
 EXPS = $(basename $(wildcard experiments/*yaml))
+EXPS_SAM = $(addsuffix .samp,$(EXPS))
 
 data/data.json data/ids: $(DATA_GEN_DEP)
 	# run denormalize
@@ -19,10 +20,11 @@ $(EXPS): data/data.json data/geneea.json $(RUN_DEP)
 	./process_data.py '$@.yaml' data/data.json data/geneea.json
 
 run: $(EXPS)
-	
-run_sample: data/data_sample.json data/geneea_sample.json $(RUN_DEP)
+run_sample: $(EXPS_SAM)
+
+$(EXPS_SAM): data/data_sample.json data/geneea_sample.json $(RUN_DEP)
 	mkdir -p graphs
-	./process_data.py experiments/experiments.yaml data/data_sample.json data/geneea_sample.json
+	./process_data.py '$(basename $@).yaml' data/data_sample.json data/geneea_sample.json
 
 clean:
 	rm -f data/data_fasttext_model.{bin,vec} data/data_fasttext_train
@@ -44,4 +46,4 @@ thesis.pdf:
 all: run thesis.pdf
 
 .DEFAULT: all
-.PHONY: all run run_sample clean $(EXPS)
+.PHONY: all run run_sample clean $(EXPS) $(EXPS_SAM)

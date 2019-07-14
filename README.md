@@ -12,7 +12,7 @@ Install the following software (for most distributions the name of a package in 
 * wget
 * git
 * shell
-* python>=3.6 (tested on python3.7.2)
+* python>=3.7 (tested on python3.7.2)
 * pip
 * aspell with english, german and french dictionary
 
@@ -21,7 +21,7 @@ It is important to install the pip version for python3.
 It is also important to have python of a version at least 3.6.
 Version 3.5 (python3 in Debian Stretch) will not work.
 
-Python can be manually installed by:
+Python can be manually installed by: (TODO wrong)
 
 apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl git
 
@@ -75,14 +75,6 @@ make run
 ```
 
 It will first preprocess and denormalize data and then process them. Repeated run will only rerun the second part. `make run` runs all experiments in directory `experiments`.
-
-It is possible to run tasks in parallel with:
-
-```
-make run -j<number-of-threads>
-```
-
-However, note that for each thread approximately 7GB of RAM is required.
 
 
 Resulting data can be found in `graphs/current_timestamp`
