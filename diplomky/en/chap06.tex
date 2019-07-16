@@ -2,30 +2,20 @@
 
 In this chapter, we outline all experiments and discuss the results.
 We end up with two best performing models --- Na\"{\i}ve Bayes and decision tree.
-Maybe somewhat surprisingly, those models do not make use of any textual features,
+Maybe somewhat surprisingly, those models do not make use of any word features,
 but exploit only high-level features.
 
-Since the objective of this thesis is to compare several approaches,
-next step after building the architecture was to define sets of experiments and metrics to compare the results.
-Our original intention was to try all combinations of features, classifiers and other techniques.
+Our original intention was to try all combinations of features, feature selection and classifiers.
 However, this turned out to be computationally infeasible.
-Instead, we tried promising subsets by only choosing the best variant out of each group and combine it.
+Instead, we tried promising subsets by choosing the best variant out of each round.
 
-The training and testing was done on a dataset with 64,550 instances.
-For each evaluation, 10-fold crossvalidation was used, resulting in
-training sets with 58,095 instances and testing with 6,455 instances.
+\section{Datasets}
+
+The experiments were done on a dataset with 64,550 instances.
+We used 10-fold crossvalidation --- each split had
+58,095 training and 6,455 testing instances.
 The exact format of the dataset can be found in \Cref{app:dataset}.
 The description of data preprocessing in \Cref{app:prepr}.
-
-It is often not possible to choose the best performing model,
-because there are different winners for different metrics.
-We decided to report accuracy and f-measure.
-Because every classifier was trained and tested 10 times,
-we report the mean as a representative value of the classifier
-together with minimum, maximum and standard deviation.
-As can be seen from the tables bellow, 
-the values were fairly stable with low standard deviation and
-as such should be reasonably reliable.
 
 For labels, we used the number of useful likes.
 Reviews with zero likes were labelled not-useful and
@@ -34,8 +24,23 @@ reviews with at least two likes useful.
 The entire dataset contains 44,921 not-useful and
 19,629 useful instances.
 
-We split features into the sets defined in the two lists bellow.
-The first list contains existential features --- they express that certain phrase is present in the review.
+We decided to report accuracy and f-measure.
+Because every classifier was trained and tested 10 times,
+we report the arithmetic mean as the representative value of the classifier
+together with minimum, maximum and standard deviation.
+As it can be seen from the tables bellow, 
+the values were fairly stable with low standard deviation and
+as such should be reasonably reliable.
+
+We split features into the sets defined in the two lists bellow;
+\textbf{existential features} expressing whether certain phrase is present in the review and
+\textbf{threshold features} clustering reviews into groups.
+
+Note that the best way for selecting bigrams and trigrams would be to compute mutual information of all bigrams, resp. trigrams.
+However, this is computationally very expensive, as there are well over 1,100,000 unique bigrams in the reviews.
+Instead, we decided to use n-grams that consist of only top informative unigrams.
+
+\subsubsection*{Existential features}
 
 \begin{itemize}
 	\item UNIGRAMS --- top 50,000 unigrams according to mutual information
@@ -45,11 +50,8 @@ The first list contains existential features --- they express that certain phras
 	\item ENTITIES --- 270,000 entities as found by the NLP analysis
 \end{itemize}
 
-Note that the best way for selecting bigrams and trigrams would be to compute mutual information of all bigrams, resp. trigrams.
-However, this is computationally very expensive, as there is well over 1,100,000 unique bigrams in the reviews.
-Instead, we decided to use n-grams that consist of top unigrams only as described in the list.
-
-The second list contains threshold features --- they split reviews into groups based on some property reaching a threshold.
+\subsubsection*{Threshold features}
+\todoA{ugly}
 
 \begin{itemize}
 	\item STARS 
@@ -90,6 +92,7 @@ Each round focuses on a different variable as listed bellow:
 
 In this round, we ran zero-R and one-R to get an idea about the problem.
 Also, we computed mutual information of all features.
+It is listed in \Cref{app:mi}.
 
 Zero-R achieves accuracy of 70\% as reported in \Cref{tab:base_perf}.
 This is in compliance with the label distribution,
@@ -100,7 +103,7 @@ Because zero-R assigns all instances label \textit{not-useful},
 there are no true positive instances.
 Hence precision and recall are zero.
 For this reason, f-measure is undefined for zero-R.
-For f-measure, we use the baseline performance of one-R --- 56\%.
+We can take one-R for f-measure baseline (56\%).
 
 \begin{table}[h!]
 
@@ -116,7 +119,7 @@ one-R & 0.56 & (0.54, 0.58) & $\pm$ 0.012 & 0.73 & (0.72, 0.74) & $\pm$ 0.005 \\
 \end{tabular}
 
 \caption{Performance of Feature Selections}\label{tab:base_perf}
-All reported values are in the format `value (min, max) $\pm$ standard deviation'.
+All reported values are in the format `mean (min, max) $\pm$ standard deviation'.
 \end{table}
 
 \section{2nd round --- Features}
@@ -164,7 +167,7 @@ basic+tfidf & 0.48 & (0.47, 0.50) & $\pm$ 0.007 & 0.36 & (0.35, 0.37) & $\pm$ 0.
 
 
 \caption{Performance of Feature Configurations}\label{tab:feat_perf}
-All reported values are in the format `value (min, max) $\pm$ standard deviation'.
+All reported values are in the format `mean (min, max) $\pm$ standard deviation'.
 \end{table}
 
 
@@ -204,7 +207,7 @@ basic+entities[PCA] & 0.47 & (0.46, 0.48) & $\pm$ 0.007 & 0.30 & (0.3, 0.31) & $
 \end{tabular}
 
 \caption{Performance of Feature Selections}\label{tab:sel_perf}
-All reported values are in the format `value (min, max) $\pm$ standard deviation'.
+All reported values are in the format `mean (min, max) $\pm$ standard deviation'.
 \end{table}
 
 \section{4th round --- Classifiers}
@@ -252,7 +255,7 @@ FastText & 0.53 & (0.52, 0.54) & $\pm$ 0.009 & 0.55 & (0.54, 0.57) & $\pm$ 0.008
 \end{tabular}
 
 \caption{Performance of Different Classifiers}\label{tab:clsf_perf}
-All reported values are in the format `value (min, max) $\pm$ standard deviation'.
+All reported values are in the format `mean (min, max) $\pm$ standard deviation'.
 \end{table}
 
 

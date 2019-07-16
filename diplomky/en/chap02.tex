@@ -29,11 +29,20 @@ A particular model is the actual labelling and is represented by arrows.
 
 \section{Classification Taxonomies}
 
-As \citet{TanBachKum08} distinguish it, classification is either {\it descriptive} and {\it predictive}.
-Descriptive is for finding regularities in data.
+We focus on short text classification, whose
+executive summary can be found in \citet{Song14}.
+They define short text as a new genre.
+It is sparse, unformatted, short text used in online communication.
+
+Classification is a mapping an instance to one of the finitely many labels.
+We have two labels.
+This is called \textbf{binary classification}.
+
+As \citet{TanBachKum08} distinguish it, classification is either descriptive and predictive.
+\textbf{Descriptive} is for finding regularities in data.
 An example of descriptive classification is a task where
 biologists try to figure out what the features distinguishing mammals and birds are.
-In this thesis, we consider only predictive classification, where the goal is to build a classifier
+In this thesis, we consider only \textbf{predictive classification}, where the goal is to build a classifier
 that can predict labels for new instances.
 
 We have two sets of instances to be able to asses how well our model predicts instances.
@@ -47,6 +56,8 @@ On the contrary, \textbf{unsupervised learning} means that we do not know the la
 
 In~this thesis, we take into account only \textbf{hard version} of~classification which explicitly maps one and only one label to each record.  
 \textbf{Soft version} assign the probability of each label to each instance.
+
+To summarize, we aim to build the hard version of predictive, supervised and binary classification.
 
 \section{Text Classification Process}
 
@@ -347,7 +358,7 @@ By combining \Cref{eq:classprb} and \Cref{eq:posterios}, we get:
 \end{equation}
 
 Probability~$P\left(f_k|c_i\right)$~is found by counting.
-We take all instances from class~$c_i$~and the probability is the ratio of all those instances with the same value of feature~$f_k$~and the rest.
+We take all instances from class~$c_i$ and the probability is the ratio of all those instances with the same value of feature~$f_k$~and the rest.
 
 Let us classify instance~$\mathit{ID}=2$~from our mock data in \Cref{tab:custsatis} for demonstration.
 For label ``yes'' (satisfied customers):

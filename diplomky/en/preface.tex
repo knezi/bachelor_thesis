@@ -6,16 +6,28 @@
 
 With growing popularity of storing and sharing more data on the internet, the biggest challenge
 for us is not to get enough information, but to find the exact information we need.
-This thesis tries to tackle one of the major issues of review systems.
+This thesis aims to tackle one of the major issues of review systems.
 A review system is a platform for sharing experience among its users.
 It is particularly aimed at information that is hard to find in another way than from direct experience.
 The information is often subjective and relevant only in a narrow context.
-A review of a novel praising historical accuracy advantage may be interesting to a history teacher,
+A review of a novel praising historical accuracy may be interesting to a history teacher,
 but not so much to someone who only searches for a gripping story.
 
 In particular, users use review systems for obtaining some information based on the experience of others.
 The users are often willing to spend only a couple of minutes on finding relevant information to them.
 Usually, the review systems contain many reviews and review systems tries to improve the user experience by showing useful reviews first.
+
+We work with reviews of restaurants from the online platform Yelp.
+It works in a similar manner like other recommendation systems such as IMDB\footnote{Internet Movie Database \url{https://www.imdb.com/}} or
+TripAdvisor.\footnote{\url{https://www.tripadvisor.com}}
+There are restaurant profiles to which users can add reviews based on their recent visit.
+An example of a profile is shown in \Cref{fig:dobra_trafika}.
+
+\begin{figure}[ht]\centering
+\includegraphics[width=130mm]{../img/dobra_trafika.png}
+\caption{An example of an online profile}
+\label{fig:dobra_trafika}
+\end{figure}
 
 A typical review of a restaurant looks like this:
 
@@ -25,7 +37,7 @@ We'll certainly become repeat customers.
 \end{code}
 
 It contains unformatted pieces of information, fragments of sentences or typos.
-In general, it can contain anything and \citet{Song14} define it as a new genre short text.
+In general, it can contain anything and \citet{Song14} define it as a new genre --- \textbf{short text}.
 Short text is used in e-commerce systems and online communication in general.
 It is usually up to 200 characters per document.
 It is characterizes by its sparsity, free form and being large-scale and in the real time.
@@ -45,8 +57,9 @@ Third, a review can quickly become obsolete or irrelevant.
 Fourth, what is relevant to some, may not be to others.
 All this also makes the task hard even for human operators and as such hard to evaluate our programme selecting useful reviews.
 
-We take reviews from Yelp, where users can flag other reviews as useful.
-It works in the same manner as Facebook likes.
+The main reason we chose Yelp is that users can flag properties of other reviews in the form of \emph{likes}.
+Each review has three buttons --- \emph{useful}, \emph{funny} and \emph{cool} as can be seen in \Cref{fig:dobra_trafika}.
+A user can vote for the property of a review by clicking on one of these buttons.
 A typical review flagged as useful looks like this:
 
 \begin{code}
@@ -96,8 +109,11 @@ More about the data and the platform can be found in \Cref{app:dataset}.
 
 Our objective is to create a software package that predicts whether some users would flag a review as a useful.
 This prediction can be used for filtering out only useful reviews in a real review system.
+We utilize means of supervised binary classification.
+The useful likes are used for labelling reviews as \textit{useful} and \textit{not-useful}.
+We take reviews only from a particular timeframe to ensure they have been viewed by enough users to get enough likes.
+We focus on classification of English reviews.
 
-For predicting the usefulness, we take the text of reviews and utilize machine learning methods.
 This is a well studied field and to date, many approaches to solve this have been introduced.
 However, there is no clearly best performing algorithm for particular application.
 Our main goal is therefore to compare already existing approaches.
