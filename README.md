@@ -60,7 +60,13 @@ pip install `cat pip_deps`
 
 ## Execution:
 
-Everything can be operated by make.
+Everything can be operated by make. Make expects the dataset from Yelp to be extracted in `../data/dataset`.
+
+Next create the directory graphs:
+
+```
+mkdir graphs
+```
 
 For running the pipeline with sample data execute the following line. Note this does not need aspell as a dependency, because the data is already preprocessed.
 

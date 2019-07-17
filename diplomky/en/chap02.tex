@@ -45,14 +45,15 @@ biologists try to figure out what the features distinguishing mammals and birds 
 In this thesis, we consider only \textbf{predictive classification}, where the goal is to build a classifier
 that can predict labels for new instances.
 
-We have two sets of instances to be able to asses how well our model predicts instances.
+We have two sets of instances to be able to assess how well our model predicts instances.
 First, a training set is  used for building a~classification model.
 Second, a testing set is used for assessing how well the model predicts labels for new instances.
-Because the testing set contains the actual labels, we can compare how well our predictions align with them.
+The classification model makes predictions based on the testing set without labels.
+The labels are stored separately and used for comparing how well the predictions align with them.
 
 The approach of fitting a classifier to labelled data is called \textbf{supervised learning}.
 The correct classification is known and we are trying to build a model that approximates these results.
-On the contrary, \textbf{unsupervised learning} means that we do not know the labels and we try to split instances into groups that are in some respect similar.
+On the contrary, \textbf{unsupervised learning} means that we do not know the labels and we try to split instances into groups according to some common pattern.
 
 In~this thesis, we take into account only \textbf{hard version} of~classification which explicitly maps one and only one label to each record.  
 \textbf{Soft version} assign the probability of each label to each instance.

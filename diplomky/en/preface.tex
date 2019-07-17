@@ -5,7 +5,7 @@
 
 
 With growing popularity of storing and sharing more data on the internet, the biggest challenge
-for us is not to get enough information, but to find the exact information we need.
+for us is not to get enough information, but to find the relevant information we need.
 This thesis aims to tackle one of the major issues of review systems.
 A review system is a platform for sharing experience among its users.
 It is particularly aimed at information that is hard to find in another way than from direct experience.
@@ -40,7 +40,7 @@ It contains unformatted pieces of information, fragments of sentences or typos.
 In general, it can contain anything and \citet{Song14} define it as a new genre --- \textbf{short text}.
 Short text is used in e-commerce systems and online communication in general.
 It is usually up to 200 characters per document.
-It is characterizes by its sparsity, free form and being large-scale and in the real time.
+It is characterized by its sparsity, free form and being large-scale and in the real-time.
 Although an average review in our data has 526 characters, we consider this short text.
 First, it fulfills other characteristics.
 Second, the bounds are not clearly defined.
@@ -107,7 +107,8 @@ Food was OK, but I don't think it was a good value.
 
 More about the data and the platform can be found in \Cref{app:dataset}.
 
-Our objective is to create a software package that predicts whether some users would flag a restaurant review as a useful.
+Our objective is to create a software package that predicts whether
+a restaurant review is useful.
 This prediction can be used for filtering out only useful reviews in a real review system.
 We utilize means of supervised binary classification.
 The useful likes are used for labelling reviews as \textit{useful} and \textit{not-useful}.
@@ -117,7 +118,7 @@ and we use only frequent restaurants with detailed profiles for the same reason.
 We focus on classification of English reviews.
 
 This is a well studied field and to date, many approaches to solve this have been introduced.
-However, there is no clearly best performing algorithm for particular application.
+However, it is not clear what the best performing algorithm is for a particular application.
 Our main goal is therefore to compare already existing approaches.
 The results can serve as a guide when implementing a real review system.
 
@@ -129,7 +130,7 @@ We describe the utilized machine learning methods with examples of concrete usag
 In \textbf{\Cref{chap:fea} Feature Engineering}, we discuss several possibilities how to extract properties called features from text and how to filter only those useful.
 Next, we mention dimension reduction as a possibility to reduce the complexity of our solution.
 Finally, we introduce several commonly used features and filtering methods.
-To a lessen degree, we also talk about non-textual data as well.
+For completeness, we mention non-textual data as well.
 
 In \textbf{\Cref{chap:eval} Evaluation}, we introduce methods for comparing different algorithms.
 We describe what requirements we expect a good algorithm to satisfy and how to use the data for comparing performance.

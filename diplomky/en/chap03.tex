@@ -18,7 +18,8 @@ When a~feature is ordinal, it means it is discrete and also defines an ordering 
 Continuous feature is any real-valued variable.
 
 In this thesis, we utilize nominal and ordinal only.
-We omit the order in ordinal features and work with them the same way as nominal.
+For easier manipulation,
+we omit the order in ordinal features and work with them the same way as nominal.
 This of course loses information conveyed in this ordering,
 but allows us easier feature manipulation.
 
@@ -291,7 +292,7 @@ Only features exceeding some given threshold are used for training.
 
 There is also an improved algorithm proposed by \citet{Hoq14}.
 Instead of choosing all features in one step,
-only one feature is chosen is chosen any time.
+only one feature is chosen any time.
 We have two sets; selected ($S$) and candidates ($C$) features.
 In the beginning, all features are in $C$.
 
