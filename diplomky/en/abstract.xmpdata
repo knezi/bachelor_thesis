@@ -1,6 +1,5 @@
 % Metadata to be stored in PDF, see documentation of the pdfx package for more details.
-% TODO
 
-\Author{Name Surname}
-\Title{Thesis title}
+\Author{Jan Knížek}
+\Title{Comparison of Approaches to Text Classification}
 \Publisher{Charles University}
