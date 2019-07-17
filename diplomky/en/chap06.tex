@@ -29,7 +29,7 @@ We report f-measure and accuracy of all models to retain comparability even thro
 Each round focuses on a different variable as listed bellow:
 
 \begin{enumerate}
-	\item baseline; (plus compute mutual information)
+	\item baseline
 	\item feature sets with Na\"{\i}ve Bayes
 	\item feature selection algorithms
 	\item classifiers
@@ -40,8 +40,6 @@ Each round focuses on a different variable as listed bellow:
 \section{1st round --- Baseline}
 
 In this round, we ran zero-R and one-R to get an idea about the problem.
-Also, we computed mutual information of all features.
-It is listed in \Cref{app:mi}.
 
 Zero-R achieves accuracy of 70\% as reported in \Cref{tab:base_perf}.
 This is in compliance with the label distribution,

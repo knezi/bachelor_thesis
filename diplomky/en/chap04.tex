@@ -24,8 +24,9 @@ These idiosyncrasies can appear by incomplete data or noise introduced during ob
 
 Instead of having simple and robust rules to describe data,
 we have many random rules that work for only small subsets of data.
-Our objective describes a phenomenon known as {\it Occam's razor}. \todoA{citation}
-It basically advises us to prefer a less complicated solution over a more complicated one.
+Our objective describes a phenomenon known as {\it Occam's razor}.
+As stated in \citet{sammut2011encyclopedia}, it is often interpreted as
+``a less complicated solution being preferred over a more complicated one''.
 The less complicated solution is less likely to suffer from overfitting,
 because there is simply not enough space to include all various idiosyncrasies.
 An example of such a process can be a {\bf Decision Tree}.
@@ -84,6 +85,9 @@ and has the advantage of
 utilizing as much data for training as we can.
 However, it is computationally expensive and
 we therefore generally choose a lower value of~$k$~for practical reasons.
+
+Thorough description of cross-validation along with other partitioning schemes
+can be found in \citet{arlot2010}.
 
 In this thesis, we compute evaluation metrics for each pair of training and testing sets separately
 and report their average along with minimal and maximal value and standard deviation.
@@ -211,7 +215,7 @@ It is the harmonic average of the two and expresses the combination of both prop
 \end{equation}
 
 
-More thorough description of evaluation can be found in \Cref{TanBachKum08}.
+More thorough description of evaluation can be found in \citet{TanBachKum08}.
 
 \todoA{Kumar has only accuracy and error rate - find prec, f-0measure, recall somewhere else}
 
@@ -228,20 +232,35 @@ As \citet{sammut2011encyclopedia} describe it,
 \textbf{learning curves} is a way of representing how well the model  generalizes.
 It is a way of finding reasons why our model performs poorly.
 
-In general machine learning, it is visualized as a function
-from the size of the training set to performance.
+In a general machine learning setting, learning curves are a visualization of a function
+of the model performance relative to the size of the training set.
 Usually, this function is plotted for both training and testing set.
-This a bit counter intuitive approach shows as how well the model
+This a bit counter intuitive approach shows how well the model
 actually fits the training data and how well it is able to predict unseen instances.
-If the model performs significantly better on the training set then testing,
-that is likely a case of overfitting.
-On the other hand, if both training and testing set are a bad fit by the model,
-the model is unlikely to be good in general.
-Also, if the difference between the two decreases, but does not get close enough,
-it may be a signal we do not have enough data for training.
+As well as the actual different between seen and unseen data.
 
-\todoA{example}
+Detailed description can be found in \citet{cortes1994learning}.
+An example taken from the article can be see in \Cref{fig:l_c_ex}.
+It shows a typical classifier.
+Training error is lower than testing, but asymptotically they reach the same value.
+By looking much close the curves get, we may estimate how much data is needed
+to prevent overfitting.
 
+
+\begin{figure}[ht]\centering
+\includegraphics[width=100mm]{../img/learning_curves_example.png}
+\caption{Example of learning curves for a classifier}
+This example has been taken from \citet{cortes1994learning}.
+\label{fig:l_c_ex}
+\end{figure}
+
+
+If the testing error is significantly higher than training error,
+we may say by looking at the graph, whether
+the model suffers from overfitting.
+In that case, the curves would not asymptotically be the same value.
+If, on the other hand, both curves showed high error,
+the model would be unlikely to be good in general.
 
 
 In this chapter, we discussed what properties of classification are desirable

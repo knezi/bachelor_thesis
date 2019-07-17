@@ -42,7 +42,7 @@ Evaluation results are saved into output files as defined in \textit{graphs spec
 the \textit{experiments file}.
 
 
-\begin{figure}[h!!]
+\begin{figure}[ht]
     \centering
 	\includegraphics[width=\textwidth]{figures/conceptual_design.png}
 	\caption{Conceptual Design}\label{fig:conceptual_design}
@@ -64,7 +64,7 @@ Subset of the last part is devoted to running the experiments; \texttt{run exper
 
 We describe each part in a separate subsection.
 
-\begin{figure}[h]
+\begin{figure}[ht]
 	\centering
 	\includegraphics[width=10cm]{figures/arch_process.eps}
 	\caption{Architecture Design}\label{fig:arch_process}
@@ -75,7 +75,7 @@ We describe each part in a separate subsection.
 
 All scripts for preparing data are in the folder \texttt{denormalization}.
 These scripts take the dataset and produce an instance file.
-Filtering of reviews as specified in \Cref{app:prepr} is done.
+Filtering of reviews as specified in \Cref{sec:filter} is done.
 Because reviews are processed through the spellchecker for filtering,
 the output is added into data as a byproduct.
 In \texttt{denormalize}, businesses are joined.
@@ -121,9 +121,7 @@ it uses the loaded instances to generate features for the train and test sets.
 \subsubsection{Run Experiments}
 
 Running experiments is implemented as a pipeline being fed with the generated sets and outputting predicted labels.
-The units of the pipeline are preprocessors and a classifier.
-Preprocessors are implemented as children of \texttt{preprocessors/preprocessingbase.py} and classifiers
-as \texttt{classifiers/classifierbase.py}.
+The units of the pipeline are preprocessors (implemented as children of \texttt{preprocessors/preprocessingbase.py}) and a classifier (a child of \texttt{classifiers/classifierbase.py}).
 The pipeline is first fed with training data to built a model.
 Subsequently, testing data is passed and predicted labels are stored.
 

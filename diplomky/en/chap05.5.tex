@@ -1,10 +1,9 @@
 \chapter{Dataset}\label{chap:dataset}
 
-In this chapter, we discuss how to filter reviews to get more reliable data with
+In this chapter, we discuss how we filter reviews to get more reliable data with
 less noise.
-Next, we describe how we prepared the data to be directly fed into the classifiers.
-and report statistics
-\todoA{sum}
+Next, we describe what features we extracted
+and report statistics about the dataset and features.
 
 
 \section{Filtering Reviews}\label{sec:filter}
@@ -164,6 +163,9 @@ four or five stars.
 This is in accordance with sentiment, which has by far the most positive reviews.
 Reviews for which sentiment could not be computed are labeled \texttt{n/a}.
 
+Stars given to the particular business also have the average 3.7.
+However, very few businesses have 4.5 or 5 stars.
+
 Error rate splits reviews into different clusters, only thresholds 0.02 and 0.05
 having both clusters with significantly many reviews.
 On the other hand, the number of total errors was always bellow the threshold and 
@@ -213,6 +215,16 @@ error total & $\le$ 5  & 64550 \\
 \midrule
 			& $\le$ 10  & 64550 \\
 			& $>$ 10  & 0 \\
+\midrule
+business stars & average & 3.7 \\
+ & 1.5 & 39 \\
+ & 2.0 & 434 \\
+ & 2.5 & 2346 \\
+ & 3.0 & 8385 \\
+ & 3.5 & 19871 \\
+ & 4.0 & 26456 \\
+ & 4.5 & 6962 \\
+ & 5.0 & 61 \\
 \bottomrule
 \end{tabular}
 

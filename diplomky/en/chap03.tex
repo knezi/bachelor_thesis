@@ -48,7 +48,8 @@ An example is the indication that a word is at the end of a sentence when follow
 
 Subsequently, it is often needed to convert words into lower case and {\it lemmatise} them.
 Both these techniques help to group together words that express the same meaning.
-{\bf Lemmatisation} is replacing a word with its lemma, which is a {\it base form} of the word.
+\citet{sammut2011encyclopedia} describes
+{\bf Lemmatisation} as replacing a word with its lemma, which is a {\it base form} of the word.
 The word \textit{cars} will be therefore be treated in the same way as \textit{car}.
 Of course, the exact meaning of the two words is different,
 but the fundamental idea is the same.
@@ -57,6 +58,8 @@ For the purposes of classification, it is often unnecessary to known whether the
 For this analysis, we omit lemmatisation and use only lower case conversion.
 Lemmatisation in English documents does not usually bring a big improvement,
 because English is not a highly inflectional language.
+For other languages, there are attempts such as \citet{jurvsic2010lemmagen}
+to use machine learning to automatically assign lemmas to words.
 
 \section{Selection}
 
@@ -402,6 +405,9 @@ The value of $\chi$ in our example in \Cref{tab:chi_ex}
 
 \subsection{Wrappers}
 
+Description of both variants of wrappers can be found in \citet{GuyEli03}.
+More thorough analysis is in \citet{kohavi1997wrappers}.
+
 Unlike filters, wrappers work with subsets of features
 and use a classifier to directly asses informativeness of the subset as a whole.
 Every subset is classified by the classifier used as a black box
@@ -630,6 +636,19 @@ We also tried to measure typos in the review.
 The hypothesis was that reviews with many typos may be less useful,
 because the reviewer apparently did not spend much time writing it.
 We tried to split features into two groups --- with and without typos.
+
+The method we used was not perfect.
+We use the package aspell.\footnote{\url{http://aspell.net}}
+It compares words against dictionary and report any not-found words.
+This way, it can report words that are not typos and are not present in the dictionary.
+Also, it may not report words that are incorrect in a particular context,
+but alright in another (such as \textit{you're} vs \textit{your}).
+
+We are also aware, that reviews contain many special words such as names of food that
+are technically from a different language, but are use in English unchanged.
+We ignored these problems,
+because we did not need the exact value of typos,
+but whether it is bellow and above a certain threshold.
 
 
 \subsubsection{Review length}

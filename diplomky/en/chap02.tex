@@ -241,6 +241,10 @@ More thorough description of decision trees and training algorithm ID3 can be fo
 
 \subsection{Na\"{i}ve Bayes}
 
+We introduce Multi-variate Bernoulli Model as described in \citet{mccallum1998comparison}.
+We use counting by occurrences without any smoothing.
+A comparison of different smoothing methods can be found in \citet{yuan2012enhancing}.
+
 Na\"{i}ve Bayes is a probabilistic classifier.
 Probabilistic means that we classify an instance according to the probabilities of the instance belonging to individual classes (having that label).
 Mathematically speaking, we choose label~$\hat{c}$~from the set of all labels $C=\left\{c_1,c_2,\dots c_n\right\}$ for instance~$d_j$, such that:
