@@ -549,7 +549,7 @@ They use this property to solve word analogies in the form {\it a is to b as c i
 
 Named entity is any group of words belonging together having a particular meaning.
 The words does not necessarily be adjacent.
-In the text bellow, there are among others entities \textit{limited hour} and \textit{good fare}.
+In the text bellow, there are among other entities \textit{limited hour} and \textit{good fare}.
 
 \begin{code}
 Another case of the Emperor's New Clothes.
@@ -563,10 +563,45 @@ For extracting entities, we used NLP analysis as described in \Cref{app:geneea}.
 
  %\todoA{- occurrences - pick only the~most frequent}
 
-\subsection{Sentiment}
+\subsection{Sentiment Analysis}
 
-In general, \textbf{Sentiment} is a mood of a text.
+\textbf{Sentiment analysis} (also referred to as \textit{opinion mining}) is described by \citet{melville2009sentiment} 
+as a task of identifying writer's feeling expressed in a text about a topic.
+\textbf{Sentiment} is then the particular mood of a text.
+
+Examples of texts with different sentiments are bellow.
+
+Negative:
+
+\begin{code}
+The pizza was horrible.
+\end{code}
+
+Neutral:
+
+\begin{code}
+They offer pizza.
+\end{code}
+
+Positive:
+
+\begin{code}
+The pizza was delicious.
+\end{code}
+
+A text can of course contain different moods.
+The example bellow is negative in the first part and positive in the second part.
+
+\begin{code}
+The place is horrible, but the pizza was great.
+\end{code}
+
 We use negative, neutral and positive sentiment extracted from the reviews by the NLP analysis.
+The sentiment is used as a direct feature.
+
+The actual sentiment analysis is beyond the scope of this thesis.
+\citet{kaushik2014scalable} lists two main approaches; machine learning and lexicon based solutions.
+Machine learning is well described in \citet{melville2009sentiment} or \citet{xia2011ensemble}.
 
 \subsection{Cosine Similarity}
 

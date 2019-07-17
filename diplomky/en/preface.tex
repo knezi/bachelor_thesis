@@ -107,11 +107,13 @@ Food was OK, but I don't think it was a good value.
 
 More about the data and the platform can be found in \Cref{app:dataset}.
 
-Our objective is to create a software package that predicts whether some users would flag a review as a useful.
+Our objective is to create a software package that predicts whether some users would flag a restaurant review as a useful.
 This prediction can be used for filtering out only useful reviews in a real review system.
 We utilize means of supervised binary classification.
 The useful likes are used for labelling reviews as \textit{useful} and \textit{not-useful}.
-We take reviews only from a particular timeframe to ensure they have been viewed by enough users to get enough likes.
+To ensure they have been viewed by enough users to get enough likes,
+we take reviews only from a particular time frame
+and we use only frequent restaurants with detailed profiles for the same reason.
 We focus on classification of English reviews.
 
 This is a well studied field and to date, many approaches to solve this have been introduced.
@@ -197,10 +199,6 @@ The main attempt is to find some structure in the free form.
 
 Related text classification research focuses on sentiment analysis and toxic speech detection.
 A lot of research is focusing on sentiment analysis.
-As \citet{kaushik2014scalable} note, most sentiment analyses use machine learning or lexicon based solutions.
-Machine learning, which is relevant to us, is well described in
-\citet{melville2009sentiment}. They also compare machine learning to lexical methods.
-Another good paper is \citet{xia2011ensemble}, which compares different machine learning methods.
 
 Relatively close research focuses on toxic speech.
 \citet{van2018challenges} talk about toxic speech as non-constructive and non-inclusive conversation including hate speech, threats, insults and in general fruitless conversation.

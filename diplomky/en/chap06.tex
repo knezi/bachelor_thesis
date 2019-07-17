@@ -1,5 +1,7 @@
 \chapter{Conducted Experiments}\label{chap:exp}
 
+\todoA{this is a mess now}
+
 In this chapter, we outline all experiments and discuss the results.
 We end up with two best performing models --- Na\"{\i}ve Bayes and decision tree.
 Maybe somewhat surprisingly, those models do not make use of any word features,
@@ -9,71 +11,18 @@ Our original intention was to try all combinations of features, feature selectio
 However, this turned out to be computationally infeasible.
 Instead, we tried promising subsets by choosing the best variant out of each round.
 
-\section{Datasets}
-
-The experiments were done on a dataset with 64,550 instances.
+The final dataset used for experiments contains  64,550 instances.
 We used 10-fold crossvalidation --- each split had
 58,095 training and 6,455 testing instances.
 The exact format of the dataset can be found in \Cref{app:dataset}.
-The description of data preprocessing in \Cref{app:prepr}.
 
-For labels, we used the number of useful likes.
-Reviews with zero likes were labelled not-useful and
-reviews with at least two likes useful.
-1 like reviews were dropped.
-The entire dataset contains 44,921 not-useful and
-19,629 useful instances.
-
-We decided to report accuracy and f-measure.
+We report accuracy and f-measure.
 Because every classifier was trained and tested 10 times,
 we report the arithmetic mean as the representative value of the classifier
 together with minimum, maximum and standard deviation.
 As it can be seen from the tables bellow, 
 the values were fairly stable with low standard deviation and
 as such should be reasonably reliable.
-
-We split features into the sets defined in the two lists bellow;
-\textbf{existential features} expressing whether certain phrase is present in the review and
-\textbf{threshold features} clustering reviews into groups.
-
-Note that the best way for selecting bigrams and trigrams would be to compute mutual information of all bigrams, resp. trigrams.
-However, this is computationally very expensive, as there are well over 1,100,000 unique bigrams in the reviews.
-Instead, we decided to use n-grams that consist of only top informative unigrams.
-
-\subsubsection*{Existential features}
-
-\begin{itemize}
-	\item UNIGRAMS --- top 50,000 unigrams according to mutual information
-	\item BIGRAMS --- bigrams consisting of top 25,000 adjacent unigrams
-	\item TRIGRAMS  --- trigrams consisting of top 10,000 adjacent unigrams
-	\item TFIDF  --- top 50,000 words
-	\item ENTITIES --- 270,000 entities as found by the NLP analysis
-\end{itemize}
-
-\subsubsection*{Threshold features}
-\todoA{ugly}
-
-\begin{itemize}
-	\item STARS 
-		\begin{itemize}
-			\item the number of stars; five groups
-			\item indicators for each stars number; five pairs one-vs-rest
-			\item extreme stars; one group 1 or 5 stars; the rest another group
-			\item the number of average stars for the business; five groups
-		\end{itemize}
-	\item REVIEWLEN 
-		\begin{itemize}
-			\item the number of words; three groups with thresholds 50 and 150
-			\item the number of words; five pairs with thresholds 35, 50, 75, 100 and 150
-		\end{itemize}
-	\item SPELLCHECK 
-		\begin{itemize}
-			\item the rate of misspelled words; five pairs with thresholds 0.02, 0.05, 0.1, 0.15 and 0.2
-			\item the number of misspelled words; four pairs with thresholds 5, 10, 15 and 20
-		\end{itemize}
-	
-	\item COSINESIM --- cosine similarity to 10 randomly chosen useful instances; five pairs with thresholds 0.4, 0.6, 0.8, 0.9, 0.95
-\end{itemize}
 
 We performed the analysis in five rounds.
 We report f-measure and accuracy of all models to retain comparability even throughout rounds.
@@ -119,7 +68,7 @@ one-R & 0.56 & (0.54, 0.58) & $\pm$ 0.012 & 0.73 & (0.72, 0.74) & $\pm$ 0.005 \\
 \end{tabular}
 
 \caption{Performance of Feature Selections}\label{tab:base_perf}
-All reported values are in the format `mean (min, max) $\pm$ standard deviation'.
+All reported values are in the format `arithmetic mean (min, max) $\pm$ standard deviation'.
 \end{table}
 
 \section{2nd round --- Features}
@@ -167,7 +116,7 @@ basic+tfidf & 0.48 & (0.47, 0.50) & $\pm$ 0.007 & 0.36 & (0.35, 0.37) & $\pm$ 0.
 
 
 \caption{Performance of Feature Configurations}\label{tab:feat_perf}
-All reported values are in the format `mean (min, max) $\pm$ standard deviation'.
+All reported values are in the format `arithmetic mean (min, max) $\pm$ standard deviation'.
 \end{table}
 
 
@@ -207,7 +156,7 @@ basic+entities[PCA] & 0.47 & (0.46, 0.48) & $\pm$ 0.007 & 0.30 & (0.3, 0.31) & $
 \end{tabular}
 
 \caption{Performance of Feature Selections}\label{tab:sel_perf}
-All reported values are in the format `mean (min, max) $\pm$ standard deviation'.
+All reported values are in the format `arithmetic mean (min, max) $\pm$ standard deviation'.
 \end{table}
 
 \section{4th round --- Classifiers}
@@ -255,24 +204,26 @@ FastText & 0.53 & (0.52, 0.54) & $\pm$ 0.009 & 0.55 & (0.54, 0.57) & $\pm$ 0.008
 \end{tabular}
 
 \caption{Performance of Different Classifiers}\label{tab:clsf_perf}
-All reported values are in the format `mean (min, max) $\pm$ standard deviation'.
+All reported values are in the format `arithmetic mean (min, max) $\pm$ standard deviation'.
 \end{table}
 
 
 \section{5th round --- Training Size}
 
 Lastly, we perform learning curves analysis as described in \Cref{sec:lcurves}.
-We report f-measure and accuracy of the two best performing models from the previous round.
-Both are trained on feature set \textbf{basic}.
-The performance of Na\"{\i}ve Bayes is displayed in \Cref{fig:l_curves2_accuracy} and \Cref{fig:l_curves2_f_measure},
-decision tree is in \Cref{fig:l_curves3_accuracy} and \Cref{fig:l_curves3_f_measure}.
-The graphs show the values of the given metrics for both training and testing set.
-Testing set is the same for all sizes of the training set.
+Each phase of 10-fold crossvalidation produces training and testing set.
+The testing set is the same for all sizes of the training set.
 For the training set, subsets of the original are used in such a way that 
-all smaller set are proper subsets of any bigger.
+all smaller sets are proper subsets of any bigger.
+\todoC{obrazek}
+
+The graphs bellow show both performance of the subset of the training set and of the full testing set.
 The x axis is log scaled.
 Some values of f-measure for very small sets were ignored for the same reason as with zero-R.
-It is undefined as there were no true positives.
+It is undefined as there are no true positives.
+
+We report the two best performing models from the previous round -- Na\"{\i}ve Bayes and decision tree
+with feature set \textbf{basic}.
 
 As we can see in \Cref{fig:l_curves2_accuracy} and \Cref{fig:l_curves2_f_measure}, Na\"{\i}ve Bayes performs comparably the same on both the training and testing sets when trained
 on already only as many as 100 instances.
@@ -287,33 +238,36 @@ It would be beneficial to plot learning curves for other models,
 because it could show the reasons why our more sophisticated models with
 more features performed significantly worse.
 However, due to the computing complexity, we did not analyse it.
-It can be a subject of further research.
+It can be the subject of further research.
 
-From the numbers, it is clear that our models did not perform significantly better than 
-a baseline model.
-Even our best performing models achieved accuracy of only 70\% which can be simply accomplished by labelling all instances as not-useful.
-The reason could simply be there is not enough information in the reviews to predict
- usefulness, the inner dependency is much more complicated than what can be conveyed by our simple models or the number of useful likes is simply not a representative metrics.
+From the numbers, it is clear that our models did not perform significantly better than the baseline model.
+Even our best performing models achieved accuracy of only approximately 70\% which can be accomplished by labelling all instances as not-useful.
+The reason could be there is not enough information in the reviews to predict
+ usefulness, the inner dependency is much more complicated than what can be conveyed by our simple models or the number of useful likes is not a representative metrics.
 
 
 
 \begin{figure}[h]\centering
 \includegraphics[width=130mm]{figures/lc2_acc.png}
 \caption{Learning curves with standard deviation for Na\"{\i}ve Bayes --- accuracy}\label{fig:l_curves2_accuracy}
+The x axis is log scaled.
 \end{figure}
 
 \begin{figure}[h]\centering
 \includegraphics[width=130mm]{figures/lc2_fm.png}
 \caption{Learning curves with standard deviation for Na\"{\i}ve Bayes --- f-measure}\label{fig:l_curves2_f_measure}
+The x axis is log scaled.
 \end{figure}
 
 
 \begin{figure}[h]\centering
 \includegraphics[width=130mm]{figures/lc3_acc.png}
 \caption{Learning curves with standard deviation for decision tree --- accuracy}\label{fig:l_curves3_accuracy}
+The x axis is log scaled.
 \end{figure}
 
 \begin{figure}[h]\centering
 \includegraphics[width=130mm]{figures/lc3_fm.png}
 \caption{Learning curves with standard deviation for decision tree --- f-measure}\label{fig:l_curves3_f_measure}
+The x axis is log scaled.
 \end{figure}

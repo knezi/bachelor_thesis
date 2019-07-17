@@ -146,3 +146,79 @@ Lastly and most importantly, this thesis focuses on extracting information from 
 For this reason we also used business information only for filtering reviews,
 but not for the actual classification.
 
+\section{Data Preparation}
+
+For easier manipulation, we denormalized the data.
+Also, we ran a spellchecker\footnote{\url{https://aspell.net}} on every review and added the information of number of words and number of misspelled words to the review.
+We used the rate of misspelled words as a feature.
+
+The resulting data has been saved in an instance file,
+which is in JSON lines containing an instance per line.
+An instance is a review with the element \texttt{business\_id} replaced by the business information.
+An example of a full instance is bellow.
+
+\begin{code}
+{
+	"review_id": "---nya_pjxWmNFDFyAcfsA",
+	"user_id": "5QOtcHU1SoqEqBCRR6FhsA",
+	"business_id": {
+		"business_id": "zQNJwaWR1M1zDjLNVJiNEw",
+		"name": "Pizza M",
+		"neighborhood": "",
+		"address": "208 W Main St",
+		"city": "Urbana",
+		"state": "IL",
+		"postal_code": "61801",
+		"latitude": 40.112655,
+		"longitude": -88.2093142,
+		"stars": 3.5,
+		"review_count": 60,
+		"is_open": 1,
+		"attributes": {
+			"RestaurantsTableService": false,
+			"Alcohol": "beer_and_wine",
+			"Caters": false,
+			"HasTV": false,
+			"RestaurantsGoodForGroups": true,
+			"NoiseLevel": "average",
+			"WiFi": "free",
+			"RestaurantsAttire": "casual",
+			"RestaurantsReservations": false,
+			"OutdoorSeating": false,
+			"BusinessAcceptsCreditCards": true,
+			"RestaurantsPriceRange2": 2,
+			"BikeParking": true,
+			"RestaurantsDelivery": true,
+			"RestaurantsTakeOut": true,
+			"GoodForKids": true,
+			"BusinessParking": {
+				"garage": true,
+				"street": true,
+				"validated": false,
+				"lot": false,
+				"valet": false
+			}
+		},
+		"categories": ["Restaurants", "Pizza"],
+		"hours": {
+			"Monday": "11:00-21:00",
+			"Tuesday": "11:00-21:00",
+			"Friday": "11:00-22:00",
+			"Wednesday": "11:00-22:00",
+			"Thursday": "11:00-22:00",
+			"Sunday": "11:00-21:00",
+			"Saturday": "11:00-23:00"
+		}
+	},
+	"stars": 1,
+	"date": "2012-06-27",
+	"text": "Another case of the Emperor's New Clothes...",
+	"useful": 10,
+	"funny": 2,
+	"cool": 3,
+	"words": 57,
+	"incorrect_words": 0
+}
+\end{code}
+
+

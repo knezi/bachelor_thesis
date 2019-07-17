@@ -160,7 +160,8 @@ We will learn how to do that in \Cref{chap:fea}.
 
 \subsection{Zero-R, One-R}
 
-These two algorithms are used as a baseline.
+These two algorithms are described in \citet{nasa2012evaluation}.
+Both are used as a baseline.
 Baseline algorithm is a very simple method used to get better idea about the dataset and difficulty of our task.
 It is useful to have a comparison to whatever more sophisticated we developed.
 Suppose, we have a very sophisticated classifier predicting 22\% instances correctly
@@ -168,7 +169,7 @@ We may lean to say that the performance is not really good.
 And if the baseline gets 20\% well, it may really be that case.
 However, when our baseline predicts only 3\%, 22\% may be actually very good results worth the effort.
 
-{\bf Zero-R} simply takes the most frequent label and labels every instance with it.
+{\bf Zero-R} (also referred to as \textit{most frequent classifier}) simply takes the most frequent label and labels every instance with it.
 Zero-R would label all customers as satisfied in our example.
 
 A bit more complicated {\bf One-R} chooses one feature and bases the classification solely on this feature.
