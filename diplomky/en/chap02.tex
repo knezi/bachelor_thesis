@@ -26,6 +26,8 @@ A particular model is the actual labelling and is represented by arrows.
 	\caption{classification model} \label{fig:cls_model}
 \end{figure}
 
+Summary about text classification can be found in \citet{korde2012text} or
+ in the already mention book \citet{AggZhai12}.
 
 \section{Classification Taxonomies}
 
@@ -62,8 +64,8 @@ To summarize, we aim to build the hard version of predictive, supervised and bin
 
 \section{Text Classification Process}
 
-%TODO - tady jsme skoncili - prepsat tohle neni hezke
-
+A summary of text classification along with description of all important parts can be found in
+\citet{khan2010review}.
 The process of classification is broken down into four parts as shown in \Cref{fig:clsf_process}.
 
 \begin{figure}[h]
@@ -102,16 +104,6 @@ demonstration of conducted experiments (\Cref{chap:exp}) and final discussion (\
 
 
 
-%\section{\todoB{What a Classifier Looks Like}}
-
-%\todoB{Probabilistic model for classification
-%Generally speaking, there are two models used for classification; generative and discriminative. Generative model assumes there exist }
-
-%\subsection{\todoB{hyperparameteres, parameters, model}}
-
-%\subsection{\todoC{discrm. vs generative}}
-
-%\todoB{linear classifier def}
 
 \section{Classifiers}
 \label{chap:clscon}
@@ -217,7 +209,7 @@ we build ask another one-R classifier for a prediction.
 The network of one-R classifiers is called a \textbf{decision tree}.
 Representation for our example is shown in \Cref{fig:tree}.
 
-We predict by traversing the graph.
+Prediction is done by traversing the graph.
 We start in a root and depending on the actual value of the instance,
 we traverse the graph until we arrive in a leaf which contains a prediction.
 
@@ -233,8 +225,10 @@ We choose a feature with highest mutual information for root.
 This splits our dataset into independent groups.
 We recursively do the same for each group individually until a certain stop condition is met.
 Usually, once all remaining features have lower mutual information than a given threshold.
-More thorough description of decision trees and training algorithm ID3 can be found in
-\citet{Quinlan1986}.
+Thorough description of decision trees and training algorithm ID3 can be found in
+\citet{Quinlan1986} on in \citet{safavian1991survey}.
+An overview of decision trees in the text classification context can be found in \citet{khan2010review}.
+
 
 
 
@@ -434,6 +428,8 @@ but the correlation between discount and satisfaction is so strong that it outwe
 FastText\footnote{\url{https://fasttext.cc}} is a small library developed by Facebook.
 Text classification in this library is on par with current state-of-the-art deep learning classifiers
 and many orders of magnitude faster~\citep{Joulin2017bag}.
+An example of using FastText is in \citet{alessa2018text}.
+They utilize FastText for classifying flu-related tweets.
 
 Let us first explain a baseline algorithm on top of which fastText builds.
 It uses {\it bag of words}\footnote{more on this in the subsection~\ref{subsec:bow}} as features.
@@ -489,18 +485,6 @@ of features.
 For achieving even better performannce and reduce memory consumption, FastText uses some more tricks.
 More details can be found in~\citet{Joulin2017bag}.
 
-%\todoA{a budeme muset pridat linearni model - pridej zminku o tom, jak se to klasifikuje podle toho, jestli nekde popises linearni modely vice}
-
-%\todoC{hierarchichal softmax}
-
-%\subsubsection{\todoC{GloVe - GloVe nepouzivam}}
-
-%\subsection{\todoC{NN}}
-
-%\subsection{\todoC{Let you imagination go wild}}
-
-
-%\section{\todoB{interpretability -see w8}}
 
 In this chapter, we defined text classification as a mapping from feature space to labels
 and demonstrated several classification algorithms.

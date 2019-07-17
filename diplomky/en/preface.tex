@@ -41,22 +41,33 @@ In general, it can contain anything and \citet{Song14} define it as a new genre 
 Short text is used in e-commerce systems and online communication in general.
 It is usually up to 200 characters per document.
 It is characterized by its sparsity, free form and being large-scale and in the real-time.
+
+One of the well studied example of short text is Twitter.\footnote{\url{https://twitter.com}}
+\citet{jiang2011target} allege that most approaches follow
+\citet{pang2002thumbs} who utilize machine learning based classifiers;
+the state-of-the-art being \citet{go2009twitter} and \citet{barbosa2010robust}.
+More relevant study on Twitter is \citep{sriram2010short},
+which tackles the problem of filtering relevant information.
+
+Relatively close research focuses on toxic speech.
+\citet{van2018challenges} talk about toxic speech as non-constructive and non-inclusive conversation including hate speech, threats, insults and in general fruitless conversation.
+Filtering out fruitless text is our focus to a high extent too.
+Basic review of toxic speech classification can be found in \citet{gunasekara2018review}.
+
 Although an average review in our data has 526 characters, we consider this short text.
 First, it fulfills other characteristics.
 Second, the bounds are not clearly defined.
 An example of another short text system is Instant Messaging software Windows Live Messenger allowing up to 400 characters.
 
-The reasons listed above make it difficult to work with short text.
-Furthermore, there are many factors contributing to the difficulty of finding useful reviews.
-First, we do not know the author and possibly have only a few reviews by the author.
-Also, reviews by the same author can have different quality which is influenced by many factors,
-such as the time spent on writing the review or whether the actual experience contains some useful information.
-Therefore it is very hard to estimate author's reliability.
-Second, reviews are very short, often containing only one piece of information.
-Third, a review can quickly become obsolete or irrelevant.
-Fourth, what is relevant to some, may not be to others.
-All this also makes the task hard even for human operators and as such hard to evaluate our programme selecting useful reviews.
+Reviews are to author's knowledge less studied.
+One of the relevant papers is \citet{ganu2009beyond}.
+They discuss the difficulties of selecting useful restaurant reviews.
+Unlike this thesis, they do not classify reviews as a whole, but instead try to find reviews containing topics such as food or service.
+The main attempt is to find some structure in the free form.
 
+
+Because the task itself is somewhat vague, it is hard even for a human operator to separate
+useful reviews.
 The main reason we chose Yelp is that users can flag properties of other reviews in the form of \emph{likes}.
 Each review has three buttons --- \emph{useful}, \emph{funny} and \emph{cool} as can be seen in \Cref{fig:dobra_trafika}.
 A user can vote for the property of a review by clicking on one of these buttons.
@@ -117,7 +128,7 @@ we take reviews only from a particular time frame
 and we use only frequent restaurants with detailed profiles for the same reason.
 We focus on classification of English reviews.
 
-This is a well studied field and to date, many approaches to solve this have been introduced.
+Short text classification is a well studied field and to date, many approaches to solve this have been introduced.
 However, it is not clear what the best performing algorithm is for a particular application.
 Our main goal is therefore to compare already existing approaches.
 The results can serve as a guide when implementing a real review system.
@@ -175,32 +186,3 @@ In this thesis, we use the following typographic conventions:
 \item \texttt{monospace} is used for code and filenames. It is used for process names in \Cref{chap:arch}.
 
 \end{itemize}
-
-\section{Related Work}
-
-A lot of research has been done in short text classification.
-Executive summary can be found in \citet{Song14}.
-They define short text as a new genre; listing its characteristics, summarizing possible approaches to short text classification and evaluating performance.
-
-One of the well studied dataset is tweets from Twitter.\footnote{\url{https://twitter.com}}
-A lot of studies on sentiment analysis have been conducted.
-\citet{jiang2011target} allege that most approaches follow
-\citet{pang2002thumbs} who utilize machine learning based classifiers;
-the state-of-the-art being \citet{go2009twitter} and \citet{barbosa2010robust}.
-Perhaps more relevant study on Twitter is \citep{sriram2010short},
-which tackles the problem of filtering relevant information.
-
-Reviews are to author's knowledge less studied.
-One of the relevant papers is \citet{ganu2009beyond}.
-They discuss the difficulties of selecting useful restaurant reviews.
-Unlike this thesis, they do not classify reviews as a whole, but instead try to find reviews containing topics such as food or service.
-The main attempt is to find some structure in the free form.
-
-Related text classification research focuses on sentiment analysis and toxic speech detection.
-A lot of research is focusing on sentiment analysis.
-
-Relatively close research focuses on toxic speech.
-\citet{van2018challenges} talk about toxic speech as non-constructive and non-inclusive conversation including hate speech, threats, insults and in general fruitless conversation.
-Filtering out fruitless text is our focus to high extent too.
-Apart from already mentioned challenges they mention high variance in performance and difficulty to define the topic clearly.
-Basic review of toxic speech classification can be found in \citet{gunasekara2018review}.

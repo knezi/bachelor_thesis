@@ -7,34 +7,7 @@
 - precist nahlas
 - testujte na lidech
 
-
-
 # zeptat
-shrnuti zacatek a konec kapitoly
-
- add to readme - mkdir graphs
-
-
-- DNES
- - eps funguje?
- - app E - threshold vypada hnusne
-
-
- spellchecker
- tabulky
- pdfa 
- citace i s carkama
-
- projit jeste na konci vsechny shrnuti a roadmapy, jeslti to sedi
- preface - sections don't make any sense
- prodat meritka stejne j grafu
- cislovani v preface
-
-
- todo not tested in debian stretch
-
-
-
 
 
 cteni bez fotnotes a apendixu
@@ -42,10 +15,6 @@ rozumet rozumny clovek
 
 
 precist uvod a vis o cem to je
-derived from number of likes
-a pridej casovy interval - stara reviews enough
-
-rozsirit 5.1 apendix je jenom bonus
 
 udelat statistiky - tohle neni ML, ale analyza
  - pridat tabulku na celym datasetu
@@ -76,3 +45,5 @@ udelat statistiky - tohle neni ML, ale analyza
   one-R nejake jine jmeno?
 
   rozlozeni continuous
+
+  pridat download - hotove pdf

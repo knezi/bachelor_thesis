@@ -150,7 +150,6 @@ Mutual information can be also expressed as
 	I(X, Y) = H(X) - H(X|Y),
 \end{equation}
 
-\todoB{explain entropy}
 
 where~$H(X)$~is the entropy of~$X$~and~$H(X|Y)$~the conditional entropy.
 This way~$H(X)$~expresses the amount of uncertainty of~$X$~and~$H(X|Y)$~what~$Y$~does not say about~$X$.
@@ -183,7 +182,6 @@ Now, we want to estimate how good those features are using mutual information.
 Using \Cref{eq:mi}, MI of variables $\mathit{rain}$ and $\mathit{mood}$ is:
 
 
-\todoA{this looks ugly}
 \begin{equation}
 	I(\mathit{rain}, \mathit{mood}) =
 	f(yes, happy) + f(no, happy) + f(yes, angry) + f(no, angry),
@@ -427,8 +425,6 @@ These methods allow us to classify only a fraction of subsets
 at the cost of losing the guarantee of the optimal solution.
 We will describe two variants of greedy search.
 
-\todoB{On the approximability of minimizing nonzero variables
-or unsatisfied relations in linear systems --- citation of the NP-hard, otherwise delete} 
 
 \subsubsection{Greedy Search --- Forward Selection}
 
@@ -532,8 +528,6 @@ To find a balance, N-grams try to convey the order only partially.
 The longer a sequence is the more order is preserved at higher computational cost.
 Bigrams and trigrams (pairs and triples) are most commonly used.
 
-\todoB{- choose words with highest information gain; as in McCallum Event models}
-
 \subsection{Word Embeddings}
 \label{subsec:wordembed}
 
@@ -566,9 +560,6 @@ but overpriced fare was great pizza and all the lemmings followed suit.
 
 For extracting entities, we used NLP analysis as described in \Cref{app:geneea}.
 
- %\todoB{- filter them based on the~geneea value of importance}
-
- %\todoA{- occurrences - pick only the~most frequent}
 
 \subsection{Sentiment Analysis}
 

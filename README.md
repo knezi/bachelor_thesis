@@ -1,9 +1,9 @@
-# NPRG045
+# bachelor thesis
 
-The project was developed in Linux.
-The author uses Arch Linux.
-It was also tested on a standard debian installation (debian Stretch).
-It may work on other platform, but beware that it has not been tested.
+TOPIC: Comparison of Approaches to Text Classification
+
+The project was developed in Arch Linux and should work in any standard distribution,
+so long all dependencies are installed.
 
 ## Dependencies:
 
@@ -18,26 +18,13 @@ Install the following software (for most distributions the name of a package in 
 
 Pip is usually a package python-pip or python3-pip.
 It is important to install the pip version for python3.
-It is also important to have python of a version at least 3.6.
-Version 3.5 (python3 in Debian Stretch) will not work.
-
-Python can be manually installed by: (TODO wrong)
-
-apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl git
-
-```
-wget https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tgz
-tar xvf Python-3.6.3.tgz
-cd Python-3.6.3
-./configure --enable-optimizations
-make -j8
-sudo make altinstall
-```
+It is also important to have python of a version at least 3.7.
+Version 3.6 or bellow (python3 in Debian Stretch) will not work.
 
 Aspell and dictionaries are usually packages `aspell` and `aspell-{en,fr,de}`.
 https://github.com/pythonhttps://github.com/python
 Optionally, it is possible to run the project in a virtual environment.
-python3 can be replaced with the installed version. Must be at least 3.6.
+python3 can be replaced with the intended version of the python interpreter. Must be at least 3.7.
 
 ```
 virtualenv venv --python=python3
