@@ -1,0 +1,7 @@
+Mutual Information of FeatureSetEnum.REVIEWLEN.
+review_length 0.07866391193397662
+review_length100 0.06725854461524786
+review_length150 0.06580346919707847
+review_length35 0.02679820067797687
+review_length50 0.04091476600331134
+review_length75 0.059955381944920075

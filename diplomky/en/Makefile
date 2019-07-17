@@ -9,6 +9,9 @@ thesis.pdf: thesis.tex $(wildcard *.tex) bibliography.bib thesis.xmpdata
 	pdflatex $<
 	pdflatex $<
 
+stupid: thesis.tex $(wildcard *.tex) bibliography.bib thesis.xmpdata
+	pdflatex $<
+
 abstract.pdf: abstract.tex abstract.xmpdata
 	pdflatex $<
 

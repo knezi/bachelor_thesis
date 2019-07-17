@@ -202,21 +202,11 @@ requirements.txt - python, setup.py
 
 shrnuti zacatek a konec kapitoly
 
-architektura
- - intro
- - high level + obrazek a pospat krabicky
- - potom konfigurovatelnost a make a...
- - samostatna stranka - conceptual overview - papir - 
-
- * pis
- dokonci 14.7
-
  add to readme - mkdir graphs
 
 
 - DNES
  - eps funguje?
- - apendixy furt nefungujou
  - app E - threshold vypada hnusne
 
 
@@ -224,10 +214,53 @@ architektura
  tabulky
  pdfa 
  citace i s carkama
- pridat referenci guy - cor fes
-
-
- todo - highlight best results in the tables
 
  projit jeste na konci vsechny shrnuti a roadmapy, jeslti to sedi
  preface - sections don't make any sense
+ prodat meritka stejne j grafu
+ cislovani v preface
+
+
+ todo not tested in debian stretch
+
+
+
+
+
+cteni bez fotnotes a apendixu
+rozumet rozumny clovek
+
+
+precist uvod a vis o cem to je
+derived from number of likes
+a pridej casovy interval - stara reviews enough
+
+rozsirit 5.1 apendix je jenom bonus
+
+udelat statistiky - tohle neni ML, ale analyza
+ - pridat tabulku na celym datasetu
+ - zakladni statistiky
+ - feature 
+ - chyboovst aspellu
+ - co jsem orizl - ne anglicke, nebo nove
+ - prumery min, max stdev
+
+
+ povysit apendix na kapitolu a dat tam statistiky??
+  - per promena
+  - vztahy mezi promennyma
+
+  prvni co jsou data
+  jak jsem vyrobildata set
+  nakonec ta analyza z line 21, 22
+ 
+
+ learning curves - obrazek - prior c
+  - popsat system podmnozin a experimenty
+
+
+  rozsirit sentiment - priklad, kdy kdo kde a tak
+
+
+  introduction - link to appA
+  one-R nejake jine jmeno?

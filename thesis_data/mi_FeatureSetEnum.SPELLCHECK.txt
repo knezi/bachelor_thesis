@@ -1,0 +1,10 @@
+Mutual Information of FeatureSetEnum.SPELLCHECK.
+error_rate0.02 6.50919811709394e-05
+error_rate0.05 0.0018191811231603877
+error_rate0.1 0.0017437657560476667
+error_rate0.15 0.0007370642302541846
+error_rate0.2 0.00038473801249859713
+error_total10< 0.0
+error_total15 0.0
+error_total20 0.0
+error_total5 0.0

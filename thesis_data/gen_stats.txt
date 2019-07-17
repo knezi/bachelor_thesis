@@ -1,0 +1,107 @@
+stars:
+hist:
+   5414 1
+   6509 2
+  10454 3
+  21913 4
+  20264 5
+
+
+av - 3.7
+5414*1+ 6509*2+ 10454*3+ 21913*4+ 20264*5
+
+5414+ 6509+ 10454+ 21913+ 20264
+= 64544
+
+
+
+sentiment:
+     30 n/a
+   4366 negative
+  19196 neutral
+  40962 positive
+
+
+
+entity:1055725/64544
+16.4 entities/per review
+      1  average 0.06114660541334154
+      1 max -11111
+      1 min 0
+average 16.354137621216346
+max 144
+min 0
+stdev 13.074585671438392
+
+
+
+unigrams: 5714432 / 64554
+88.5 per review
+average 88.52173374229328
+max 482
+min 1
+stdev 62.57816700491353
+
+
+
+bigrams: 8743923 / 64554
+135.4 per rev
+average 135.45129658890232
+max 942
+min 0
+stdev 120.2654358445901
+
+
+
+trigrams:8666674 / 64554
+134 pre rev
+average 134.25463952659788
+max 1012
+min 0
+stdev 124.22241906145202
+
+error_rate0.02
+30573 bad
+33981 good
+error_rate0.1
+   1551 bad
+  63003 good
+error_rate0.05
+   8740 bad
+  55814 good
+error_rate0.15
+    454 bad
+  64100 good
+error_rate0.2
+    192 bad
+  64362 good
+
+error_total5
+  64554 good
+error_total15
+  64554 good
+error_total20
+  64554 good
+error_total10
+  64554 good
+
+
+ tf -idf 5758094/64554
+ average 89.19809771664033
+max 481
+min 1
+stdev 63.16175348341567
+
+
+bus_stars
+     39 1.5
+    434 2.0
+   2346 2.5
+   8385 3.0
+  19871 3.5
+  26456 4.0
+   6962 4.5
+     61 5.0
+
+av 3.7
+39*1.5+ 434*2.0+ 2346*2.5+ 8385*3.0+ 19871*3.5+ 26456*4.0+ 6962*4.5+ 61*5.0
