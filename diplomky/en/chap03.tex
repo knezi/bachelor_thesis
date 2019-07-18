@@ -1,8 +1,9 @@
 \chapter{Feature Engineering} \label{chap:fea}
 
-In this chapter, we talk about creating features used by the algorithms
+In this chapter, we talk about creating features.
+Those features are then fed into the algorithms
 introduced in the previous chapter.
-We create features and discuss how to find those that are the most informative.
+Subsequently, we discuss how to find those features that are the most informative.
 Finally, we describe concrete features we used for the classification.
 
 We cannot use the raw data for training as it is.
@@ -156,7 +157,7 @@ This way~$H(X)$~expresses the amount of uncertainty of~$X$~and~$H(X|Y)$~what~$Y$
 This supports the intuitive idea that information gain expresses how much information one variable carries about the other one.
 
 Let us demonstrate mutual information on an example.
-Suposse we are trying to predict the mood of the examiner for our exam.
+Supposse we are trying to predict the mood of the examiner for our exam.
 We have created two features --- whether it is raining and whether the examiner is hungry.
 Mock data is shown in \Cref{tab:mi_ex}.
 Now, we want to estimate how good those features are using mutual information.

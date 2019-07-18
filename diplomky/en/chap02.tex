@@ -1,6 +1,6 @@
 \chapter{Text Classification}\label{chap:cls}
 
-In this chapter, we define precisely our task and set it in context with other related tasks.
+In this chapter, we define precisely our task and set it in context.
 Subsequently, we introduce several algorithms for approaching the problem.
 
 The process of~selecting useful review is an example of {\bf text classification}.
@@ -23,7 +23,7 @@ A particular model is the actual labelling and is represented by arrows.
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=7cm]{figures/model.eps}
-	\caption{classification model} \label{fig:cls_model}
+	\caption{Classification model} \label{fig:cls_model}
 \end{figure}
 
 Summary about text classification can be found in \citet{korde2012text} or
@@ -71,7 +71,7 @@ The process of classification is broken down into four parts as shown in \Cref{f
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=12cm]{figures/clsf_process.eps}
-	\caption{classification process}\label{fig:clsf_process}
+	\caption{Classification process}\label{fig:clsf_process}
 \end{figure}
 
 First, we need to obtain sufficient information about each instance.
@@ -95,11 +95,12 @@ We discuss this in \Cref{chap:fea}.
  
 
 
-Once the data is ready, we build a classifier in the \textbf{training} phase.
+Once the dataset is ready, we build a classifier in the \textbf{training} phase.
 Finally, we compare different classifiers and feature sets in \textbf{evaluation}.
 Common evaluations will be discussed in \Cref{chap:eval}.
 
-Last three chapters  are left for the architecture of the software developed (\Cref{chap:arch}),
+Last four chapters  are left for the architecture of the software developed (\Cref{chap:arch}),
+dataset description (\Cref{chap:dataset}),
 demonstration of conducted experiments (\Cref{chap:exp}) and final discussion (\nameref{chap:concl}).
 
 
@@ -116,8 +117,8 @@ We have a fictional dataset of customers of a mobile carrier and
 we are trying to predict whether customers are satisfied.
 The rows are instances and columns features.
 Our three features are 
-whether the customer received a discount (yes or no), whether it is a private customer (yes or no)
-and what mobile internet is part of their prepaid plan (none, limited and unlimited).
+whether the customer received a discount (\texttt{yes} or \texttt{no}), whether it is a private customer (\texttt{yes} or \texttt{no})
+and what mobile internet is part of their prepaid plan (\texttt{none}, \texttt{limited} and \texttt{unlimited}).
 We are predicting the last column.
 
 Please note that our primary focus is text classification.
@@ -133,13 +134,13 @@ We will learn how to do that in \Cref{chap:fea}.
 \toprule
 \textbf{ID} & \textbf{discount} & \textbf{private} & \textbf{internet} \hspace{1.cm} & \textbf{satisfied} \\
 \midrule
-1 & yes & yes & unlimited & yes \\
-2 & no & yes & unlimited & yes \\
-3 & no & no & unlimited & no \\
-4 & yes & yes & no & yes \\
-5 & no & yes & limited & no \\
-6 & yes & no & limited & yes \\
-7 & no & yes & no & no \\
+\texttt{1} & \texttt{yes} & \texttt{yes} & \texttt{unlimited} & \texttt{yes} \\
+\texttt{2} & \texttt{no} & \texttt{yes} & \texttt{unlimited} & \texttt{yes} \\
+\texttt{3} & \texttt{no} & \texttt{no} & \texttt{unlimited} & \texttt{no} \\
+\texttt{4} & \texttt{yes} & \texttt{yes} & \texttt{no} & \texttt{yes} \\
+\texttt{5} & \texttt{no} & \texttt{yes} & \texttt{limited} & \texttt{no} \\
+\texttt{6} & \texttt{yes} & \texttt{no} & \texttt{limited} & \texttt{yes} \\
+\texttt{7} & \texttt{no} & \texttt{yes} & \texttt{no} & \texttt{no} \\
 \bottomrule
 \end{tabular}
 
@@ -163,17 +164,17 @@ And if the baseline gets 20\% well, it may really be that case.
 However, when our baseline predicts only 3\%, 22\% may be actually very good results worth the effort.
 
 {\bf Zero-R} (also referred to as \textit{most frequent classifier}) simply takes the most frequent label and labels every instance with it.
-Zero-R would label all customers as satisfied in our example.
+Zero-R would label all customers as \texttt{satisfied} in our example.
 
 A bit more complicated {\bf One-R} chooses one feature and bases the classification solely on this feature.
 For every value of the feature, we take all instances corresponding to this value and remember the label occurring the most among them.
 For predicting, we use the label we remember for the particular value.
 
 Suppose we choose feature \textit{discount} in our example.
-We can see that all customers that got discount are satisfied.
-Hence all customers getting a discount are according to one-R satisfied.
-Three customers that did not get discount are dissatisfied and one is satisfied.
-Hence one-R will predict all customers without a discount as dissatisfied.
+We can see that all customers that got discount are \texttt{satisfied}.
+Hence all customers getting a discount are according to one-R \texttt{satisfied}.
+Three customers that did not get discount are \texttt{dissatisfied} and one is \texttt{satisfied}.
+Hence one-R will predict all customers without a discount as \texttt{dissatisfied}.
 
 The only problem left is how to choose the most informative feature.
 We want to choose such a feature which has some sort of dependency on the label.
@@ -186,16 +187,16 @@ More about mutual information can be found in \Cref{subsubsec:mi}.
 
 Imagine taking the concept of one-R a bit further.
 Suppose we have one-R with feature \textit{discount} from the previous section.
-The classifier works perfectly for all instances with discount being \textbf{yes}.
-However, when the value is \textbf{no}, it makes a mistake.
+The classifier works perfectly for all instances with discount being \texttt{yes}.
+However, when the value is \texttt{no}, it makes a mistake.
 
 To improve the predictions, we build another one-R classifier
 whenever we get an instance without discount.
 The reduced task is to learn how to predict instances 2, 3, 5 and 7 with features \textit{private} and \textit{internet}.
 Let us say we choose feature \textit{internet}.
-For values \textbf{limited} and \textbf{no} the prediction is dissatisfied.
-In case of \textbf{unlimited}, we get a tie.
-However we break it, we get one instance incorrectly classified.
+For values \texttt{limited} and \texttt{no} the prediction is \texttt{dissatisfied}.
+In case of \texttt{unlimited}, we get a tie.
+However we break it, we get one instance classified incorrectly.
 
 So, for instances with unlimited internet and without discount, we do not stop, but
 build another one-R classifier.
@@ -205,9 +206,9 @@ After using even this feature, all predictions are correct.
 What we just did is building a decision tree classifier.
 It can be described as
 building a one-R classifier and whenever we are not certain with our prediction,
-we build ask another one-R classifier for a prediction.
+we ask another one-R classifier for a prediction.
 The network of one-R classifiers is called a \textbf{decision tree}.
-Representation for our example is shown in \Cref{fig:tree}.
+Representation of our example is shown in \Cref{fig:tree}.
 
 Prediction is done by traversing the graph.
 We start in a root and depending on the actual value of the instance,
@@ -487,5 +488,5 @@ More details can be found in~\citet{Joulin2017bag}.
 
 
 In this chapter, we defined text classification as a mapping from feature space to labels
-and demonstrated several classification algorithms.
+and introduced several classification algorithms.
 In the next chapter, we discuss how to create features.
