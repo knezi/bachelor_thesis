@@ -142,6 +142,7 @@ I(X,Y) = \sum_{x,y} p\left(x,y\right)
 \label{eq:mi}
 \end{equation}
 
+\noindent
 where $p\left(x, y\right)$ is the joint probability of~$X$ and $Y$ and~$p(x)$~and~$p(y)$~
 are marginal probability distributions of the individual variables.
 
@@ -152,6 +153,7 @@ Mutual information can be also expressed as
 \end{equation}
 
 
+\noindent
 where~$H(X)$~is the entropy of~$X$~and~$H(X|Y)$~the conditional entropy.
 This way~$H(X)$~expresses the amount of uncertainty of~$X$~and~$H(X|Y)$~what~$Y$~does not say about~$X$.
 This supports the intuitive idea that information gain expresses how much information one variable carries about the other one.
@@ -180,6 +182,8 @@ Now, we want to estimate how good those features are using mutual information.
  \label{tab:mi_ex}
 \end{table}
 
+\jh{v tabulce je raining, dole pouzivate rain}
+
 Using \Cref{eq:mi}, MI of variables $\mathit{rain}$ and $\mathit{mood}$ is:
 
 
@@ -188,6 +192,7 @@ Using \Cref{eq:mi}, MI of variables $\mathit{rain}$ and $\mathit{mood}$ is:
 	f(yes, happy) + f(no, happy) + f(yes, angry) + f(no, angry),
 \end{equation}
 
+\noindent
 where:
 
 \begin{equation}
@@ -377,8 +382,11 @@ and~$n$~number of all instances.
 
 We define $\chi^2$~of two random variables~$X$~and~$Y$~as:
 
-$$\sum_{x \in X, y \in Y}{\chi^2_{y,x}},$$
+\begin{equation}
+\sum_{x \in X, y \in Y}{\chi^2_{y,x}}
+\end{equation}
 
+\noindent
 where~${\chi^2_{y,x}}$ is $\left(O_{x,y} - E_{x,y} \right)^ 2 / E_{x,y}$.
 
 This corresponds to our intuition.
@@ -387,8 +395,7 @@ the observed values will differ from expected and~$\chi^2$ will by non-zero.
 The farther observed value from the expected is, the higher penalization with square.
 Also, it is normalized by dividing it in E.
 
-The value of $\chi$ in our example in \Cref{tab:chi_ex}
-~is:
+The value of $\chi$ in our example in \Cref{tab:chi_ex} is:
 
 \begin{equation}
 \chi^2 = 
