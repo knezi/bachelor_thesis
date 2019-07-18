@@ -310,7 +310,7 @@ Our original \Cref{eq:argmax}
 	\hat{c} = \argmax_{c_i \in C} P\left(c_i  | d_j \right)
 \end{equation}
 
-can be transcribed with Bayes rule as:
+can be \jh{transcribed TO rewritten} with Bayes rule as:
 
 \begin{equation}
 	\hat{c} = \argmax_{c_i \in C}
@@ -323,6 +323,7 @@ can be transcribed with Bayes rule as:
 \end{equation}
 
 Because we are not interested in the exact value of the expression, it is equivalent to:
+\jh{Neni uplne vysvetleny, spis neco jako: Because we are not interested in the exact value of the expression following `arg max` but only it the value maximizing it, we can ignore the denominator:}
 
 \begin{equation}
 	\label{eq:classprb}
@@ -331,17 +332,17 @@ Because we are not interested in the exact value of the expression, it is equiva
 	P\left( c_i \right)
 \end{equation}
 
-The exact values of probabilities are calculated as follows.
-Prior probabilities are the distribution of classes.
+The \jh{delete: exact} values of probabilities are calculated as follows.
+Prior probabilities \jh{do zavorky pridat kus te formule, ktera to je} are the distribution of classes.
 The exact values are computed by counts.
-For computing posterios, Na\"{i}ve Bayes assumption is used.
+For computing posterios \jh{do zavorky pridat kus te formule, ktera to je}, Na\"{i}ve Bayes assumption is used.
 It says that each feature is independent of all other features.
 Note that in practical context, the assumption often does not hold.
-However, since we are only interested in the label with highest probability,
+However, since we are only interested in the label with \jh{the} highest probability,
 not the probability itself, possible errors are often insignificant and Na\"{i}ve Bayes often works in practise even when the features are not independent.
-Thanks to the assumption, the probability of an instance represented by feature values is the product
+Thanks to the assumption, the probability of an instance represented by \jh{certain} feature values is the product
 of probabilities of individual features having the given values.
-For features $f_1, f_2, \dots f_K$ it is:
+For features $f_1, f_2, \dots f_K$\jh{,} it is:
 
 \begin{equation}
 	\label{eq:posterios}
@@ -359,7 +360,9 @@ By combining \Cref{eq:classprb} and \Cref{eq:posterios}, we get:
 \end{equation}
 
 Probability~$P\left(f_k|c_i\right)$~is found by counting.
-We take all instances from class~$c_i$ and the probability is the ratio of all those instances with the same value of feature~$f_k$~and the rest.
+We take all instances from class~$c_i$ and the probability is the ratio of all those instances with the same value of feature~$f_k$~and the rest.\
+\jh{rest? snad vsechno: 
+The probability is the ratio of the number of instances $c_i$ with feature $f_k$~and and all instances of $c_i$. (Ale jak pisu ve slacku, trochu nerozumim oznaceni $f_k$}
 
 Let us classify instance~$\mathit{ID}=2$~from our mock data in \Cref{tab:custsatis} for demonstration.
 For label ``yes'' (satisfied customers):
@@ -426,13 +429,13 @@ but the correlation between discount and satisfaction is so strong that it outwe
 
 \subsection{FastText}
 
-FastText\footnote{\url{https://fasttext.cc}} is a small library developed by Facebook.
+FastText\footnote{\url{https://fasttext.cc}} \citep{Joulin2017bag} is a small library developed by Facebook.
 Text classification in this library is on par with current state-of-the-art deep learning classifiers
-and many orders of magnitude faster~\citep{Joulin2017bag}.
+and many orders of magnitude faster.
 An example of using FastText is in \citet{alessa2018text}.
 They utilize FastText for classifying flu-related tweets.
 
-Let us first explain a baseline algorithm on top of which fastText builds.
+Let us first explain \jh{a TO the} baseline algorithm on top of which fastText builds.
 It uses {\it bag of words}\footnote{more on this in the subsection~\ref{subsec:bow}} as features.
 This means that each instance is represented by a vector of numbers.
 Every position in the vector corresponds to a particular word in a dictionary.
@@ -442,23 +445,23 @@ Linear in this context means that the decision on classification is based on a l
 Thanks to this, linear models are a lot faster than complicated neural networks, however the classification may not be as good.
 
 FastText uses {\it word embeddings}\footnote{see the subsection~\ref{subsec:wordembed}} instead of a simple bag of words.
-In short, it maps every word onto a vector. Every document is represented as an average vector of all words.
+In short, it maps every word onto a \jh{real} vector. Every document is represented as \jh{an TO the} average vector of all words' vectors.
 
 However, fastText goes even further.
-The process is precisely described in \citet{Bojanowski2017enriching}.
+The process is precisely described in \citet{Bojanowski2017enriching}\jh{. TO ,}
 we only briefly summarize it.
 Fasttext maps n-grams onto vectors, not words.
 {\bf N-gram} is any sequence of n elements --- in this case letters.
-The algorithm represents a words as an average of vectors of all its n-grams.
+The algorithm represents a \jh{words TO word} as \jh{an TO the} average of vectors of all its \jh{character} n-grams.
 Let~$w_{a}$~be a vector representation of an n-gram~$a$, then 
 the representation of \texttt{where} is the average of vectors
 $w_{whe}$, 
 $w_{her}$ and
 $w_{ere}$.
 
-For even higher performance, every word is surrounded by \texttt{<} and \texttt{>}.
+For even higher performance, \jh{word boundaries are chonsidered characters as well. Technically,} every word is surrounded by \texttt{<} and \texttt{>}.
 The word \textit{ where} thus becomes \texttt{<where>}.
-The vector of \texttt{where} becomes the average of vectors
+The vector of \texttt{where} \jh{becomes TO is} the average of \jh{the} vectors
 $w_{<wh}$, 
 $w_{whe}$, 
 $w_{her}$,
