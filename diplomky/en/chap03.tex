@@ -169,7 +169,7 @@ Now, we want to estimate how good those features are using mutual information.
  \center
  \begin{tabular}{lll}
 	\toprule
-	 \textbf{raining} & \textbf{hungry} & \textbf{mood} \\ 
+	 \textbf{rain} & \textbf{hungry} & \textbf{mood} \\ 
 	 \midrule
 	 yes & yes & happy \\
 	 no & yes & happy \\
@@ -181,8 +181,6 @@ Now, we want to estimate how good those features are using mutual information.
  \caption{Mutual information example}
  \label{tab:mi_ex}
 \end{table}
-
-\jh{v tabulce je raining, dole pouzivate rain}
 
 Using \Cref{eq:mi}, MI of variables $\mathit{rain}$ and $\mathit{mood}$ is:
 
@@ -282,7 +280,7 @@ We compute $I(\mathit{hungry}, \mathit{mood})$ in the same way:
 	I(\mathit{hungry}, \mathit{mood}) \approx 0.291
 \end{equation}
 
-The mutual information of \textit{hungry} is higher than \textit{raining}.
+The mutual information of \textit{hungry} is higher than \textit{rain}.
 It intuitively makes sense if we look at the table.
 \textit{Hungry} predicts the mood four times out of five correctly.
 Especially, when the examiner is hungry, he is always happy.
